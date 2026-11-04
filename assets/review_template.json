@@ -1,0 +1,103 @@
+{
+  "schema_version": "1.1",
+  "artifact": {
+    "path": "REPLACE_WITH_CURRENT_ARTIFACT",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "size_bytes": 0
+  },
+  "mode": "static",
+  "scope": {
+    "included": ["REPLACE_WITH_SCOPE"],
+    "excluded": [],
+    "dynamic_authorization": "",
+    "time_budget": ""
+  },
+  "change_regression": {
+    "status": "not_applicable",
+    "checks": [
+      {
+        "id": "A0",
+        "description": "No baseline or regression claim supplied",
+        "status": "not_applicable",
+        "evidence": ["Replace this placeholder when a baseline exists"],
+        "finding_ids": []
+      }
+    ]
+  },
+  "current_correctness": {
+    "status": "manual",
+    "checks": [
+      {
+        "id": "B0",
+        "description": "Current implementation review has not been completed",
+        "status": "manual",
+        "evidence": [],
+        "finding_ids": []
+      }
+    ]
+  },
+  "claims": [
+    {
+      "id": "C0",
+      "statement": "Replace with a concrete declared capability",
+      "source": {"path": "REPLACE.md", "line": 1},
+      "implementation_evidence": [],
+      "behavior_required": true,
+      "status": "manual",
+      "evidence_level": "EV0",
+      "coverage_refs": ["B0"],
+      "finding_ids": []
+    }
+  ],
+  "behavior_coverage": [
+    {
+      "id": "B0",
+      "claim_id": "C0",
+      "interface": "Replace with the declared interface",
+      "environment": "Record cwd, layout, environment and permissions",
+      "branches": [
+        {"name": "normal", "status": "manual", "evidence": []},
+        {"name": "failure_or_timeout", "status": "manual", "evidence": []}
+      ],
+      "untested_branches": ["normal", "failure_or_timeout"]
+    }
+  ],
+  "adversarial_cases": [],
+  "findings": [],
+  "platform_checks": [
+    {
+      "id": "PC0",
+      "rule": "B-C01",
+      "status": "needs_manual",
+      "evidence": ["Replace with file:line evidence from check_platform_rules.py output"],
+      "evidence_state": "verified",
+      "note": "verified=已证实 / materials_missing=材料未提供 / not_run=未执行；三态不得混写"
+    }
+  ],
+  "three_judgements": {
+    "runtime_chain": "REPLACE: 准备/执行/评分/回传各自完成到哪一步；正常截止须记录原因",
+    "score_trustworthiness": "REPLACE: 分数是否真实对应当前候选、完成正式评分并被正确读取",
+    "author_fix_required": "REPLACE: 只取决于作者控制的当前缺陷；平台故障不自动生成作者返修项"
+  },
+  "standard_decision": "INCOMPLETE",
+  "waiver_review": {
+    "applicable": false,
+    "decision": "ERROR",
+    "reason_codes": [],
+    "notes": "No waiver assessment performed"
+  },
+  "coverage_statement": {
+    "files_total": 0,
+    "files_indexed": 0,
+    "machine_scanned": 0,
+    "human_reviewed": 0,
+    "behavior_branches_total": 2,
+    "behavior_branches_run": 0,
+    "attacks_total": 0,
+    "attacks_reached": 0,
+    "unreviewed": ["Entire review is still a template"],
+    "notes": "Replace all placeholder values before issuing a verdict"
+  },
+  "weakest_link": "Template only: no substantive evidence has been collected",
+  "extensions": {}
+}

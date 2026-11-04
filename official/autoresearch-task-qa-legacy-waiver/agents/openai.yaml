@@ -1,0 +1,4 @@
+interface:
+  display_name: "AutoResearch 原标准完整质检与历史豁免"
+  short_description: "原v0.3.10全部检查含NOP，先保留原判，再逐问题豁免"
+  default_prompt: "使用 $autoresearch-task-qa-legacy-waiver 按原v0.3.10执行全部静态检查，包括NOP、三门控、21项、Harbor六项、轨迹行为/分数、资源时长和指纹；使用audit_standard_with_waivers.py先保留原标准明细，再逐原因应用旧题豁免，不运行题包或Harbor。"

@@ -1,0 +1,246 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Adversarial Engineering QA Review",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact", "mode", "scope", "change_regression", "current_correctness", "claims", "behavior_coverage", "adversarial_cases", "findings", "standard_decision", "waiver_review", "coverage_statement", "weakest_link", "extensions"],
+  "properties": {
+    "schema_version": {"type": "string", "enum": ["1.0", "1.1"]},
+    "domain": {"type": "string", "enum": ["generic", "autoresearch_harbor"]},
+    "artifact": {"$ref": "#/$definitions/artifact"},
+    "mode": {"type": "string", "enum": ["static", "dynamic", "mixed"]},
+    "scope": {"$ref": "#/$definitions/scope"},
+    "change_regression": {"$ref": "#/$definitions/gate"},
+    "current_correctness": {"$ref": "#/$definitions/gate"},
+    "claims": {"type": "array", "items": {"$ref": "#/$definitions/claim"}},
+    "behavior_coverage": {"type": "array", "items": {"$ref": "#/$definitions/behavior"}},
+    "adversarial_cases": {"type": "array", "items": {"$ref": "#/$definitions/adversarial"}},
+    "findings": {"type": "array", "items": {"$ref": "#/$definitions/finding"}},
+    "platform_checks": {"type": "array", "items": {"$ref": "#/$definitions/platform_check"}},
+    "three_judgements": {"$ref": "#/$definitions/three_judgements"},
+    "standard_decision": {"type": "string", "enum": ["PASS", "FAIL", "INCOMPLETE"]},
+    "waiver_review": {"$ref": "#/$definitions/waiver"},
+    "coverage_statement": {"$ref": "#/$definitions/coverage"},
+    "weakest_link": {"type": "string", "minLength": 1},
+    "extensions": {"type": "object"}
+  },
+  "$definitions": {
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "size_bytes"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "size_bytes": {"type": "integer", "minimum": 0}
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["included", "excluded", "dynamic_authorization", "time_budget"],
+      "properties": {
+        "included": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "excluded": {"type": "array", "items": {"type": "string"}},
+        "dynamic_authorization": {"type": "string"},
+        "time_budget": {"type": "string"}
+      }
+    },
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "checks"],
+      "properties": {
+        "status": {"type": "string", "enum": ["pass", "fail", "manual", "not_applicable"]},
+        "checks": {"type": "array", "items": {"$ref": "#/$definitions/check"}}
+      }
+    },
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "description", "status", "evidence", "finding_ids"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1},
+        "status": {"type": "string", "enum": ["pass", "fail", "manual", "not_applicable"]},
+        "evidence": {"type": "array", "items": {"type": "string"}},
+        "finding_ids": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "location": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "line"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "line": {"type": "integer", "minimum": 1}
+      }
+    },
+    "implementation_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "line", "kind", "note"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "line": {"type": "integer", "minimum": 1},
+        "kind": {"type": "string", "enum": ["code", "config", "artifact", "runtime_log", "recompute", "other"]},
+        "note": {"type": "string"}
+      }
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "statement", "source", "implementation_evidence", "behavior_required", "status", "evidence_level", "coverage_refs", "finding_ids"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "statement": {"type": "string", "minLength": 1},
+        "source": {"$ref": "#/$definitions/location"},
+        "implementation_evidence": {"type": "array", "items": {"$ref": "#/$definitions/implementation_evidence"}},
+        "behavior_required": {"type": "boolean"},
+        "status": {"type": "string", "enum": ["pass", "fail", "manual", "pass_with_waivers"]},
+        "evidence_level": {"type": "string", "enum": ["EV0", "EV1", "EV2", "EV3", "EV4"]},
+        "coverage_refs": {"type": "array", "items": {"type": "string"}},
+        "finding_ids": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "branch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "status", "evidence"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "status": {"type": "string", "enum": ["pass", "fail", "manual"]},
+        "evidence": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "behavior": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "claim_id", "interface", "environment", "branches", "untested_branches"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "claim_id": {"type": "string", "minLength": 1},
+        "interface": {"type": "string", "minLength": 1},
+        "environment": {"type": "string"},
+        "branches": {"type": "array", "items": {"$ref": "#/$definitions/branch"}},
+        "untested_branches": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "early_exit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "message"],
+      "properties": {
+        "kind": {"type": "string", "enum": ["", "syntax_error", "import_error", "dependency_missing", "unrelated_crash", "timeout_before_target", "other"]},
+        "message": {"type": "string"}
+      }
+    },
+    "control": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["expected_without_defense", "observed"],
+      "properties": {
+        "expected_without_defense": {"type": "string"},
+        "observed": {"type": "string"}
+      }
+    },
+    "ablation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["performed", "result"],
+      "properties": {
+        "performed": {"type": "boolean"},
+        "result": {"type": "string"}
+      }
+    },
+    "adversarial": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "claim_id", "attack", "authorization", "core_mechanism", "reached_target", "reachability_evidence", "early_exit", "defense_observed", "oracle", "control", "ablation", "status", "evidence"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "claim_id": {"type": "string", "minLength": 1},
+        "attack": {"type": "string", "minLength": 1},
+        "authorization": {"type": "string"},
+        "core_mechanism": {"type": "boolean"},
+        "reached_target": {"type": "boolean"},
+        "reachability_evidence": {"type": "array", "items": {"type": "string"}},
+        "early_exit": {"$ref": "#/$definitions/early_exit"},
+        "defense_observed": {"type": "boolean"},
+        "oracle": {"type": "string"},
+        "control": {"$ref": "#/$definitions/control"},
+        "ablation": {"$ref": "#/$definitions/ablation"},
+        "status": {"type": "string", "enum": ["pass", "fail", "manual", "pass_with_waivers"]},
+        "evidence": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "summary", "severity", "status", "evidence", "affected_claim_ids", "affected_gates", "waiver_eligible"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "summary": {"type": "string", "minLength": 1},
+        "severity": {"type": "string", "enum": ["blocker", "major", "minor"]},
+        "status": {"type": "string", "enum": ["confirmed", "unresolved"]},
+        "evidence": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1},
+        "affected_claim_ids": {"type": "array", "items": {"type": "string"}},
+        "affected_gates": {"type": "array", "items": {"type": "string", "enum": ["change_regression", "current_correctness"]}},
+        "waiver_eligible": {"type": "boolean"},
+        "responsible": {"type": "string", "enum": ["author", "platform", "unresolved"]},
+        "action": {"type": "string", "enum": ["author_fix", "platform_fix", "record_only"]}
+      }
+    },
+    "platform_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "rule", "status", "evidence", "evidence_state", "note"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "rule": {"type": "string", "enum": ["B-C01", "B-C02", "B-C03", "B-C04"]},
+        "status": {"type": "string", "enum": ["pass", "fail", "needs_manual", "not_applicable"]},
+        "evidence": {"type": "array", "items": {"type": "string"}},
+        "evidence_state": {"type": "string", "enum": ["verified", "materials_missing", "not_run"]},
+        "note": {"type": "string"}
+      }
+    },
+    "three_judgements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["runtime_chain", "score_trustworthiness", "author_fix_required"],
+      "properties": {
+        "runtime_chain": {"type": "string", "minLength": 1},
+        "score_trustworthiness": {"type": "string", "minLength": 1},
+        "author_fix_required": {"type": "string", "minLength": 1}
+      }
+    },
+    "waiver": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["applicable", "decision", "reason_codes", "notes"],
+      "properties": {
+        "applicable": {"type": "boolean"},
+        "decision": {"type": "string", "enum": ["PASS_WITH_WAIVERS", "FAIL", "ERROR"]},
+        "reason_codes": {"type": "array", "items": {"type": "string"}},
+        "notes": {"type": "string"}
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["files_total", "files_indexed", "machine_scanned", "human_reviewed", "behavior_branches_total", "behavior_branches_run", "attacks_total", "attacks_reached", "unreviewed", "notes"],
+      "properties": {
+        "files_total": {"type": "integer", "minimum": 0},
+        "files_indexed": {"type": "integer", "minimum": 0},
+        "machine_scanned": {"type": "integer", "minimum": 0},
+        "human_reviewed": {"type": "integer", "minimum": 0},
+        "behavior_branches_total": {"type": "integer", "minimum": 0},
+        "behavior_branches_run": {"type": "integer", "minimum": 0},
+        "attacks_total": {"type": "integer", "minimum": 0},
+        "attacks_reached": {"type": "integer", "minimum": 0},
+        "unreviewed": {"type": "array", "items": {"type": "string"}},
+        "notes": {"type": "string"}
+      }
+    }
+  }
+}
