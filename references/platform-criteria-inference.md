@@ -192,3 +192,49 @@ review 显式记录「官方副本口径已过期，以 2026-11 平台规则为�
 supplement skill）时，显式规则优先于反推结论**——反推是在拿不到源码时的替代手段，
 不是与官方口径对赌的工具。反推结论必须标注「截至 rev 1145 / 2026-11-03」，
 显式规则更新时立即复核本文全部结论。
+
+---
+
+## 7. 2026-11-06 新证据：复盘副本带批注，规则再次变动
+
+> 来源：飞书群「A5-autosearch作业群」2026-11-06 20:02 消息附带的
+> 《Harbor 1074题执行复盘…（2026-10-26）副本》（wiki `Gto2wtQ4yiSU5dkC3Hmc5NK7n1c`）。
+> 与内嵌 supplement 1.0.1 所依据的 rev 1145 相比，本副本至少有两处实质变化。
+
+### 7.1 npm bnpm 规则被划掉（B-C04 降级）
+
+副本「需加入质检skill的rule」第 4 条被划掉（原文 `~~如使用npm包，Dockfile里的依赖
+镜像源必须改为 https://bnpm.byted.org~~`，仅留 `npm config set registry` 代码块）。
+处置（v2.4.1 已落地）：B-C04 保留检测（不删规则），但把违规从 `fail` 降为
+`needs_manual`，findings 注明「规则状态待平台新版 skill 确认」。平台新版官方 skill
+发布后先 `sync_official_skills.py --check` 做规则 diff，再决定恢复 fail 还是移除。
+**这是「判据会变」的第三例**（前两例：docker_image 翻转、3σ 迁移）。
+
+### 7.2 两类问题应脚本化（已补 D-C01/D-C02）
+
+复盘里 74 题评分失败中 **72 题为 RewardFileNotFoundError**，以及「评分资产/锚点
+不一致 2 题」——此前只能靠 agent 语义发现，实为纯机械判据。v2.4.1 新增
+`check_delivery_contract.py`：
+
+- **D-C01**：声明 `reward_file` vs tests/ 写入链（2604 实测：声明 `/logs/verifier/reward.txt`，
+  全链只写 `/workspace/.verifier/*` → 精确复现 round-1 blocking）。
+- **D-C02**：清单 sha256/size 全量复算（1841 实测：评分合同清单 5 项失配——dev_eval.py/
+  instruction.md/task.toml/tests/grader.py/anchors.json——与 round-1 agent 发现完全一致）。
+
+分级纪律：评分合同清单（tests//harbor_task/environment/ 下）失配=blocking；
+专家证据清单（expert_evidence/ 下 provenance/NOP 树哈希）失配=needs_manual
+（证据侧不一致，不阻断提交但须如实记录）。
+
+### 7.3 批注信号：平台自己在犹豫责任归属
+
+副本「补充说明」列新增大量批注：「打回专家返修？」「尝试重试」「变成质检skill枚举」
+「看具体报错，oncall」。这说明 664 题失败里相当比例的责任边界未定。我方处置不变：
+责任三标记（出题人/rollout/平台/未明）+ 处理清单（专家返修/平台处理/仅记录），
+**不得把平台故障记成作者缺陷，也不得把作者缺陷包装成平台问题**（E25）。
+
+### 7.4 方法补充
+
+复盘类文档给的是「原因族」，不是「可执行判据」。每轮拿到新版本后应做一次
+「可脚本化缺口」扫描：哪些原因族其实能写成确定性检查（如 D-C01/D-C02），
+哪些只能靠日志诊断，哪些根本不可见（平台网络/配额/运行时）。v2.4.1 的 D-C01/D-C02
+就是这次扫描的产物；下一次平台规则更新时重复该动作。

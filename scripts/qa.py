@@ -269,26 +269,35 @@ def _stage_scripts(ws: Path, st: dict):
 
 
 def _stage_platform(ws: Path, st: dict):
-    """平台源包硬规则（B-C01–B-C04，2026-11 新规）。
+    """平台源包硬规则（B-C01–B-C04）+ 交付契约（D-C01/D-C02，v2.4.1）。
 
     注意：内嵌官方层（0.3.10.5）不含这四条，且其中 B-C02 与旧口径
     「填写 docker_image」正面翻转——本阶段以带日期的新平台规则为准，
     冲突在 review 中显式记录，不静默沿用旧规则。
+    B-C04（npm bnpm）在 2026-11-06 复盘副本中被划掉，当前降为 needs_manual。
     """
     task = st["identity"]["task_dir"]
     out = ws / "platform-rules.json"
     rc, txt = run_script("check_platform_rules.py", ["--root", task, "--out", out])
+    dc = ws / "delivery-contract.json"
+    rc2, txt2 = run_script("check_delivery_contract.py", ["--root", task, "--out", dc])
     if out.is_file():
         rep = json.loads(out.read_text(encoding="utf-8"))
         st["artifacts"]["platform_rules"] = str(out)
         fails = rep["summary"].get("fail", 0)
-        st["artifacts"]["platform_fail"] = fails
+        nm = rep["summary"].get("needs_manual", 0)
+        drep = json.loads(dc.read_text(encoding="utf-8")) if dc.is_file() else {"summary": {}}
+        if dc.is_file():
+            st["artifacts"]["delivery_contract"] = str(dc)
+        dfails = drep["summary"].get("fail", 0)
+        dnm = drep["summary"].get("needs_manual", 0)
+        st["artifacts"]["platform_fail"] = fails + dfails
         # 违规是数据不是流水线故障：报告写出即视为阶段完成，让 official/review/integrate
         # 继续跑（「发现 FAIL 不阻止继续完成其余审查」）；总判由合并层取最严格结论。
         mark(st, "platform", "done",
-             "B-C01–B-C04: fail=%d needs_manual=%d"
-             % (fails, rep["summary"].get("needs_manual", 0)), rc)
-        return 0, txt
+             "B-C01–C04: fail=%d manual=%d | D-C01/02: fail=%d manual=%d"
+             % (fails, nm, dfails, dnm), rc or rc2)
+        return 0, txt + "\n" + txt2
     mark(st, "platform", "failed", txt, rc)
     return rc, txt
 

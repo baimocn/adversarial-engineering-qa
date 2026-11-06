@@ -38,6 +38,14 @@ SKIP_DIRS = {"__pycache__", ".git", ".hg", ".svn", "node_modules",
 BNPM = "bnpm.byted.org"
 CANONICAL = "workspace/harbor_task/task.toml"
 
+# ★ 2026-11-06 规则版本信号：平台 1074 复盘新副本中「npm 必须改 bnpm」一条被划掉
+#   （原文 ~~如使用npm包…~~，仅留 npm config set 代码块）。在平台新版 skill 明确前，
+#   本检查保留检测但降为 needs_manual（只记录不阻断），避免按已撤回规则误判作者。
+#   引用时必须连日期版本一起引；新版 skill 发布后复核本常量。
+NPM_RULE_STATUS = "pending_platform_review"
+NPM_RULE_NOTE = ("（规则状态待确认：2026-11-06 平台复盘副本中该条被划掉，"
+                 "待平台新版 skill 明确；本轮仅记录，不判 fail）")
+
 # 已证实的非官方镜像域（发行版/生态官方源之外）。只在这些域出现在
 # 「执行载体」里时才判违规；README/说明文档不扫（说明 ≠ 生效）。
 MIRROR_DOMAINS = [
@@ -342,11 +350,11 @@ def check_c04(root: Path):
     overrides = [(f, i, u) for f, i, u in flag_regs if _norm(u) != BNPM]
     if overrides:
         f, i, u = overrides[0]
-        findings.append({"severity": "blocking", "file": f, "line": i,
+        findings.append({"severity": "needs_manual", "file": f, "line": i,
                          "detail": "B-C04：npm 命令行 --registry=%s 覆盖了其他配置"
-                                   "（.npmrc 写了 bnpm 也会被它盖掉）——改为 bnpm 或删掉覆盖"
-                                   % u})
-        return "fail", findings
+                                   "（.npmrc 写了 bnpm 也会被它盖掉）——建议改为 bnpm 或删掉覆盖"
+                                   % u + NPM_RULE_NOTE})
+        return "needs_manual", findings
     if flag_regs:
         return "pass", [{"severity": "informational", "file": flag_regs[0][0],
                          "line": flag_regs[0][1],
@@ -356,10 +364,11 @@ def check_c04(root: Path):
     bad = [(f, i, u) for f, i, u in effective if _norm(u) != BNPM]
     if bad:
         f, i, u = bad[0]
-        findings.append({"severity": "blocking", "file": f, "line": i,
+        findings.append({"severity": "needs_manual", "file": f, "line": i,
                          "detail": "B-C04：npm registry 实际生效为 %s——"
-                                   "必须为 https://%s" % (u, BNPM)})
-        return "fail", findings
+                                   "按 2026-11 规则应为 https://%s" % (u, BNPM)
+                                   + NPM_RULE_NOTE})
+        return "needs_manual", findings
     if effective:
         return "pass", [{"severity": "informational", "file": effective[0][0],
                          "line": effective[0][1],
@@ -368,8 +377,8 @@ def check_c04(root: Path):
     #    但基础镜像可能已配置——静态无法判定
     findings.append({"severity": "needs_manual", "file": "", "line": 0,
                      "detail": "B-C04：npm 已使用但源包内未见任何 registry 配置——"
-                               "默认源 registry.npmjs.org 不符合要求；若依赖基础镜像预配，"
-                               "须指出该镜像与配置证据"})
+                               "默认源 registry.npmjs.org 按 2026-11 规则不符合要求；"
+                               "若依赖基础镜像预配，须指出该镜像与配置证据" + NPM_RULE_NOTE})
     return "needs_manual", findings
 
 

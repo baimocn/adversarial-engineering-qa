@@ -130,7 +130,7 @@ class PlatformRulesTest(unittest.TestCase):
                          "说明文档里的 URL 不判违规（说明 ≠ 生效）")
 
     # ── B-C04 ──
-    def test_c04_fail_registry_override(self):
+    def test_c04_override_downgraded_needs_manual(self):
         rc, rep = self._run(make_pkg(
             tempfile.mkdtemp(prefix="pr10_"),
             extra_files={
@@ -141,9 +141,9 @@ class PlatformRulesTest(unittest.TestCase):
                     "COPY web /opt/web\n",
             }))
         c04 = self._check(rep, "B-C04")
-        self.assertEqual(c04["status"], "fail",
-                         "命令行 --registry 覆盖 .npmrc ⇒ 不符合")
-        self.assertTrue(any("覆盖" in f["detail"] for f in c04["findings"]))
+        self.assertEqual(c04["status"], "needs_manual",
+                         "2026-11-06 副本中 npm 规则被划掉：降为 needs_manual 保留检测，不再判 fail")
+        self.assertTrue(any("规则状态待确认" in f["detail"] for f in c04["findings"]))
 
     def test_c04_pass_bnpm_config(self):
         rc, rep = self._run(make_pkg(

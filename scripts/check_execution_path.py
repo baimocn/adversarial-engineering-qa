@@ -490,16 +490,45 @@ def rule_artifacts_handoff(task_toml, instr_text, trees, root):
     for m in re.finditer(r"[^\n]*(提交|submit|solution|移交|写入)[^\n]*", instr_text or "", re.I):
         submit_paths.update(re.findall(r"/workspace/[A-Za-z0-9_./-]+", m.group(0)))
     norm_art = {a.rstrip("/") for a in artifacts}
-    conflict = [s for s in submit_paths if s.rstrip("/") not in norm_art]
+
+    def _under(p, roots):
+        p = p.rstrip("/")
+        return any(p == r or p.startswith(r + "/") for r in roots)
+
+    # ★ 抽检修正（2026-11-05，0340 连续两轮实测误报）：
+    #   ① artifacts 目录的**内部子路径**（cd /workspace/solution/tdmpc2、目录树图）
+    #     与 artifacts 一致，不是冲突；
+    #   ② 行级关键字连坐会把数据挂载/Agent 侧挂载（/workspace/dataset、
+    #     /workspace/starter）一起抓进来——挂载类词根直接忽略；
+    #   ③ 剩余路径「行级提及」无法机械区分移交物/中间产物 ⇒ 默认 needs_manual，
+    #     仅当 tests/ 代码字面引用该路径（评分链真实读写）才 blocking。
+    MOUNT_STEMS = {"dataset", "data", "starter", "reference", "public",
+                   "public_assets", "public_eval", "logs", "tmp", "hidden_assets"}
+    conflict = [s for s in submit_paths
+                if not _under(s, norm_art)
+                and (len(s.rstrip("/").split("/")) < 3
+                     or s.rstrip("/").split("/")[2] not in MOUNT_STEMS)]
     if conflict:
+        # ★ 抽检修正（0823）：blocking 升级只认 tests/ 下的字面引用（真正的
+        #   Verifier 侧耦合）；题面/环境侧的引用是挂载声明，不算。
+        tests_ref = False
+        for path, tree in trees.items():
+            if tree is None or "tests" not in path.parts:
+                continue
+            src = _read_text(path)
+            if any(s in src for s in conflict):
+                tests_ref = True
+                break
         out.append({
             "rule": "artifacts_handoff_mismatch",
-            "severity": "blocking",
+            "severity": "blocking" if tests_ref else "needs_manual",
             "file": "instruction.md",
             "line": 0,
-            "detail": "题面提交路径 %s 与 task.toml artifacts %s 不一致——"
-                      "初始化、题面、artifacts 声明、平台移交和评分读取位置必须统一"
-                      % (sorted(conflict)[:3], artifacts),
+            "detail": ("题面提交相关路径 %s 落在 task.toml artifacts %s 之外%s——"
+                       % (sorted(conflict)[:3], artifacts,
+                          "且被 tests/ 代码字面引用（确定性移交缺口）" if tests_ref
+                          else "（仅题面行级提及：需语义裁定是数据挂载/评分中间产物还是候选移交物）")
+                      + "初始化、题面、artifacts 声明、平台移交和评分读取位置必须统一"),
         })
     # ② artifacts 路径是否被 tests/ 或题面引用
     referenced = False

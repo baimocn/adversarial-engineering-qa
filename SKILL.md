@@ -6,7 +6,7 @@ agent_created: true
 
 # Adversarial Engineering QA
 
-**版本**：v2.4（2026-11-05）
+**版本**：v2.4.1（2026-11-06）
 **v2 相对 v1 的实质改动**：新增 Gate C（执行层门禁）——`scripts/check_execution_path.py`
 四条静态规则 + `scripts/check_honest_candidate.py` 诚实候选冒烟；判定纪律加入
 「Gate C blocking 不可豁免、不得静默降级 manual」；合并规则加入 `remaining_findings` 阻断。
@@ -41,6 +41,17 @@ submission_dir_pollution / atomic_replace_race，来源为平台八类已确认�
 ④ `qa.py` 增加 `platform` 阶段；⑤ 内嵌 `official/autoresearch-supplement-platform-audit`
 （只读副本，`sync_official_skills.py` 已纳入）；⑥ 错误类台账扩至 E1–E25，
 `platform-criteria-inference.md` 记录规则翻转案例与方法升级。
+
+**v2.4.1 相对 v2.4 的实质改动（2026-11-06，1074 复盘副本接入）**：平台群内发布
+1074 题复盘新副本（带批注），暴露两个信号：① **npm bnpm 规则被划掉**
+（原文划线，待平台新版 skill 明确）→ B-C04 保留检测但降为 `needs_manual`，
+不再判 fail（防止按已撤回规则误判作者）；② 复盘里两类问题其实可纯脚本化但此前靠
+agent 语义发现 → 新增 `scripts/check_delivery_contract.py` 并接入 `platform` 阶段：
+**D-C01** task.toml 声明的 `reward_file` 必须出现在 tests/ 写入链（覆盖 72 题
+`RewardFileNotFoundError`；2604 实测精确复现）、**D-C02** 包内清单声明的
+sha256/size 全量复算（评分合同清单失配=blocking，专家证据清单失配=needs_manual；
+1841 实测精确复现 round-1 的 5 项失配）。平台新版官方 skill 发布后，先
+`sync_official_skills.py --check` 复核规则版本，再定 B-C04 最终去留。
 
 ## 目标
 
@@ -407,10 +418,21 @@ python scripts/check_platform_rules.py --root "<提交包根或任务目录>" \
 | B-C01 | 只保留一份 `task.toml` 于 `workspace/harbor_task/`；历史配置另归档或改成说明材料 | mechanical |
 | B-C02 | 专家源 `task.toml` 禁配 `docker_image`；`environment/Dockerfile` 及 COPY/ADD 构建上下文完整 | mechanical |
 | B-C03 | 依赖用发行版/生态官方源——只扫**执行载体**（Dockerfile/安装脚本/包管理配置），README 里的 URL 不算生效 | mechanical / needs_manual |
-| B-C04 | npm 实际生效 registry 为 `https://bnpm.byted.org`——命令行 `--registry` 覆盖 `.npmrc`；未用 npm 记不适用 | mechanical / needs_manual |
+| B-C04 | npm 实际生效 registry 为 `https://bnpm.byted.org`——命令行 `--registry` 覆盖 `.npmrc`；未用 npm 记不适用。**2026-11-06 复盘副本中该条被划掉：当前保留检测但降为 needs_manual，待平台新版 skill 确认** | mechanical / needs_manual |
 
 全部机械判（mechanical）。supplement 的案例边界已编码进实现：注释里的字段名不算配置、
 说明文档不算生效包源、`.npmrc` 写 bnpm 被命令行覆盖仍判不符合。
+
+**交付契约机械检查（D-C01 / D-C02，v2.4.1 新增）**：同一 platform 阶段自动运行
+`scripts/check_delivery_contract.py`：
+
+| 编号 | 查什么 | 判定档 |
+|---|---|---|
+| D-C01 | task.toml 声明的 `reward_file` 必须出现在 tests/ 写入链（含 `$REWARD_DIR/reward.txt` 拼接写法）；声明落点零出现=每次试验缺分 | blocking（来源：72 题 RewardFileNotFoundError；2604 实测复现） |
+| D-C02 | 包内清单（manifest/hashes/trusted/frozen/calibration/anchor）声明的 sha256+size 全量复算 | 评分合同清单（tests//harbor_task/environment/ 下）失配=blocking；专家证据清单（expert_evidence/ 等）失配=needs_manual；声明指向包外文件=needs_manual（来源：评分资产不一致 2 题；1841 实测复现 5 项） |
+
+D-C02 只做"声明 vs 实物"的字节级比对，不判断变更是否合理；"刷新清单+实名记录"
+仍是唯一合法处置（不得静默对齐——见 1841 F2 教训）。
 
 **⚠️ 规则冲突批注（不得静默处理）**：内嵌官方层（`0.3.10-standard-waiver.5`）的
 `innerfield-deployment.md` / `submission-format.md` / `harbor-harness.md` 仍写着

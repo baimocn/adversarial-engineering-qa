@@ -79,14 +79,38 @@ class ExecutionPathV24Test(unittest.TestCase):
         hits = self._rules(rep, "home_writability")
         self.assertTrue(hits and hits[0]["severity"] == "needs_manual")
 
-    def test_artifacts_handoff_mismatch_is_blocking(self):
+    def test_artifacts_handoff_outside_mention_is_needs_manual(self):
+        """抽检修正回归：题面行级提及的 artifacts 外路径默认 needs_manual。"""
         rc, rep = self._run({"task.toml": TASK_TOML,
                              "tests/grader.py": "candidate = '/workspace/solution'\n"},
                             instruction=INSTR_MISMATCH)
+        self.assertEqual(rc, 0, "仅题面提及（无 tests 引用）不得判 blocking")
+        hits = self._rules(rep, "artifacts_handoff_mismatch")
+        self.assertTrue(hits and all(f["severity"] == "needs_manual" for f in hits))
+
+    def test_artifacts_handoff_tests_referenced_is_blocking(self):
+        """确定性移交缺口：tests/ 代码字面读写 artifacts 之外的路径 ⇒ blocking。"""
+        rc, rep = self._run(
+            {"task.toml": TASK_TOML,
+             "tests/grader.py":
+                 "candidate = '/workspace/solution'\n"
+                 "result = open('/workspace/outputs/final/result.json')\n"},
+            instruction=INSTR_MISMATCH)
         self.assertEqual(rc, 1)
         hits = self._rules(rep, "artifacts_handoff_mismatch")
         self.assertTrue(any(f["severity"] == "blocking" for f in hits),
-                         "题面提交路径与 artifacts 不一致应为 blocking")
+                         "tests 字面引用 artifacts 外路径应为 blocking")
+
+    def test_artifacts_mount_stem_ignored(self):
+        """抽检修正回归：/workspace/dataset、/workspace/starter 等挂载不算冲突。"""
+        rc, rep = self._run(
+            {"task.toml": TASK_TOML,
+             "tests/grader.py": "candidate = '/workspace/solution'\n"},
+            instruction="# 题面\n数据集挂载于 /workspace/dataset/APAVA；"
+                        "starter 见 /workspace/starter/。\n提交到 /workspace/solution。\n")
+        conflicts = [f for f in self._rules(rep, "artifacts_handoff_mismatch")
+                     if f["severity"] == "blocking"]
+        self.assertEqual(conflicts, [], "挂载类路径不应判 blocking")
 
     def test_artifacts_unreferenced_is_needs_manual(self):
         rc, rep = self._run({"task.toml": TASK_TOML,
@@ -94,6 +118,19 @@ class ExecutionPathV24Test(unittest.TestCase):
         self.assertEqual(rc, 0)
         hits = self._rules(rep, "artifacts_handoff_mismatch")
         self.assertTrue(hits and all(f["severity"] == "needs_manual" for f in hits))
+
+    def test_artifacts_subpath_no_false_positive(self):
+        """抽检修正回归（0340 误报）：artifacts 目录内部子路径不算冲突。"""
+        rc, rep = self._run(
+            {"task.toml": TASK_TOML,
+             "tests/grader.py": "candidate = '/workspace/solution'\n"},
+            instruction="# 题面\n提交路径统一为 /workspace/solution，平台整体移交该目录。\n"
+                        "> cd /workspace/solution/tdmpc2\n"
+                        "/workspace/solution/\n└── submission.json\n")
+        self.assertEqual(rc, 0, "artifacts 内部子路径不应判 blocking")
+        conflicts = [f for f in self._rules(rep, "artifacts_handoff_mismatch")
+                     if f["severity"] == "blocking"]
+        self.assertEqual(conflicts, [])
 
     def test_submission_pollution_blocking(self):
         rc, rep = self._run({
