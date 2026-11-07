@@ -3,3 +3,9 @@ __pycache__/
 .pytest_cache/
 .official-sync-*/
 official/.official-sync-*/
+
+*.json.tmp
+pr-*.json
+dc-*.json
+dcf-*.json
+dcg-*.json
