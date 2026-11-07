@@ -37,6 +37,13 @@ SKIP_DIRS = {"__pycache__", ".git", ".hg", ".svn", "node_modules",
 SHA_RE = re.compile(r"^[0-9a-fA-F]{64}$")
 PATHISH_RE = re.compile(r"(/|\\|\.[A-Za-z0-9]{1,8}$)")
 REWARD_LIKE = re.compile(r"(/|\\|\b)[A-Za-z0-9_./\\-]*(reward|verifier)[A-Za-z0-9_./\\-]*")
+# ★ 2026-11-07 误报修正（qa_batch_v2 交叉审计发现）：清单里的 revision_log/history
+#   区块保存的是"实名刷新记录"（old_declared/old_actual/previous 等），其键形如
+#   tests/grader.py 且带旧哈希——把它们当"当前声明"采进来会产生假失配。
+#   这些键名命中历史模式时整棵子树跳过。
+HISTORY_KEY_RE = re.compile(
+    r"revision_log|revision_history|history|old_declared|old_actual|old_value|"
+    r"previous|legacy|archived|superseded|_old$|_prev$", re.I)
 
 
 def iter_files(root: Path):
@@ -160,9 +167,13 @@ def _looks_like_path(v: str) -> bool:
     return isinstance(v, str) and 0 < len(v) < 300 and bool(PATHISH_RE.search(v)) and "\n" not in v
 
 
-def extract_declarations(node, out):
-    """递归抽取 (path, sha256, size) 声明，兼容三种常见形态。"""
+def extract_declarations(node, out, path=""):
+    """递归抽取 (path, sha256, size) 当前声明；跳过历史记录区块（revision_log 等）。"""
     if isinstance(node, dict):
+        for k, v in node.items():
+            if HISTORY_KEY_RE.search(str(k)):
+                continue  # 历史记录区块：旧值是实名记录的一部分，不是当前声明
+            extract_declarations(v, out, path + "/" + str(k))
         # 形态 A：同一 dict 内 {path|file: ..., sha256: ...}
         path_v = None
         for k in ("path", "file", "rel_path", "relative_path", "filename", "name"):
@@ -181,6 +192,8 @@ def extract_declarations(node, out):
             out.append((path_v, sha_v.lower(), int(size_v) if isinstance(size_v, int) else None))
         # 形态 B：{相对路径: {sha256, size}}
         for k, v in node.items():
+            if HISTORY_KEY_RE.search(str(k)):
+                continue
             if isinstance(k, str) and _looks_like_path(k) and isinstance(v, dict):
                 sha_v = None
                 for kk in ("sha256", "hash", "sha", "digest"):
@@ -191,11 +204,9 @@ def extract_declarations(node, out):
                 if sha_v:
                     size_v = v.get("size") or v.get("size_bytes") or v.get("bytes")
                     out.append((k, sha_v.lower(), int(size_v) if isinstance(size_v, int) else None))
-        for v in node.values():
-            extract_declarations(v, out)
     elif isinstance(node, list):
         for v in node:
-            extract_declarations(v, out)
+            extract_declarations(v, out, path)
 
 
 def resolve_declared(root: Path, manifest: Path, rel_path: str):

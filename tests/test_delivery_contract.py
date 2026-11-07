@@ -125,6 +125,26 @@ class DeliveryContractTest(unittest.TestCase):
         self.assertEqual(rc, 0, "证据侧不一致不应判 fail")
         self.assertEqual(self._check(rep, "D-C02")["status"], "needs_manual")
 
+    def test_d02_revision_log_history_not_current_declaration(self):
+        """qa_batch_v2 交叉审计修正：清单 revision_log 的旧哈希是实名刷新记录，
+        不是当前声明——不得产生假失配。"""
+        tmp = Path(tempfile.mkdtemp(prefix="dc15_"))
+        payload = b"payload-bytes"
+        real_sha = hashlib.sha256(payload).hexdigest()
+        manifest = {
+            "package": {"files": {"data.bin": {"size": len(payload), "sha256": real_sha}}},
+            "revision_log": [{"old_declared": {"data.bin": {"size": 1, "sha256": "0" * 64}},
+                              "old_actual_v1": {"data.bin": {"size": 2, "sha256": "1" * 64}},
+                              "v2_current": {"data.bin": {"size": len(payload), "sha256": real_sha}}}],
+        }
+        root = make_pkg(tmp, TASK_TOML_NO_REWARD, TEST_SH_OK, {
+            "workspace/harbor_task/frozen_manifest.json": json.dumps(manifest),
+            "workspace/harbor_task/data.bin": payload,
+        })
+        rc, rep = self._run(root)
+        self.assertEqual(rc, 0, "revision_log 旧哈希不得计为当前声明")
+        self.assertEqual(self._check(rep, "D-C02")["status"], "pass")
+
     def test_d02_not_applicable_without_manifest(self):
         rc, rep = self._run(make_pkg(tempfile.mkdtemp(prefix="dc7_"),
                                      TASK_TOML_NO_REWARD, TEST_SH_OK))
