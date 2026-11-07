@@ -1,0 +1,62 @@
+{
+  "gate": "delivery_contract",
+  "root": "D:\\Desktop\\论文最新包\\repair-check\\0340_v257",
+  "task_toml": "D:\\Desktop\\论文最新包\\repair-check\\0340_v257\\workspace\\harbor_task\\task.toml",
+  "summary": {
+    "pass": 4
+  },
+  "checks": [
+    {
+      "id": "D-C01",
+      "title": "声明的 reward_file 必须存在于 Verifier 写入链",
+      "status": "pass",
+      "findings": [
+        {
+          "severity": "informational",
+          "file": "workspace/harbor_task/tests/test.sh",
+          "line": 6,
+          "detail": "D-C01：声明路径 /logs/verifier/reward.json 在 tests/ 中被引用（写入链存在）"
+        }
+      ]
+    },
+    {
+      "id": "D-C02",
+      "title": "包内清单声明的哈希/尺寸必须与实物一致",
+      "status": "pass",
+      "findings": [
+        {
+          "severity": "informational",
+          "file": "expert_evidence/best_method/MODEL_SHA_MANIFEST.json",
+          "line": 0,
+          "detail": "D-C02：11 项声明哈希/尺寸与实物全部一致（扫描清单：expert_evidence/best_method/MODEL_SHA_MANIFEST.json, expert_evidence/best_method/box1_GPT-5.6_Sol/model/manifest.json, expert_evidence/best_method/box2_Seed_2.1_Turbo/model/manifest.json）"
+        }
+      ]
+    },
+    {
+      "id": "D-C03",
+      "title": "正式 reward 二选一（json/txt 不得同时写）",
+      "status": "pass",
+      "findings": [
+        {
+          "severity": "informational",
+          "file": "workspace/harbor_task/tests/hard_gate.py",
+          "line": 270,
+          "detail": "D-C03：正式 reward 单一（reward.json）——符合二选一协议"
+        }
+      ]
+    },
+    {
+      "id": "D-C04",
+      "title": "Oracle 规范入口 solution/solve.sh 在位且不暴露给 Agent",
+      "status": "pass",
+      "findings": [
+        {
+          "severity": "informational",
+          "file": "workspace/harbor_task/solution/solve.sh",
+          "line": 0,
+          "detail": "D-C04：solution/solve.sh 在位（Oracle 入口）；调用链与输出路径的语义核对留 review"
+        }
+      ]
+    }
+  ]
+}

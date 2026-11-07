@@ -299,18 +299,32 @@ def check_c03(root: Path):
             continue
         text = read_text(p)
         dedicated = _is_pkg_config(p.name) or p.name.lower().startswith("dockerfile")
+        # ★ 范围分级（v2.5，与 D-C02 同纪律）：harbor_task 内（environment/tests/）
+        #   的执行载体是"当前交付的构建输入"，失配=blocking；expert_evidence/ 等
+        #   证据侧的历史记录（如 NOP 试跑的 build override）是"已发生事实"，
+        #   记 needs_manual 不阻断——但必须在报告里点名，由评审判断是否影响复建。
+        parts = set(p.parts)
+        evidence_side = bool({"expert_evidence", "optimization_evidence"} & parts)
         for i, line in enumerate(text.splitlines(), 1):
             domain = next((d for d in MIRROR_DOMAINS if d in line.lower()), None)
             if not domain:
                 continue
             if dedicated or INSTALL_MARKERS.search(line):
+                sev = "needs_manual" if evidence_side else "blocking"
                 findings.append({
-                    "severity": "blocking",
+                    "severity": sev,
                     "file": rel(root, p), "line": i,
-                    "detail": "B-C03：实际生效的依赖源使用了非官方镜像 %s——"
+                    "detail": "B-C03：%s依赖源使用了非官方镜像 %s——"
                               "改为发行版/对应生态官方源；保留版本、哈希与签名校验，"
-                              "不得以换源名义删除校验" % domain})
-                status = "fail"
+                              "不得以换源名义删除校验%s"
+                              % ("历史证据侧（非当前交付构建输入）" if evidence_side
+                                 else "实际生效的", domain,
+                                 "；随包留存须在修复报告说明用途与是否影响复建"
+                                 if evidence_side else "")})
+                if not evidence_side:
+                    status = "fail"
+                elif status == "pass":
+                    status = "needs_manual"
             else:
                 findings.append({
                     "severity": "needs_manual",

@@ -1,0 +1,81 @@
+{
+  "gate": "delivery_contract",
+  "root": "D:\\Desktop\\论文最新包\\repair-check\\0340_v256",
+  "task_toml": "D:\\Desktop\\论文最新包\\repair-check\\0340_v256\\workspace\\harbor_task\\task.toml",
+  "summary": {
+    "pass": 2,
+    "fail": 2
+  },
+  "checks": [
+    {
+      "id": "D-C01",
+      "title": "声明的 reward_file 必须存在于 Verifier 写入链",
+      "status": "pass",
+      "findings": [
+        {
+          "severity": "informational",
+          "file": "workspace/harbor_task/tests/hard_gate.py",
+          "line": 264,
+          "detail": "D-C01：声明路径 /logs/verifier/reward.txt 在 tests/ 中被引用（写入链存在）"
+        }
+      ]
+    },
+    {
+      "id": "D-C02",
+      "title": "包内清单声明的哈希/尺寸必须与实物一致",
+      "status": "pass",
+      "findings": [
+        {
+          "severity": "informational",
+          "file": "expert_evidence/best_method/MODEL_SHA_MANIFEST.json",
+          "line": 0,
+          "detail": "D-C02：11 项声明哈希/尺寸与实物全部一致（扫描清单：expert_evidence/best_method/MODEL_SHA_MANIFEST.json, expert_evidence/best_method/box1_GPT-5.6_Sol/model/manifest.json, expert_evidence/best_method/box2_Seed_2.1_Turbo/model/manifest.json）"
+        }
+      ]
+    },
+    {
+      "id": "D-C03",
+      "title": "正式 reward 二选一（json/txt 不得同时写）",
+      "status": "fail",
+      "findings": [
+        {
+          "severity": "blocking",
+          "file": "workspace/harbor_task/tests/hard_gate.py",
+          "line": 267,
+          "detail": "D-C03：同一评分链同时写 reward.json 与 reward.txt——违反 v0.5.0「正式 reward 二选一」L0 协议（JSON 侧 workspace/harbor_task/tests/hard_gate.py:267 · os.system('echo 999 > /logs/verifier/reward.json')          # 非 open 字面量；TXT 侧 workspace/harbor_task/tests/evaluate_verify.py:111 \"\"\"★ QA09 原子写入（纯文本，供 reward.txt 用）。语义同 atomic_write_json。\"\"\"）。保留一种为正式 reward，另一种内容移入 result.json 或日志"
+        },
+        {
+          "severity": "blocking",
+          "file": "workspace/harbor_task/tests/test.sh",
+          "line": 114,
+          "detail": "D-C03：--out /logs/verifier/reward.json 2>&1 | tee -a /logs/verifier/verifier.log"
+        },
+        {
+          "severity": "blocking",
+          "file": "workspace/harbor_task/tests/test.sh",
+          "line": 125,
+          "detail": "D-C03：#   再用 os.replace 原子替换。理由：reward.txt / reward.json 是 Harness"
+        },
+        {
+          "severity": "blocking",
+          "file": "workspace/harbor_task/tests/test.sh",
+          "line": 153,
+          "detail": "D-C03：r = json.load(open(\"/logs/verifier/reward.json\"))"
+        }
+      ]
+    },
+    {
+      "id": "D-C04",
+      "title": "Oracle 规范入口 solution/solve.sh 在位且不暴露给 Agent",
+      "status": "fail",
+      "findings": [
+        {
+          "severity": "blocking",
+          "file": "workspace/harbor_task/solution/solve.sh",
+          "line": 0,
+          "detail": "D-C04：缺少 Oracle 规范入口 solution/solve.sh——v0.5.0 四项统一协议之一（容器侧 /solution/solve.sh，调用 solution/ 内参考实现生成正常提交物后独立评分）；已有参考实现补交付结构与入口接线即可，不需要重做算法"
+        }
+      ]
+    }
+  ]
+}

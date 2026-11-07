@@ -346,26 +346,59 @@ def check_reward_single_file(root: Path, task_toml: Path | None):
     if not tests_dir.is_dir():
         return "needs_manual", [{"severity": "needs_manual", "file": rel(root, tests_dir),
                                  "line": 0, "detail": "D-C03：tests/ 目录不存在，无法核对写入链"}]
+    CLEANUP_RE = re.compile(r"rm\s+-f|clean_stale|预清理|卫生清理|clean_stale_rewards", re.I)
+    ASSIGN_JSON = re.compile(r"^\s*[A-Za-z_][A-Za-z0-9_]*\s*=\s*[\"'][^\n]*reward\.json")
+    ASSIGN_TXT = re.compile(r"^\s*[A-Za-z_][A-Za-z0-9_]*\s*=\s*[\"'][^\n]*reward\.txt")
+    LOOP_BOTH = re.compile(r"for\s+\w+\s+in\s+[^\n]*reward\.txt[^\n]*reward\.json", re.I)
     json_writes, txt_writes = [], []
+    indirect_files = []
     for p in iter_files(tests_dir):
         if p.suffix.lower() not in (".sh", ".py", ".bash"):
             continue
         t = read_text(p)
         lines = t.splitlines()
+        f_json_nc, f_txt_nc = [], []   # 非清理、非注释行的两种字面量
+        json_assign = txt_assign = loop_both = False
+        has_call = any(k in t.lower() for k in ("atomic_write", "os.replace", "open(", "dump", "cp ", "echo"))
         for i, line in enumerate(lines, 1):
             low = line.lower()
             # 排除纯诊断/明细文件
             if "reward_detail" in low or "result.json" in low:
                 continue
-            is_json = "reward.json" in low
-            is_txt = re.search(r"reward\.txt", low) is not None
+            is_regex_line = 're.compile' in line or 're.search' in line
+            is_json = 'reward.json' in low and not is_regex_line
+            is_txt = (re.search(r'reward\.txt', low) is not None) and not is_regex_line
+            is_cleanup = bool(CLEANUP_RE.search(line))
             is_write = any(k in low for k in (">", "open(", "write", "replace", "echo", "dump", "save"))
-            if not is_write:
+            stripped = line.strip()
+            is_comment = stripped.startswith("#")
+            if is_cleanup:
                 continue
             if is_json:
-                json_writes.append((rel(root, p), i, line.strip()[:120]))
+                if is_write:
+                    json_writes.append((rel(root, p), i, line.strip()[:120]))
+                elif not is_comment:
+                    f_json_nc.append(i)
+                if ASSIGN_JSON.match(line):
+                    json_assign = True
             elif is_txt:
-                txt_writes.append((rel(root, p), i, line.strip()[:120]))
+                if is_write:
+                    txt_writes.append((rel(root, p), i, line.strip()[:120]))
+                elif not is_comment:
+                    f_txt_nc.append(i)
+                if ASSIGN_TXT.match(line):
+                    txt_assign = True
+            if LOOP_BOTH.search(line) and "detail.json" not in line:
+                loop_both = True
+        # ★ v2.5.1 误报修正（2604 r2 交叉审计）：变量间接双写——赋值行
+        #   REWARD_TXT=…/reward.txt + REWARD_JSON=…/reward.json + 循环镜像 publish，
+        #   行级写入标记扫描抓不到。强特征（两次赋值成对，或 for-in 双扩展循环）
+        #   才升 needs_manual；泛共现（注释/正则扫描行）不升。
+        if f_json_nc and f_txt_nc and has_call:
+            indirect_files.append((rel(root, p), f_json_nc[0], f_txt_nc[0], "weak"))
+        if (json_assign and txt_assign) or loop_both:
+            indirect_files.append((rel(root, p), 0, 0, "strong"))
+    strong = [x for x in indirect_files if x[3] == "strong"]
     if json_writes and txt_writes:
         jf, jl, jl_ = json_writes[0]
         tf, tl, tl_ = txt_writes[0]
@@ -379,6 +412,22 @@ def check_reward_single_file(root: Path, task_toml: Path | None):
             findings.append({"severity": "blocking", "file": f, "line": i,
                              "detail": "D-C03：%s" % s})
         return "fail", findings
+    if strong and not (json_writes and txt_writes):
+        f, jl, tl, _ = strong[0]
+        return "needs_manual", [{"severity": "needs_manual", "file": f, "line": jl,
+                                 "detail": "D-C03：疑似变量间接双写（强特征：成对赋值或 "
+                                           "for-in 双扩展循环）——同一评分链内 "
+                                           "reward.json 与 reward.txt 共存且有写调用"
+                                           "（2604 r2 实测形态：赋值+循环镜像）。"
+                                           "需人工确认实际落点是否只发布一种"}]
+    weak = [x for x in indirect_files if x[3] == "weak"]
+    if weak and not (json_writes and txt_writes):
+        f, jl, tl = weak[0][:3]
+        return "needs_manual", [{"severity": "needs_manual", "file": f, "line": jl,
+                                 "detail": "D-C03：疑似变量间接双写——同一评分链内 "
+                                           "reward.json（行 %d）与 reward.txt（行 %d）字面量共存"
+                                           "且有写调用（2604 r2 实测形态：赋值+循环镜像）。"
+                                           "需人工确认实际落点是否只发布一种" % (jl, tl)}]
     if json_writes or txt_writes:
         kind = "reward.json" if json_writes else "reward.txt"
         f, i, s = (json_writes or txt_writes)[0]

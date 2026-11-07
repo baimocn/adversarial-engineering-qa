@@ -1,0 +1,64 @@
+{
+  "gate": "delivery_contract",
+  "root": "D:\\Desktop\\论文最新包\\repair-check\\2768_v20",
+  "task_toml": "D:\\Desktop\\论文最新包\\repair-check\\2768_v20\\workspace\\harbor_task\\task.toml",
+  "summary": {
+    "not_applicable": 1,
+    "needs_manual": 1,
+    "pass": 2
+  },
+  "checks": [
+    {
+      "id": "D-C01",
+      "title": "声明的 reward_file 必须存在于 Verifier 写入链",
+      "status": "not_applicable",
+      "findings": [
+        {
+          "severity": "informational",
+          "file": "workspace/harbor_task/task.toml",
+          "line": 0,
+          "detail": "D-C01：task.toml 未声明 reward_file——按平台默认语义处理，本项不适用"
+        }
+      ]
+    },
+    {
+      "id": "D-C02",
+      "title": "包内清单声明的哈希/尺寸必须与实物一致",
+      "status": "needs_manual",
+      "findings": [
+        {
+          "severity": "needs_manual",
+          "file": "expert_evidence/repair/harbor/native_nop_trial/task-tree-hashes.json",
+          "line": 0,
+          "detail": "D-C02：专家证据清单与实物不符 17 项（首例 environment/Dockerfile）——非评分合同、不阻断提交，但清单需刷新或说明；评审中如实记录为证据侧不一致"
+        }
+      ]
+    },
+    {
+      "id": "D-C03",
+      "title": "正式 reward 二选一（json/txt 不得同时写）",
+      "status": "pass",
+      "findings": [
+        {
+          "severity": "informational",
+          "file": "workspace/harbor_task/tests/grader.py",
+          "line": 118,
+          "detail": "D-C03：正式 reward 单一（reward.json）——符合二选一协议"
+        }
+      ]
+    },
+    {
+      "id": "D-C04",
+      "title": "Oracle 规范入口 solution/solve.sh 在位且不暴露给 Agent",
+      "status": "pass",
+      "findings": [
+        {
+          "severity": "informational",
+          "file": "workspace/harbor_task/solution/solve.sh",
+          "line": 0,
+          "detail": "D-C04：solution/solve.sh 在位（Oracle 入口）；调用链与输出路径的语义核对留 review"
+        }
+      ]
+    }
+  ]
+}

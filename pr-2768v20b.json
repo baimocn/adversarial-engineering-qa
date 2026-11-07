@@ -1,0 +1,51 @@
+{
+  "gate": "platform_rules",
+  "root": "D:\\Desktop\\论文最新包\\repair-check\\2768_v20",
+  "task_dir_mode": false,
+  "rules_version": "返修指南 2026-11-03 / supplement platform-audit 1.0.1 / 复盘 rev 1145",
+  "summary": {
+    "pass": 2,
+    "needs_manual": 1,
+    "not_applicable": 1
+  },
+  "checks": [
+    {
+      "id": "B-C01",
+      "title": "唯一 task.toml 于 workspace/harbor_task/",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "B-C02",
+      "title": "源 task.toml 禁配 docker_image；Dockerfile 与上下文完整",
+      "status": "pass",
+      "findings": []
+    },
+    {
+      "id": "B-C03",
+      "title": "依赖使用发行版/生态官方源（实际生效设置）",
+      "status": "needs_manual",
+      "findings": [
+        {
+          "severity": "needs_manual",
+          "file": "expert_evidence/repair/harbor/native_nop_trial/build-acceleration-override.yaml",
+          "line": 5,
+          "detail": "B-C03：历史证据侧（非当前交付构建输入）依赖源使用了非官方镜像 pypi.tuna.tsinghua.edu.cn——改为发行版/对应生态官方源；保留版本、哈希与签名校验，不得以换源名义删除校验；随包留存须在修复报告说明用途与是否影响复建"
+        }
+      ]
+    },
+    {
+      "id": "B-C04",
+      "title": "npm registry 为 bnpm.byted.org（未用 npm 则不适用）",
+      "status": "not_applicable",
+      "findings": [
+        {
+          "severity": "informational",
+          "file": "",
+          "line": 0,
+          "detail": "B-C04：题包未使用 npm，本项不适用；不强制新增 npm 步骤"
+        }
+      ]
+    }
+  ]
+}

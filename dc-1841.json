@@ -1,0 +1,64 @@
+{
+  "gate": "delivery_contract",
+  "root": "D:\\Desktop\\论文最新包\\repair-check\\1841_v2",
+  "task_toml": "D:\\Desktop\\论文最新包\\repair-check\\1841_v2\\workspace\\harbor_task\\task.toml",
+  "summary": {
+    "not_applicable": 2,
+    "needs_manual": 1,
+    "fail": 1
+  },
+  "checks": [
+    {
+      "id": "D-C01",
+      "title": "声明的 reward_file 必须存在于 Verifier 写入链",
+      "status": "not_applicable",
+      "findings": [
+        {
+          "severity": "informational",
+          "file": "workspace/harbor_task/task.toml",
+          "line": 0,
+          "detail": "D-C01：task.toml 未声明 reward_file——按平台默认语义处理，本项不适用"
+        }
+      ]
+    },
+    {
+      "id": "D-C02",
+      "title": "包内清单声明的哈希/尺寸必须与实物一致",
+      "status": "needs_manual",
+      "findings": [
+        {
+          "severity": "needs_manual",
+          "file": "expert_evidence/best_method/_BEST_METHOD_MANIFEST.json",
+          "line": 0,
+          "detail": "D-C02：专家证据清单与实物不符 14 项（首例 README.md）——非评分合同、不阻断提交，但清单需刷新或说明；评审中如实记录为证据侧不一致"
+        }
+      ]
+    },
+    {
+      "id": "D-C03",
+      "title": "正式 reward 二选一（json/txt 不得同时写）",
+      "status": "not_applicable",
+      "findings": [
+        {
+          "severity": "informational",
+          "file": "workspace/harbor_task/tests",
+          "line": 0,
+          "detail": "D-C03：tests/ 内未发现 reward.json/reward.txt 写入证据（可能由外部协议生成）——按实际链路核对"
+        }
+      ]
+    },
+    {
+      "id": "D-C04",
+      "title": "Oracle 规范入口 solution/solve.sh 在位且不暴露给 Agent",
+      "status": "fail",
+      "findings": [
+        {
+          "severity": "blocking",
+          "file": "workspace/harbor_task/solution/solve.sh",
+          "line": 0,
+          "detail": "D-C04：缺少 Oracle 规范入口 solution/solve.sh——v0.5.0 四项统一协议之一（容器侧 /solution/solve.sh，调用 solution/ 内参考实现生成正常提交物后独立评分）；已有参考实现补交付结构与入口接线即可，不需要重做算法"
+        }
+      ]
+    }
+  ]
+}

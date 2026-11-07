@@ -1,0 +1,64 @@
+{
+  "gate": "delivery_contract",
+  "root": "D:\\Desktop\\论文最新包\\repair-check\\2604_r2",
+  "task_toml": "D:\\Desktop\\论文最新包\\repair-check\\2604_r2\\workspace\\harbor_task\\task.toml",
+  "summary": {
+    "pass": 2,
+    "not_applicable": 1,
+    "fail": 1
+  },
+  "checks": [
+    {
+      "id": "D-C01",
+      "title": "声明的 reward_file 必须存在于 Verifier 写入链",
+      "status": "pass",
+      "findings": [
+        {
+          "severity": "informational",
+          "file": "workspace/harbor_task/tests/test.sh",
+          "line": 15,
+          "detail": "D-C01：声明路径 /logs/verifier/reward.txt 在 tests/ 中被引用（写入链存在）"
+        }
+      ]
+    },
+    {
+      "id": "D-C02",
+      "title": "包内清单声明的哈希/尺寸必须与实物一致",
+      "status": "pass",
+      "findings": [
+        {
+          "severity": "informational",
+          "file": "workspace/harbor_task/environment/public_eval/assets/anchor_dev.json",
+          "line": 0,
+          "detail": "D-C02：清单存在但未抽取到 (path, sha256) 声明"
+        }
+      ]
+    },
+    {
+      "id": "D-C03",
+      "title": "正式 reward 二选一（json/txt 不得同时写）",
+      "status": "not_applicable",
+      "findings": [
+        {
+          "severity": "informational",
+          "file": "workspace/harbor_task/tests",
+          "line": 0,
+          "detail": "D-C03：tests/ 内未发现 reward.json/reward.txt 写入证据（可能由外部协议生成）——按实际链路核对"
+        }
+      ]
+    },
+    {
+      "id": "D-C04",
+      "title": "Oracle 规范入口 solution/solve.sh 在位且不暴露给 Agent",
+      "status": "fail",
+      "findings": [
+        {
+          "severity": "blocking",
+          "file": "workspace/harbor_task/solution/solve.sh",
+          "line": 0,
+          "detail": "D-C04：缺少 Oracle 规范入口 solution/solve.sh——v0.5.0 四项统一协议之一（容器侧 /solution/solve.sh，调用 solution/ 内参考实现生成正常提交物后独立评分）；已有参考实现补交付结构与入口接线即可，不需要重做算法"
+        }
+      ]
+    }
+  ]
+}

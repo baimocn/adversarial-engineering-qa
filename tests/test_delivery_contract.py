@@ -174,6 +174,23 @@ class DeliveryContractTest(unittest.TestCase):
         self.assertEqual(self._check(rep, "D-C03")["status"], "pass",
                          "reward_detail/result 属诊断文件，不算第二种正式 reward")
 
+    def test_d03_variable_indirect_dual_write_needs_manual(self):
+        """2604 r2 交叉审计：变量赋值 + 循环镜像的间接双写，行级扫描抓不到 →
+        文件级双字面量共存 + 写调用 ⇒ needs_manual（人工确认落点）。"""
+        script = (
+            '#!/bin/bash\n'
+            'OUT=/workspace/.verifier\n'
+            'REWARD_TXT="$OUT_DIR/reward.txt"\n'
+            'REWARD_JSON="$OUT_DIR/reward.json"\n'
+            'publish_reward() { for name in reward.txt reward.json; do '
+            'atomic_write "$OUT_DIR/$name"; done }\n'
+            'grader --out "$REWARD_JSON"\n')
+        root = make_pkg(tempfile.mkdtemp(prefix="dc16_"), TASK_TOML_NO_REWARD, script)
+        rc, rep = self._run(root)
+        c = self._check(rep, "D-C03")
+        self.assertEqual(c["status"], "needs_manual",
+                         "变量间接双写应触发 needs_manual 而非 pass")
+
     # ── D-C04：Oracle 入口 ──
     def test_d04_fail_missing_oracle_entry(self):
         root = make_pkg(tempfile.mkdtemp(prefix="dc12_"),
