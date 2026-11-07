@@ -6,7 +6,7 @@ agent_created: true
 
 # Adversarial Engineering QA
 
-**版本**：v2.4.1（2026-11-06）
+**版本**：v2.5（2026-11-07）
 **v2 相对 v1 的实质改动**：新增 Gate C（执行层门禁）——`scripts/check_execution_path.py`
 四条静态规则 + `scripts/check_honest_candidate.py` 诚实候选冒烟；判定纪律加入
 「Gate C blocking 不可豁免、不得静默降级 manual」；合并规则加入 `remaining_findings` 阻断。
@@ -52,6 +52,19 @@ agent 语义发现 → 新增 `scripts/check_delivery_contract.py` 并接入 `pl
 sha256/size 全量复算（评分合同清单失配=blocking，专家证据清单失配=needs_manual；
 1841 实测精确复现 round-1 的 5 项失配）。平台新版官方 skill 发布后，先
 `sync_official_skills.py --check` 复核规则版本，再定 B-C04 最终去留。
+
+**v2.5 相对 v2.4.1 的实质改动（2026-11-07，unified-qa v0.5.0 接入）**：平台发布
+统一版官方 skill `autoresearch-unified-qa v0.5.0-current.1`（新入口
+`scripts/audit_current.py`，90 项检查 + 工程六组 + 交付合同六组；最终结果二态
+通过/不通过）。规则第三次反转与扩展：① **B-C01/B-C02 降为旧规则建议**
+（"定位实际有效任务，不恢复固定 workspace 路径"；"不统一禁止源包 docker_image"）
+→ 两项保留检测降为 needs_manual；② **B-C03/B-C04 确认延续**（批准替代源可接受
+→ B-C04 维持 needs_manual）；③ 新增**所有题统一四项 L0 协议**并脚本化其中可判
+两项：**D-C03** 正式 reward 二选一（json/txt 同链双写=fail）、**D-C04** Oracle
+规范入口 solution/solve.sh 在位且不被 COPY 进 Agent 镜像（缺失/暴露=fail）；
+依赖锁定与 hard gate −10 需语义/运行判断留 review。④ 本轮六修复包按旧标准
+修复，v0.5.0 四项协议缺口（D-C03 双写 ×4、D-C04 缺入口 ×3、1841 指纹未刷 ×9）
+属**新标准下的第二波整改项**，不是修复失败。
 
 ## 目标
 

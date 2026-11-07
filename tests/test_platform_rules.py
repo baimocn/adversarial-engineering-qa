@@ -63,12 +63,12 @@ class PlatformRulesTest(unittest.TestCase):
         self.assertEqual(rc, 0)
         self.assertEqual(self._check(rep, "B-C01")["status"], "pass")
 
-    def test_c01_fail_multiple_task_toml(self):
+    def test_c01_multiple_task_toml_downgraded_needs_manual(self):
         rc, rep = self._run(make_pkg(
             tempfile.mkdtemp(prefix="pr2_"),
             extra_files={"backup/task.toml": TASK_TOML_CLEAN}))
-        self.assertEqual(rc, 1)
-        self.assertEqual(self._check(rep, "B-C01")["status"], "fail")
+        self.assertEqual(rc, 0, "v0.5.0：多份 task.toml 降为 needs_manual（定位实际有效配置）")
+        self.assertEqual(self._check(rep, "B-C01")["status"], "needs_manual")
         detail = self._check(rep, "B-C01")["findings"][0]["detail"]
         self.assertIn("2 份 task.toml", detail)
 
@@ -80,13 +80,13 @@ class PlatformRulesTest(unittest.TestCase):
         self.assertEqual(self._check(rep, "B-C01")["status"], "fail")
 
     # ── B-C02 ──
-    def test_c02_fail_docker_image_configured(self):
+    def test_c02_docker_image_downgraded_needs_manual(self):
         rc, rep = self._run(make_pkg(tempfile.mkdtemp(prefix="pr4_"),
                                      toml_text=TASK_TOML_IMAGE))
-        self.assertEqual(rc, 1)
+        self.assertEqual(rc, 0, "v0.5.0：不统一禁止源包 docker_image（降为建议）")
         c02 = self._check(rep, "B-C02")
-        self.assertEqual(c02["status"], "fail")
-        self.assertTrue(any("docker_image" in f["detail"] and f["severity"] == "blocking"
+        self.assertEqual(c02["status"], "needs_manual")
+        self.assertTrue(any("docker_image" in f["detail"]
                             for f in c02["findings"]))
 
     def test_c02_pass_comment_only_mention(self):
@@ -96,11 +96,12 @@ class PlatformRulesTest(unittest.TestCase):
         self.assertEqual(c02["status"], "pass",
                          "注释中出现 docker_image 不算配置，不应判 fail")
 
-    def test_c02_fail_missing_dockerfile(self):
+    def test_c02_missing_dockerfile_without_image_needs_manual(self):
         rc, rep = self._run(make_pkg(tempfile.mkdtemp(prefix="pr6_"),
                                      dockerfile_text=None))
         c02 = self._check(rep, "B-C02")
-        self.assertEqual(c02["status"], "fail")
+        self.assertEqual(c02["status"], "needs_manual",
+                         "v0.5.0：镜像来源二选一，两者皆无记 needs_manual")
         self.assertTrue(any("Dockerfile" in f["detail"] for f in c02["findings"]))
 
     def test_c02_fail_copy_source_missing(self):
@@ -143,7 +144,7 @@ class PlatformRulesTest(unittest.TestCase):
         c04 = self._check(rep, "B-C04")
         self.assertEqual(c04["status"], "needs_manual",
                          "2026-11-06 副本中 npm 规则被划掉：降为 needs_manual 保留检测，不再判 fail")
-        self.assertTrue(any("规则状态待确认" in f["detail"] for f in c04["findings"]))
+        self.assertTrue(any("v0.5.0" in f["detail"] for f in c04["findings"]))
 
     def test_c04_pass_bnpm_config(self):
         rc, rep = self._run(make_pkg(

@@ -238,3 +238,52 @@ supplement skill）时，显式规则优先于反推结论**——反推是在�
 「可脚本化缺口」扫描：哪些原因族其实能写成确定性检查（如 D-C01/D-C02），
 哪些只能靠日志诊断，哪些根本不可见（平台网络/配额/运行时）。v2.4.1 的 D-C01/D-C02
 就是这次扫描的产物；下一次平台规则更新时重复该动作。
+
+---
+
+## 8. 2026-11-07：unified-qa v0.5.0——统一标准与第三次反转
+
+> 来源：飞书群 2026-11-07 13:51 消息（`autoresearch-unified-qa-v0.5.0-current.1_20261107.zip`
+> + 《Skill修改清单与格式说明》docx + 逐题修改事项 sheet，338 行，**我方六题不在清单**）。
+> 新入口 `scripts/audit_current.py`；90 项检查 + 工程六组 + 交付合同六组；
+> 最终结果二态（通过/不通过）。这是 v0.3.10.5 之后的**大版本重写**。
+
+### 8.1 规则第三次反转：B-C01/B-C02 降为建议
+
+- "B-C01 定位实际有效任务，不恢复固定 workspace 路径"——多个资料目录含 task.toml
+  时看实际有效 Runner 选择，**不按旧固定位置拒收**。
+- "不统一禁止源包 docker_image"、"看实际有效 Runner 选择"——B-C02 变为
+  "真实镜像/构建和资产"。
+- v2.5 处置：两项保留检测降为 needs_manual（LEGACY_LOCATION_RULE_NOTE）；
+  完全缺失 task.toml 仍 fail（有效任务配置是 L0）。
+
+### 8.2 B-C03/B-C04 确认延续（含放宽）
+
+- C03 非npm 依赖用生态官方源；C04 实际 npm 生效 registry 为指定 bnpm——
+  **"批准替代源/等效配置可接受"**。静态无法验证批准依据 → B-C04 维持
+  needs_manual（作者声明批准出处可转 pass）。2026-11-06 副本的划线疑虑解除。
+
+### 8.3 新增所有题统一四项 L0 协议（delivery_contract new_intake_protocol）
+
+| 协议 | 内容 | 我方机械化 |
+|---|---|---|
+| Oracle 入口 | harbor_task/solution/solve.sh（容器侧 /solution/solve.sh）调用 solution/ 内参考实现生成提交物；不能直接写 reward；不得暴露给 Agent | D-C04：入口存在性 + environment/Dockerfile COPY solution/ 检测 |
+| 依赖锁定 | 核心/传递/运行时依赖有 lockfile 或锁定材料，禁 latest/浮动 | 语义核（留 review） |
+| reward 二选一 | 同次正式评分只输出 /logs/verifier/reward.json **或** reward.txt 一种；JSON 主 reward 有限；诊断放 result.json/日志 | D-C03：同链双写=fail |
+| hard gate −10 | 候选违约拒绝→−10+可执行诊断；可信故障=错误状态/无分，不得伪装成候选 0 分 | 语义核（留 review；关联 0823 超时归因、1841 gates） |
+
+### 8.4 对六修复包的影响（v0.5.0 就绪度实测，2026-11-07）
+
+| 任务 | D-C01 | D-C02 | D-C03 | D-C04 | 结论 |
+|---|---|---|---|---|---|
+| 0340 v25.5.6 | pass | pass | **fail 双写** | **fail 缺入口** | 需第二波整改 |
+| 2001 v39 | pass | manual | **fail 双写** | **fail 缺入口** | 需第二波整改 |
+| 1841 v2 | n/a | **fail 9 项（修复未刷清单）** | n/a | 待核 | 修复不完整：实现改了、指纹没刷 |
+| 0823 v42 | pass | manual | **fail 双写** | pass | 需第二波整改（D-C03） |
+| 2604 r2 | pass | pass | n/a | **fail 缺入口** | 需第二波整改 |
+| 2768 v19 | n/a | manual | **fail 双写** | pass | 需第二波整改 |
+
+**定性**：这些不是修复失败——修复对话按 round-1（旧标准）清单执行且 D-C01/D-C02
+类问题确实修了；v0.5.0 四项协议是 2026-11-07 新发布的**第二波整改需求**。DDL
+推迟到周日 21:00，时间上可完成（每包改动量小：删一种 reward 文件/补 solve.sh/
+1841 补指纹刷新）。

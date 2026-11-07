@@ -27,6 +27,10 @@ def make_pkg(tmp: Path, toml_text: str, test_sh: str | None = None,
     root = Path(tmp) / "pkg"
     base = root / "workspace" / "harbor_task"
     (base / "tests").mkdir(parents=True)
+    (base / "solution").mkdir(parents=True)
+    (base / "solution" / "solve.sh").write_text(
+        "#!/bin/bash\ncp method.py /workspace/solution/\n", encoding="utf-8")
+    (base / "solution" / "method.py").write_text("# reference\n", encoding="utf-8")
     (base / "task.toml").write_text(toml_text, encoding="utf-8")
     (base / "instruction.md").write_text("# task\n", encoding="utf-8")
     if test_sh is not None:
@@ -125,6 +129,59 @@ class DeliveryContractTest(unittest.TestCase):
         rc, rep = self._run(make_pkg(tempfile.mkdtemp(prefix="dc7_"),
                                      TASK_TOML_NO_REWARD, TEST_SH_OK))
         self.assertEqual(self._check(rep, "D-C02")["status"], "not_applicable")
+
+    # ── D-C03：reward 二选一 ──
+    def test_d03_fail_dual_reward_files(self):
+        root = make_pkg(tempfile.mkdtemp(prefix="dc9_"), TASK_TOML_NO_REWARD,
+                        '#!/bin/bash\nOUT=/logs/verifier\necho 1 > "$OUT/reward.json"\necho 1 > "$OUT/reward.txt"\n')
+        rc, rep = self._run(root)
+        self.assertEqual(rc, 1)
+        c = self._check(rep, "D-C03")
+        self.assertEqual(c["status"], "fail")
+        self.assertTrue(any("二选一" in f["detail"] for f in c["findings"]))
+
+    def test_d03_pass_single_reward(self):
+        root = make_pkg(tempfile.mkdtemp(prefix="dc10_"), TASK_TOML_NO_REWARD,
+                        '#!/bin/bash\nOUT=/logs/verifier\necho 1 > "$OUT/reward.json"\n')
+        rc, rep = self._run(root)
+        self.assertEqual(self._check(rep, "D-C03")["status"], "pass")
+
+    def test_d03_diagnostics_not_counted(self):
+        root = make_pkg(tempfile.mkdtemp(prefix="dc11_"), TASK_TOML_NO_REWARD,
+                        '#!/bin/bash\nOUT=/logs/verifier\necho 1 > "$OUT/reward.json"\n'
+                        'echo detail > "$OUT/reward_detail.json"\necho r > "$OUT/result.json"\n')
+        rc, rep = self._run(root)
+        self.assertEqual(self._check(rep, "D-C03")["status"], "pass",
+                         "reward_detail/result 属诊断文件，不算第二种正式 reward")
+
+    # ── D-C04：Oracle 入口 ──
+    def test_d04_fail_missing_oracle_entry(self):
+        root = make_pkg(tempfile.mkdtemp(prefix="dc12_"),
+                        TASK_TOML_NO_REWARD, TEST_SH_OK)
+        (root / "workspace" / "harbor_task" / "solution" / "solve.sh").unlink()
+        rc, rep = self._run(root)
+        self.assertEqual(rc, 1)
+        c = self._check(rep, "D-C04")
+        self.assertEqual(c["status"], "fail")
+        self.assertTrue(any("solution/solve.sh" in f["detail"] for f in c["findings"]))
+
+    def test_d04_pass_oracle_entry_present(self):
+        root = make_pkg(tempfile.mkdtemp(prefix="dc13_"), TASK_TOML_NO_REWARD, TEST_SH_OK,
+                        {"workspace/harbor_task/solution/solve.sh": "#!/bin/bash\ncp method.py /workspace/solution/\n",
+                         "workspace/harbor_task/solution/method.py": "# reference\n"})
+        rc, rep = self._run(root)
+        self.assertEqual(self._check(rep, "D-C04")["status"], "pass")
+
+    def test_d04_fail_oracle_leaked_to_agent_image(self):
+        root = make_pkg(tempfile.mkdtemp(prefix="dc14_"), TASK_TOML_NO_REWARD, TEST_SH_OK,
+                        {"workspace/harbor_task/solution/solve.sh": "#!/bin/bash\ntrue\n",
+                         "workspace/harbor_task/environment/Dockerfile":
+                             "FROM python:3.11\nCOPY solution/ /workspace/solution/\n"})
+        rc, rep = self._run(root)
+        self.assertEqual(rc, 1)
+        c = self._check(rep, "D-C04")
+        self.assertEqual(c["status"], "fail")
+        self.assertTrue(any("Oracle 私有参考解暴露" in f["detail"] for f in c["findings"]))
 
 
 if __name__ == "__main__":

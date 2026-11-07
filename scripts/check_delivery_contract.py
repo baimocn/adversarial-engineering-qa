@@ -1,23 +1,21 @@
 #!/usr/bin/env python3
-"""交付契约机械检查（D-C01 / D-C02，v2.4.1）。
+"""交付契约机械检查（D-C01–D-C04，v2.5）。
 
-★ 为什么需要这一层（来源：Harbor 1074 题复盘 2026-10-26 / 2026-11-06 副本）
+★ 来源与版本
 
-  复盘里有两类问题此前只能靠 agent 语义发现，但其实是纯机械的：
+  D-C01/D-C02（2026-11-06 引入）：Harbor 1074 题复盘——评分文件缺失 72 题、
+  评分资产/锚点不一致 2 题。2604/1841 实测精确复现。
 
-  D-C01 评分文件缺失（74 题评分失败中 72 题为 RewardFileNotFoundError）：
-        task.toml 声明的 reward_file 从未被 Verifier 写入。
-        2604 实测：声明 /logs/verifier/reward.txt，全链只写 /workspace/.verifier/*，
-        全树 /logs 唯一出现即声明自身 ⇒ 每次试验缺 reward。
-        同口径反例（work_2768）：test.sh 用 REWARD_DIR=/logs/verifier 写盘且平台
-        实跑成功读回 ⇒ 平台按字面读取声明路径，落点不符即缺分。
+  D-C03/D-C04（2026-11-07 引入）：unified-qa v0.5.0「所有题统一四项协议」中
+  可静态判定的两项——
+  D-C03 reward 二选一：同次正式评分只输出 reward.json 或 reward.txt 一种
+        （"不拼不同 Trial/seed 制造双文件冲突"）。同一评分链同时写两种
+        正式 reward 文件 = 违反 L0 协议。诊断文件（result.json/日志）不算。
+  D-C04 Oracle 规范入口：harbor_task/solution/solve.sh 必须存在
+        （容器侧 /solution/solve.sh），调用 solution/ 内参考实现生成提交物；
+        Oracle 材料不得被 COPY 进 Agent 可见镜像（私有边界）。
 
-  D-C02 评分资产/锚点不一致（2 题）+ 1841 实测指纹合同失效（26 项中 5 项失配）：
-        包内清单（frozen_manifest / TRUSTED_HASHES / env_hashes / calibration 等）
-        声明的 sha256/size 与实物不符。哈希复算是纯机械的，不该等 agent 读码。
-
-  纪律：只报可静态确定的（声明路径是否存在/是否被写入、声明哈希是否等于实物）；
-  动态可达性（平台是否真按字面读取）不在这里断言，由 review 绑定证据。
+  其余两项协议（依赖锁定、hard gate −10）需语义/运行判断，不在本脚本。
 
 用法：
   python scripts/check_delivery_contract.py --root <提交包根> --out <out>/delivery-contract.json
@@ -321,6 +319,101 @@ def check_manifest_hashes(root: Path):
                                % (ok, ", ".join(scanned[:3]))}]
 
 
+# ────────────────────────── D-C03：reward 二选一 ──────────────────────────
+
+def check_reward_single_file(root: Path, task_toml: Path | None):
+    """同一评分链同时写 reward.json 与 reward.txt = 违反 v0.5.0 L0 协议。
+
+    只认 test.sh/grader 里的写入证据（echo/重定向/open/原子写）；诊断文件
+    （result.json、reward_detail、日志）不算正式 reward。
+    """
+    findings = []
+    if task_toml is None:
+        return "needs_manual", [{"severity": "needs_manual", "file": "workspace/harbor_task/task.toml",
+                                 "line": 0, "detail": "D-C03：无 task.toml 可查（前置缺失）"}]
+    tests_dir = task_toml.parent / "tests"
+    if not tests_dir.is_dir():
+        return "needs_manual", [{"severity": "needs_manual", "file": rel(root, tests_dir),
+                                 "line": 0, "detail": "D-C03：tests/ 目录不存在，无法核对写入链"}]
+    json_writes, txt_writes = [], []
+    for p in iter_files(tests_dir):
+        if p.suffix.lower() not in (".sh", ".py", ".bash"):
+            continue
+        t = read_text(p)
+        lines = t.splitlines()
+        for i, line in enumerate(lines, 1):
+            low = line.lower()
+            # 排除纯诊断/明细文件
+            if "reward_detail" in low or "result.json" in low:
+                continue
+            is_json = "reward.json" in low
+            is_txt = re.search(r"reward\.txt", low) is not None
+            is_write = any(k in low for k in (">", "open(", "write", "replace", "echo", "dump", "save"))
+            if not is_write:
+                continue
+            if is_json:
+                json_writes.append((rel(root, p), i, line.strip()[:120]))
+            elif is_txt:
+                txt_writes.append((rel(root, p), i, line.strip()[:120]))
+    if json_writes and txt_writes:
+        jf, jl, jl_ = json_writes[0]
+        tf, tl, tl_ = txt_writes[0]
+        findings.append({"severity": "blocking", "file": jf, "line": jl,
+                         "detail": "D-C03：同一评分链同时写 reward.json 与 reward.txt——"
+                                   "违反 v0.5.0「正式 reward 二选一」L0 协议"
+                                   "（JSON 侧 %s:%d %s；TXT 侧 %s:%d %s）。"
+                                   "保留一种为正式 reward，另一种内容移入 result.json 或日志"
+                                   % (jf, jl, jl_, tf, tl, tl_)})
+        for f, i, s in (json_writes + txt_writes)[1:4]:
+            findings.append({"severity": "blocking", "file": f, "line": i,
+                             "detail": "D-C03：%s" % s})
+        return "fail", findings
+    if json_writes or txt_writes:
+        kind = "reward.json" if json_writes else "reward.txt"
+        f, i, s = (json_writes or txt_writes)[0]
+        return "pass", [{"severity": "informational", "file": f, "line": i,
+                         "detail": "D-C03：正式 reward 单一（%s）——符合二选一协议" % kind}]
+    return "not_applicable", [{"severity": "informational", "file": rel(root, tests_dir),
+                               "line": 0,
+                               "detail": "D-C03：tests/ 内未发现 reward.json/reward.txt "
+                                         "写入证据（可能由外部协议生成）——按实际链路核对"}]
+
+
+# ────────────────────────── D-C04：Oracle 规范入口 ──────────────────────────
+
+def check_oracle_entry(root: Path, task_toml: Path | None):
+    """harbor_task/solution/solve.sh 必须存在（v0.5.0 Oracle 规范入口）；
+    solution/ 私有材料不得被 COPY 进 Agent 可见镜像。"""
+    findings = []
+    if task_toml is None:
+        return "needs_manual", [{"severity": "needs_manual", "file": "workspace/harbor_task/task.toml",
+                                 "line": 0, "detail": "D-C04：无 task.toml 可查（前置缺失）"}]
+    task_root = task_toml.parent
+    solve = task_root / "solution" / "solve.sh"
+    if not solve.is_file():
+        findings.append({"severity": "blocking", "file": rel(root, solve), "line": 0,
+                         "detail": "D-C04：缺少 Oracle 规范入口 solution/solve.sh——"
+                                   "v0.5.0 四项统一协议之一（容器侧 /solution/solve.sh，"
+                                   "调用 solution/ 内参考实现生成正常提交物后独立评分）；"
+                                   "已有参考实现补交付结构与入口接线即可，不需要重做算法"})
+        return "fail", findings
+    findings.append({"severity": "informational", "file": rel(root, solve), "line": 0,
+                     "detail": "D-C04：solution/solve.sh 在位（Oracle 入口）；调用链与"
+                               "输出路径的语义核对留 review"})
+    # 私有边界：environment/（Agent 镜像）不得 COPY solution/
+    agent_df = task_root / "environment" / "Dockerfile"
+    if agent_df.is_file():
+        t = read_text(agent_df)
+        for i, line in enumerate(t.splitlines(), 1):
+            if re.search(r"\bCOPY\b|\bADD\b", line, re.I) and re.search(r"\bsolution\b", line):
+                findings.append({"severity": "blocking", "file": rel(root, agent_df),
+                                 "line": i,
+                                 "detail": "D-C04：Agent 镜像 COPY 了 solution/——Oracle 私有"
+                                           "参考解暴露给被测 Agent（%s）" % line.strip()[:100]})
+    status = "fail" if any(f["severity"] == "blocking" for f in findings) else "pass"
+    return status, findings
+
+
 # ────────────────────────── 汇总 ──────────────────────────
 
 def main():
@@ -337,12 +430,18 @@ def main():
     task_toml = find_task_toml(root)
     d01_status, d01_findings = check_reward_path(root, task_toml)
     d02_status, d02_findings = check_manifest_hashes(root)
+    d03_status, d03_findings = check_reward_single_file(root, task_toml)
+    d04_status, d04_findings = check_oracle_entry(root, task_toml)
 
     checks = [
         {"id": "D-C01", "title": "声明的 reward_file 必须存在于 Verifier 写入链",
          "status": d01_status, "findings": d01_findings},
         {"id": "D-C02", "title": "包内清单声明的哈希/尺寸必须与实物一致",
          "status": d02_status, "findings": d02_findings},
+        {"id": "D-C03", "title": "正式 reward 二选一（json/txt 不得同时写）",
+         "status": d03_status, "findings": d03_findings},
+        {"id": "D-C04", "title": "Oracle 规范入口 solution/solve.sh 在位且不暴露给 Agent",
+         "status": d04_status, "findings": d04_findings},
     ]
     counts = {}
     for c in checks:

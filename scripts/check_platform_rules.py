@@ -42,9 +42,21 @@ CANONICAL = "workspace/harbor_task/task.toml"
 #   （原文 ~~如使用npm包…~~，仅留 npm config set 代码块）。在平台新版 skill 明确前，
 #   本检查保留检测但降为 needs_manual（只记录不阻断），避免按已撤回规则误判作者。
 #   引用时必须连日期版本一起引；新版 skill 发布后复核本常量。
-NPM_RULE_STATUS = "pending_platform_review"
-NPM_RULE_NOTE = ("（规则状态待确认：2026-11-06 平台复盘副本中该条被划掉，"
-                 "待平台新版 skill 明确；本轮仅记录，不判 fail）")
+# ★ 2026-11-07 unified-qa v0.5.0 确认：「C04 实际使用 npm 时生效 registry 为指定
+#   bnpm，批准替代源/等效配置可接受，无 npm 不适用」（current-check-map.json:307、
+#   standard-coverage.md:57）。划线副本的疑虑解除；但静态无法验证「批准替代」依据，
+#   非 bnpm 的 registry 保持 needs_manual（作者声明批准依据可转 pass）。
+NPM_RULE_STATUS = "confirmed_with_alternatives"
+NPM_RULE_NOTE = ("（v0.5.0 延续本规则；批准替代源/等效配置可接受——静态无法验证"
+                 "批准依据，作者声明批准出处可转 pass）")
+
+# ★ 2026-11-07 规则版本信号（第三次反转）：unified-qa v0.5.0 把固定位置/禁
+#   docker_image 两条降为「旧规则建议」——
+#   "B-C01 定位实际有效任务，不恢复固定 workspace 路径"；
+#   "不统一禁止源包 docker_image"、"看实际有效 Runner 选择，不按旧固定位置拒收"。
+#   本检查保留检测但降为 needs_manual（只记录不阻断），按实际有效配置判定。
+LEGACY_LOCATION_RULE_NOTE = ("（v0.5.0 已将该规则降为建议：定位实际有效任务/Runner "
+                             "配置即可，不按旧固定位置拒收；本轮仅记录）")
 
 # 已证实的非官方镜像域（发行版/生态官方源之外）。只在这些域出现在
 # 「执行载体」里时才判违规；README/说明文档不扫（说明 ≠ 生效）。
@@ -103,15 +115,17 @@ def check_c01(root: Path):
     task_dir_mode = False
     if not hits:
         findings.append({"severity": "blocking", "file": CANONICAL, "line": 0,
-                         "detail": "B-C01：提交包内没有任何 task.toml（缺失任务配置）"})
+                         "detail": "B-C01：提交包内没有任何 task.toml（缺失任务配置——"
+                                   "v0.5.0 下有效任务配置仍是 L0 必需）"})
         status = "fail"
     elif len(hits) > 1:
         paths = ", ".join(rel(root, p) for p in hits)
-        findings.append({"severity": "blocking", "file": rel(root, hits[0]), "line": 0,
-                         "detail": "B-C01：发现 %d 份 task.toml（%s）；必须整理为唯一一份，"
-                                   "历史配置另归档或改为说明材料，不得随机挑选一份当作通过"
-                                   % (len(hits), paths)})
-        status = "fail"
+        findings.append({"severity": "needs_manual", "file": rel(root, hits[0]), "line": 0,
+                         "detail": "B-C01：发现 %d 份 task.toml（%s）；v0.5.0 要求定位"
+                                   "实际有效任务配置（不按旧固定位置拒收），但多份并存"
+                                   "仍须指明实际生效的一份与归档处置" % (len(hits), paths)
+                                   + LEGACY_LOCATION_RULE_NOTE})
+        status = "needs_manual"
     else:
         only = hits[0].resolve()
         if only == canonical:
@@ -126,10 +140,11 @@ def check_c01(root: Path):
                                        "唯一 task.toml 位于根；提交包根级位置校验"
                                        "（%s）需以提交包根重跑确认" % CANONICAL})
         else:
-            status = "fail"
-            findings.append({"severity": "blocking", "file": rel(root, hits[0]), "line": 0,
-                             "detail": "B-C01：唯一 task.toml 位于 %s，不符合当前交付要求"
-                                       "的 %s" % (rel(root, hits[0]), CANONICAL)})
+            status = "needs_manual"
+            findings.append({"severity": "needs_manual", "file": rel(root, hits[0]), "line": 0,
+                             "detail": "B-C01：唯一 task.toml 位于 %s（旧口径要求 %s）"
+                                       % (rel(root, hits[0]), CANONICAL)
+                                       + LEGACY_LOCATION_RULE_NOTE})
     # 下游 B-C02 仍需要一个确定性的检查对象：多份时优先规范路径（不随机挑选），
     # 只保证「检查对象确定」，不改变 B-C01 本身的 fail 结论。
     primary = None
@@ -149,7 +164,8 @@ def _strip_inline_comment(line: str) -> str:
 
 
 def check_c02(root: Path, task_toml: Path | None):
-    """专家源 task.toml 禁配 docker_image；按 environment/Dockerfile 及其构建上下文核对。"""
+    """镜像/构建来源核对。v0.5.0：不统一禁止源包 docker_image（降为建议），
+    核对实际镜像/构建与私有资产；Dockerfile 缺失按「镜像来源二选一」记 manual。"""
     findings = []
     if task_toml is None:
         return "needs_manual", [{"severity": "needs_manual", "file": CANONICAL, "line": 0,
@@ -175,25 +191,33 @@ def check_c02(root: Path, task_toml: Path | None):
     status = "pass"
     if configured:
         i, val = configured
-        findings.append({"severity": "blocking", "file": rel(root, task_toml), "line": i,
+        findings.append({"severity": "needs_manual", "file": rel(root, task_toml), "line": i,
                          "detail": "B-C02：专家源 task.toml 配置了 docker_image=%r——"
-                                   "2026-11 起禁止；以 environment/Dockerfile 为准，"
-                                   "内部镜像由平台构建（注释/说明中出现字段名才算例外，"
-                                   "此处是真实赋值）" % val})
-        status = "fail"
+                                   "2026-10-26 旧口径禁止；v0.5.0 不统一禁止，改为核对"
+                                   "实际镜像/构建与私有资产（镜像可访问性属平台侧）" % val
+                                   + LEGACY_LOCATION_RULE_NOTE})
+        status = "needs_manual"
     elif comment_only:
         findings.append({"severity": "informational", "file": rel(root, task_toml),
                          "line": 0, "detail": "B-C02：docker_image 仅出现在注释/说明中，"
                          "不构成有效配置（不计违规）"})
 
-    # environment/Dockerfile 必须交付
+    # environment/Dockerfile：镜像来源二选一（Dockerfile 或 docker_image），
+    # 两者皆无才阻断；有 Dockerfile 时仍核 COPY 来源（确定性构建失败）
     task_root = task_toml.parent
     env_df = task_root / "environment" / "Dockerfile"
     if not env_df.is_file():
-        findings.append({"severity": "blocking", "file": rel(root, env_df), "line": 0,
-                         "detail": "B-C02：缺少 environment/Dockerfile——"
-                                   "专家需交齐构建文件与上下文，平台才能构建内部镜像"})
-        status = "fail"
+        if configured:
+            findings.append({"severity": "informational", "file": rel(root, env_df), "line": 0,
+                             "detail": "B-C02：未交付 environment/Dockerfile，但声明了"
+                                       " docker_image——镜像来源二选一成立；平台按声明"
+                                       "镜像准备，实际可拉取性属平台侧验证"})
+        else:
+            findings.append({"severity": "needs_manual", "file": rel(root, env_df), "line": 0,
+                             "detail": "B-C02：既无 environment/Dockerfile 也未声明"
+                                       " docker_image——镜像来源二选一不成立，"
+                                       "平台无法构建" + LEGACY_LOCATION_RULE_NOTE})
+            status = "needs_manual"
     else:
         findings.extend(check_copy_sources(root, env_df))
         for f in findings:
