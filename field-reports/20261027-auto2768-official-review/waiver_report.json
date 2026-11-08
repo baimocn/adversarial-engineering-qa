@@ -1,0 +1,109 @@
+{
+  "adapter_version": "0.3.10-standard-waiver.5",
+  "decision": "PASS_WITH_WAIVERS",
+  "accepted": [
+    {
+      "target": "QA05",
+      "causes": [
+        {
+          "summary": "删除未支持禁网配置后，无可信外部查表网络防护；题面禁止不能替代执行。"
+        }
+      ]
+    },
+    {
+      "target": "QA16",
+      "causes": [
+        {
+          "summary": "历史TSV声明11.00/11.55h，但映射strict_fully_bound_effective_seconds为null；本轮无当前协议10h研究。"
+        }
+      ]
+    },
+    {
+      "target": "QA18",
+      "causes": [
+        {
+          "summary": "模型/runtime可由轨迹及摘要交叉识别，原Prompt/最高推理档/空输出与方法来源绑定仍属旧证明缺口。"
+        }
+      ]
+    },
+    {
+      "target": "QA18",
+      "causes": [
+        {
+          "summary": "旧status=ok、Seed35/36重复及计时映射未完全闭合，保留映射而不补造历史字段。"
+        }
+      ]
+    },
+    {
+      "target": "QA18",
+      "causes": [
+        {
+          "summary": "已实际对比现有两轨材料，旧版材料仍不足以证明所有历史条件一致；仅此记录缺口豁免，不声称已证实同条件。两轨均从59.7的GCN起点在两图公开val迭代，同类允许训练/读出空间，模型和方法演进独立；已有轨迹/映射没有确认的Prompt、任务、Dev、反馈、权限或资源实质差异。未交原启动Prompt/原任务快照/全部原sessions，不能证实完全同条件。当前标签视图/接口返修与旧dream-v1差异是历史到返修迁移，不能反推A/B条件相同。"
+        }
+      ]
+    },
+    {
+      "target": "QA21",
+      "causes": [
+        {
+          "summary": "当前四项hash一致，但历史dream-v1与返修安全标签视图/数值接口不同，当前摘要hash不证明过去执行绑定。另对best_method_selection.method_sha256逐文件重算：23/24一致，唯一README.md旧hash87c499…与当前428e8a…不同，修复日志v12说明Dev输出路径/权限说明更新；23项方法源码及配置一致。属历史复验到文档返修迁移，不能声称当前24项完全同字节。"
+        }
+      ]
+    },
+    {
+      "target": "H03",
+      "causes": [
+        {
+          "summary": "有完整Dockerfile/context来源方案，内部ICM镜像tag由平台准备。"
+        }
+      ]
+    },
+    {
+      "target": "H03",
+      "causes": [
+        {
+          "summary": "当前镜像构建/启动/权限/物理隔离与移交未独立验证，旧NOP不覆盖当前字节。"
+        }
+      ]
+    },
+    {
+      "target": "H05",
+      "causes": [
+        {
+          "summary": "已有配置为旧本地Docker NOP（含构建加速override与cpu/memory ignore），当前MASO选择/覆盖尚未执行。"
+        }
+      ]
+    },
+    {
+      "target": "H06",
+      "causes": [
+        {
+          "summary": "已有真实旧NOP仅覆盖缺预测早退；8项版本差异含6条构建/评分链路文件，当前NOP未运行。另已审historical_docker_simulation_not_nop：其身份字段由后处理构造，并非原生NOP，拒绝作为成功自检；不因旧模拟被扫描到就掩去其真实性限制。"
+        }
+      ]
+    },
+    {
+      "target": "T01",
+      "causes": [
+        {
+          "summary": "完整方法digest/启动/时长证明不闭合；保留历史分数unverified与当前复验区别。"
+        }
+      ]
+    },
+    {
+      "target": "T02",
+      "causes": [
+        {
+          "summary": "完整方法digest/启动/时长证明不闭合；保留历史分数unverified与当前复验区别。"
+        }
+      ]
+    }
+  ],
+  "remaining_findings": [],
+  "rejected": [],
+  "integrity_issues": [],
+  "platform_followup_pending": [],
+  "review_sha256": "eb726b218d192b62f9c9046cfdc664c9b86866c422ce5004c5011e5bc6b290cc",
+  "legacy_review_sha256": "78ca40c9bfc62bb007a0036ba9e748875368a141872bbc623982b7f2ae3e22c3",
+  "final_report_sha256": "6e9c82a3bcd2889a8774a859932379118fec5b6e4f3d56b2e29900ac119923ae"
+}

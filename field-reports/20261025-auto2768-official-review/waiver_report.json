@@ -1,0 +1,204 @@
+{
+  "adapter_version": "0.3.10-standard-waiver.5",
+  "decision": "FAIL",
+  "accepted": [
+    {
+      "target": "QA05",
+      "causes": [
+        {
+          "summary": "当前不申请禁网/白名单；题面禁止外部查表但无网络执行机制，源AST不能认证外部训练或查表。"
+        }
+      ]
+    },
+    {
+      "target": "QA16",
+      "causes": [
+        {
+          "summary": "TSV宣称Codex39613/Seed41572秒；timing_map分别给出38589.395/39236.909 provisional秒、直接训练评测下界11488/19413.651秒，strict_fully_bound为null；存在缺行、重复窗口及阻塞未完整分类，原标准有效时长未获确认。"
+        }
+      ]
+    },
+    {
+      "target": "QA18",
+      "causes": [
+        {
+          "summary": "实际模型由run_summary和轨迹头交叉映射；独立session ID与不同演进支持分别运行，但无完整原Prompt、最高推理档位/空输出启动证明；无已确认两轨实质条件不同反证。"
+        }
+      ]
+    },
+    {
+      "target": "QA18",
+      "causes": [
+        {
+          "summary": "已实际对比现有两轨材料，旧版材料仍不足以证明所有历史条件一致；仅此记录缺口豁免，不声称已证实同条件。已比较两轨全部轮次、公共起点59.7/相同两图、数据/反馈/约束/资源说明及源事件映射。现有材料支持不同session的独立研究，无identical_prompt=false或已确认反馈/IPC/只读条件被逐轨改变的证据。没有原始完整启动Prompt/资源配置快照，不能把摘要相同升级为已证明同条件。当前v8接口迁移发生于两条历史v7研究之后，与历史两轨彼此不同分开。"
+        }
+      ]
+    },
+    {
+      "target": "QA21",
+      "causes": [
+        {
+          "summary": "当前45文件四项指纹与run_summary匹配；两条研究保留原v7身份，当前train-only接口为返修迁移，不能用当前hash追溯认证历史。"
+        }
+      ]
+    },
+    {
+      "target": "H03",
+      "causes": [
+        {
+          "summary": "两侧有效Dockerfile和依赖方案可读，当前内场预构建、内部镜像tag与实际可达性待平台准备。"
+        }
+      ]
+    },
+    {
+      "target": "H03",
+      "causes": [
+        {
+          "summary": "专用Verifier CMD仅sh -c sleep infinity保持存活，Harness移交后调用/tests/test.sh；实际内场启动/身份/移交待平台验证。"
+        }
+      ]
+    },
+    {
+      "target": "H05",
+      "causes": [
+        {
+          "summary": "两侧有效Dockerfile和依赖方案可读，当前内场预构建、内部镜像tag与实际可达性待平台准备。"
+        }
+      ]
+    },
+    {
+      "target": "H05",
+      "causes": [
+        {
+          "summary": "专用Verifier CMD仅sh -c sleep infinity保持存活，Harness移交后调用/tests/test.sh；实际内场启动/身份/移交待平台验证。"
+        }
+      ]
+    },
+    {
+      "target": "H06",
+      "causes": [
+        {
+          "summary": "原生NOP两处身份nop、separate、finished且exception=null，reward.json优先0.0与result一致，日志非空，无相同sandbox ID反证；仅无提交FORMAT_ERROR分支。历史绑定44/46，task.toml及instruction不同；手工simulation明确不充当NOP。当前Trial未跑。"
+        }
+      ]
+    },
+    {
+      "target": "T01",
+      "causes": [
+        {
+          "summary": "实际模型由run_summary和轨迹头交叉映射；独立session ID与不同演进支持分别运行，但无完整原Prompt、最高推理档位/空输出启动证明；无已确认两轨实质条件不同反证。"
+        }
+      ]
+    },
+    {
+      "target": "T01",
+      "causes": [
+        {
+          "summary": "TSV宣称Codex39613/Seed41572秒；timing_map分别给出38589.395/39236.909 provisional秒、直接训练评测下界11488/19413.651秒，strict_fully_bound为null；存在缺行、重复窗口及阻塞未完整分类，原标准有效时长未获确认。"
+        }
+      ]
+    },
+    {
+      "target": "T02",
+      "causes": [
+        {
+          "summary": "实际模型由run_summary和轨迹头交叉映射；独立session ID与不同演进支持分别运行，但无完整原Prompt、最高推理档位/空输出启动证明；无已确认两轨实质条件不同反证。"
+        }
+      ]
+    },
+    {
+      "target": "T02",
+      "causes": [
+        {
+          "summary": "TSV宣称Codex39613/Seed41572秒；timing_map分别给出38589.395/39236.909 provisional秒、直接训练评测下界11488/19413.651秒，strict_fully_bound为null；存在缺行、重复窗口及阻塞未完整分类，原标准有效时长未获确认。"
+        }
+      ]
+    }
+  ],
+  "remaining_findings": [
+    {
+      "key": "QA05",
+      "status": "fail",
+      "summary": "题面仍规定单轮7200秒有效预算，但task.toml明确declared_only；训练、run.sh与grader无单轮timeout。43200秒Agent总超时和3600秒纯Verifier超时不覆盖该训练阶段。",
+      "remediation": "在可信启动/训练控制链加入覆盖每轮两图训练、导出与必要重载的7200秒计时与超时处理，保持题面和配置一致。"
+    },
+    {
+      "key": "QA05",
+      "status": "fail",
+      "summary": "instruction §3要求模型可加载，§6要求模型产物；grader仅读取test_pred.npy，既不检查model.pt存在也不重载。源码AST检查不证明模型可加载，缺模型仍可进入正常评分。",
+      "remediation": "在独立可信Verifier实施模型存在及可加载质量门并使用与题面一致的安全重载接口；同步准备独立依赖。"
+    },
+    {
+      "key": "QA05",
+      "status": "fail",
+      "summary": "单轮7200秒仅声明而未执行；模型加载质量门未实施。网络约束迁移单独保留豁免。",
+      "remediation": ""
+    },
+    {
+      "key": "QA08",
+      "status": "fail",
+      "summary": "instruction第69行直接披露正式Reference采用500 epochs，同时明确n_epochs是可研究变量。这是参考实现实际可变配置，不是必须固定的骨干接口；不符合QA08题面不得披露参考具体配置的要求。",
+      "remediation": "将正式B/R各自实际epoch日程移到专家侧证据，题面仅保留共同预算与epoch可研究的规则。"
+    },
+    {
+      "key": "QA08",
+      "status": "fail",
+      "summary": "题面第69行披露Reference采用500 epochs，而n_epochs本身为研究变量；属于参考具体可变配置泄露。",
+      "remediation": ""
+    },
+    {
+      "key": "QA11",
+      "status": "fail",
+      "summary": "instruction §3要求模型可加载，§6要求模型产物；grader仅读取test_pred.npy，既不检查model.pt存在也不重载。源码AST检查不证明模型可加载，缺模型仍可进入正常评分。",
+      "remediation": "在独立可信Verifier实施模型存在及可加载质量门并使用与题面一致的安全重载接口；同步准备独立依赖。"
+    },
+    {
+      "key": "QA11",
+      "status": "fail",
+      "summary": "task.toml dev_score_command将--out设为/workspace/results.json；Agent Dockerfile使/workspace root所有0755并切换USER agent，仅/workspace/solution属于agent。evaluate.py无条件open该输出，配置命令在默认身份下不可写并退出失败。",
+      "remediation": "将配置的Dev输出改到Agent可写目录，例如/workspace/solution/results.json，并同步任何引用；或在镜像中仅准备所需可写输出位置。"
+    },
+    {
+      "key": "QA11",
+      "status": "fail",
+      "summary": "八项内容俱全，但可加载模型门与仅预测数组评分不一致；配置的公开Dev输出与默认身份权限不一致。",
+      "remediation": ""
+    },
+    {
+      "key": "QA17",
+      "status": "fail",
+      "summary": "由H01–H06派生：当前Dev写权限和模型门静态缺陷保留；内部镜像准备、运行验证及历史NOP迁移分别处理。",
+      "remediation": ""
+    },
+    {
+      "key": "H03",
+      "status": "fail",
+      "summary": "task.toml dev_score_command将--out设为/workspace/results.json；Agent Dockerfile使/workspace root所有0755并切换USER agent，仅/workspace/solution属于agent。evaluate.py无条件open该输出，配置命令在默认身份下不可写并退出失败。",
+      "remediation": "将配置的Dev输出改到Agent可写目录，例如/workspace/solution/results.json，并同步任何引用；或在镜像中仅准备所需可写输出位置。"
+    },
+    {
+      "key": "H03",
+      "status": "fail",
+      "summary": "当前Agent仅solution可写，配置Dev输出/workspace/results.json不可写。两侧单容器、直接本地执行，无任务自部署额外环境；镜像准备和运行验证另列。",
+      "remediation": ""
+    },
+    {
+      "key": "H04",
+      "status": "fail",
+      "summary": "instruction §3要求模型可加载，§6要求模型产物；grader仅读取test_pred.npy，既不检查model.pt存在也不重载。源码AST检查不证明模型可加载，缺模型仍可进入正常评分。",
+      "remediation": "在独立可信Verifier实施模型存在及可加载质量门并使用与题面一致的安全重载接口；同步准备独立依赖。"
+    },
+    {
+      "key": "H04",
+      "status": "fail",
+      "summary": "入口/reward清理、原子写入和错误分层存在；但模型可加载质量门未实现，缺model.pt仍只凭预测数组进入正常评分。",
+      "remediation": ""
+    }
+  ],
+  "rejected": [],
+  "integrity_issues": [],
+  "platform_followup_pending": [],
+  "review_sha256": "55c06339547650a08b507ff812a4f00d450e7241426cc01c80d1060545de3922",
+  "legacy_review_sha256": "94e35a290e58f9e8f9b4ee990f0053fe02e1e18ab4e8f8ad7d86163a8fac1998",
+  "final_report_sha256": "d5b0ca2c65d1246a7eb0b5ed7493195787505d029f4e5050483049d84e1e8b76"
+}

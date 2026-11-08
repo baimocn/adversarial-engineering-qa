@@ -1,0 +1,5245 @@
+{
+  "schema_version": 6,
+  "generated_at": "2026-10-26T21:46:28.851786+00:00",
+  "source": {
+    "path": "/data00/wangsiyu/autoresearch-qa-standalone-20261014/reports/0f4b333a2c3f494cb98fbe897f9530a5_tblHNtQNFPVwuKiP_recvxeP2AYB9GI_Q5DvbFE4AobvUZxNT5RcAyE7nje_2fba32c50948/evidence-input",
+    "sha256": null,
+    "kind": "directory"
+  },
+  "workspace_root": "/data00/wangsiyu/autoresearch-qa-standalone-20261014/reports/0f4b333a2c3f494cb98fbe897f9530a5_tblHNtQNFPVwuKiP_recvxeP2AYB9GI_Q5DvbFE4AobvUZxNT5RcAyE7nje_2fba32c50948/evidence-input",
+  "policy": {
+    "name": "implementation",
+    "revision": "innerfield-deployment-v6",
+    "strict_release_certification": false,
+    "adjustments": []
+  },
+  "overview": {
+    "optimization_surface": {
+      "summary": "固定两张引文图的特征、边、划分和损坏训练标签，在固定GCN/Adam骨架内设计噪声鲁棒训练与图上推断方法。AST守卫开放方法类及数值hooks，非仅常量搜索。",
+      "modifiable": [
+        "训练损失及辅助一致性/对比目标",
+        "样本/邻居可靠性加权与筛选",
+        "train-only标签传播与伪目标",
+        "训练日程及支持的分阶段集成",
+        "无标签图推断读出"
+      ],
+      "fixed": [
+        "Cora/CiteSeer公开资产与划分、uniform 0.3损坏标签(seed 3000)",
+        "GCN 64宽2层ReLU dropout0.5，无额外层/归一化",
+        "Adam lr0.01 weight_decay0.0005",
+        "两图训练7200秒声明预算、私有测试与宏平均指标"
+      ],
+      "metric_and_gate": "maximize两图测试准确率百分数宏平均；reward=(x-B)/(U-B)，B=61.8833,U=75.1333；模型可加载且预测非退化，硬门失败-1。资格审查另以100为分母并要求Δ≥3σ_B。",
+      "evidence": [
+        "workspace/harbor_task/instruction.md",
+        "workspace/harbor_task/tests/contract_guard.py",
+        "workspace/harbor_task/environment/starter/train.py",
+        "workspace/harbor_task/environment/starter/numeric_api.py",
+        "workspace/reference/predictor/DREAM_Predictor.py"
+      ]
+    },
+    "baseline_reference": {
+      "baseline_method": "未经改动的朴素GCN，在固定损坏训练标签上作交叉熵训练；每图200次Adam更新，使用验证指标选择checkpoint；Starter、正式B和reward零锚点对应同一方法。",
+      "reference_method": "修复后的DREAM：仅从损坏训练标签以结构/特征kNN双路传播推断同类锚点，语义同质性重加权并加入对比学习；每图500次更新、相同骨干/Adam/资产/预算，val仅评价选点。",
+      "metric": "macro_average_hidden_test_accuracy_percent",
+      "direction": "maximize",
+      "paired_runs": [
+        {
+          "seed": 3000,
+          "baseline": 60.05,
+          "reference": 70.25,
+          "baseline_valid": true,
+          "reference_valid": true
+        },
+        {
+          "seed": 3001,
+          "baseline": 62.6,
+          "reference": 71.4,
+          "baseline_valid": true,
+          "reference_valid": true
+        },
+        {
+          "seed": 3002,
+          "baseline": 63.0,
+          "reference": 69.95,
+          "baseline_valid": true,
+          "reference_valid": true
+        }
+      ],
+      "baseline_mean": 61.88333333333333,
+      "baseline_sample_std": 1.6002603954773547,
+      "reference_mean": 70.53333333333333,
+      "reference_sample_std": 0.765397500213671,
+      "improvement_summary": "全部正式seed配对改善10.20/8.80/6.95；均值B61.883333,R70.533333,Δ8.65,σ_B1.600260,Δ/σ_B5.405370；生效U75.1333下0.652832，预声明天花板100下0.226935，均在[0.15,0.8]。专家说明第4节首行Δ误写8.10，保留为当前文字算术错误，不改变原始成绩有效性。",
+      "quality_gate_summary": "12个B/R图级运行均记录非退化与独立reload预测相同；12个checkpoint字节SHA与计分登记一致，未反序列化；日志实际200/500轮正常结束。旧v7泄漏Reference单列INVALID且不纳入；新平台实跑未执行。",
+      "evidence": [
+        "optimization_evidence/formal_test_scoring_declared.json",
+        "optimization_evidence/comparison_summary.json",
+        "workspace/harbor_task/tests/calibration.json",
+        "optimization_evidence/训练证据说明.md",
+        "expert_evidence/repair/protocol_decisions.json",
+        "optimization_evidence/baseline_runs/seed_3000/result.json",
+        "optimization_evidence/baseline_runs/seed_3001/result.json",
+        "optimization_evidence/baseline_runs/seed_3002/result.json",
+        "optimization_evidence/reference_runs/seed_3000/result.json",
+        "optimization_evidence/reference_runs/seed_3001/result.json",
+        "optimization_evidence/reference_runs/seed_3002/result.json"
+      ]
+    },
+    "trajectories": [
+      {
+        "name": "codex",
+        "status": "complete",
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "packaged_rounds": 193,
+        "reported_effective_rounds": 193,
+        "duration_hours": null,
+        "summary": "GCE/小损失分类配额→邻域平滑/硬投票→裕量与单源支配门控，r183最佳66.7，后续184–193未提升。",
+        "final_result": "历史66.7，已有原字节复验66.7；非当前协议Hidden成绩。",
+        "evidence": [
+          "expert_evidence/trajectory_codex.json",
+          "expert_evidence/run_summary.json",
+          "expert_evidence/repair/historical_timing_mapping/timing_map.json",
+          "expert_evidence/best_method_selection.json",
+          "expert_evidence/qa16_best_method_revalidation.json"
+        ]
+      },
+      {
+        "name": "seed",
+        "status": "complete",
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "packaged_rounds": 53,
+        "reported_effective_rounds": 52,
+        "duration_hours": null,
+        "summary": "small-loss/双路LP→TLP→多阶段共识5成员集成→度数感知硬化，r43最佳71.4；ILC/EMA/SWA等失败或持平完整保留，35与36非两个独立成功试验。",
+        "final_result": "历史71.4，原字节复验71.1；迁移当前数值接口后Dev71.2(74.2/68.2)，不是历史71.4复现或正式R。",
+        "evidence": [
+          "expert_evidence/trajectory_seed.json",
+          "expert_evidence/run_summary.json",
+          "expert_evidence/repair/historical_timing_mapping/timing_map.json",
+          "expert_evidence/best_method_selection.json",
+          "expert_evidence/qa16_best_method_revalidation.json"
+        ]
+      }
+    ]
+  },
+  "format_alignment": {
+    "schema_version": "autoresearch-submission-format.v1",
+    "inspected_root": "/data00/wangsiyu/autoresearch-qa-standalone-20261014/reports/0f4b333a2c3f494cb98fbe897f9530a5_tblHNtQNFPVwuKiP_recvxeP2AYB9GI_Q5DvbFE4AobvUZxNT5RcAyE7nje_2fba32c50948/evidence-input",
+    "submission_root": "/data00/wangsiyu/autoresearch-qa-standalone-20261014/reports/0f4b333a2c3f494cb98fbe897f9530a5_tblHNtQNFPVwuKiP_recvxeP2AYB9GI_Q5DvbFE4AobvUZxNT5RcAyE7nje_2fba32c50948/evidence-input",
+    "submission_root_relative": ".",
+    "wrapper_depth": 0,
+    "status": "aligned_with_extras",
+    "summary": "规范结构已对齐；另记录 26 条非阻断整理建议。",
+    "missing": [],
+    "issues": [],
+    "alignment_issues": [],
+    "suggestions": [
+      {
+        "code": "EXTRA_ALLOWED",
+        "path": "optimization_evidence/_layout_migrated.json",
+        "classification": "extra_allowed",
+        "recommendation": "规范外附加材料；多交不构成格式失败。"
+      },
+      {
+        "code": "EXTRA_ALLOWED",
+        "path": "optimization_evidence/_layout_v2.json",
+        "classification": "extra_allowed",
+        "recommendation": "规范外附加材料；多交不构成格式失败。"
+      },
+      {
+        "code": "EXTRA_ALLOWED",
+        "path": "optimization_evidence/baseline_runs/seed_3000/curve.csv",
+        "classification": "extra_allowed",
+        "recommendation": "规范外附加材料；多交不构成格式失败。"
+      },
+      {
+        "code": "ORGANIZE_EXTRA",
+        "path": "optimization_evidence/baseline_runs/seed_3000/model/citeseer/metrics.json",
+        "classification": "merge_candidate",
+        "recommendation": "指标通常可并入同目录的 result.json。"
+      },
+      {
+        "code": "ORGANIZE_EXTRA",
+        "path": "optimization_evidence/baseline_runs/seed_3000/model/cora/metrics.json",
+        "classification": "merge_candidate",
+        "recommendation": "指标通常可并入同目录的 result.json。"
+      },
+      {
+        "code": "EXTRA_ALLOWED",
+        "path": "optimization_evidence/baseline_runs/seed_3001/curve.csv",
+        "classification": "extra_allowed",
+        "recommendation": "规范外附加材料；多交不构成格式失败。"
+      },
+      {
+        "code": "ORGANIZE_EXTRA",
+        "path": "optimization_evidence/baseline_runs/seed_3001/model/citeseer/metrics.json",
+        "classification": "merge_candidate",
+        "recommendation": "指标通常可并入同目录的 result.json。"
+      },
+      {
+        "code": "ORGANIZE_EXTRA",
+        "path": "optimization_evidence/baseline_runs/seed_3001/model/cora/metrics.json",
+        "classification": "merge_candidate",
+        "recommendation": "指标通常可并入同目录的 result.json。"
+      },
+      {
+        "code": "EXTRA_ALLOWED",
+        "path": "optimization_evidence/baseline_runs/seed_3002/curve.csv",
+        "classification": "extra_allowed",
+        "recommendation": "规范外附加材料；多交不构成格式失败。"
+      },
+      {
+        "code": "ORGANIZE_EXTRA",
+        "path": "optimization_evidence/baseline_runs/seed_3002/model/citeseer/metrics.json",
+        "classification": "merge_candidate",
+        "recommendation": "指标通常可并入同目录的 result.json。"
+      },
+      {
+        "code": "ORGANIZE_EXTRA",
+        "path": "optimization_evidence/baseline_runs/seed_3002/model/cora/metrics.json",
+        "classification": "merge_candidate",
+        "recommendation": "指标通常可并入同目录的 result.json。"
+      },
+      {
+        "code": "EXTRA_ALLOWED",
+        "path": "optimization_evidence/formal_test_scoring_declared.json",
+        "classification": "extra_allowed",
+        "recommendation": "规范外附加材料；多交不构成格式失败。"
+      },
+      {
+        "code": "EXTRA_ALLOWED",
+        "path": "optimization_evidence/historical_development_attempts",
+        "classification": "extra_allowed",
+        "recommendation": "规范外附加材料；多交不构成格式失败。"
+      },
+      {
+        "code": "EXTRA_ALLOWED",
+        "path": "optimization_evidence/historical_v7_invalid_reference",
+        "classification": "extra_allowed",
+        "recommendation": "规范外附加材料；多交不构成格式失败。"
+      },
+      {
+        "code": "EXTRA_ALLOWED",
+        "path": "optimization_evidence/public_dev_qualification.json",
+        "classification": "extra_allowed",
+        "recommendation": "规范外附加材料；多交不构成格式失败。"
+      },
+      {
+        "code": "EXTRA_ALLOWED",
+        "path": "optimization_evidence/README.md",
+        "classification": "extra_allowed",
+        "recommendation": "规范外附加材料；多交不构成格式失败。"
+      },
+      {
+        "code": "EXTRA_ALLOWED",
+        "path": "optimization_evidence/reference_runs/seed_3000/curve.csv",
+        "classification": "extra_allowed",
+        "recommendation": "规范外附加材料；多交不构成格式失败。"
+      },
+      {
+        "code": "ORGANIZE_EXTRA",
+        "path": "optimization_evidence/reference_runs/seed_3000/model/citeseer/metrics.json",
+        "classification": "merge_candidate",
+        "recommendation": "指标通常可并入同目录的 result.json。"
+      },
+      {
+        "code": "ORGANIZE_EXTRA",
+        "path": "optimization_evidence/reference_runs/seed_3000/model/cora/metrics.json",
+        "classification": "merge_candidate",
+        "recommendation": "指标通常可并入同目录的 result.json。"
+      },
+      {
+        "code": "EXTRA_ALLOWED",
+        "path": "optimization_evidence/reference_runs/seed_3001/curve.csv",
+        "classification": "extra_allowed",
+        "recommendation": "规范外附加材料；多交不构成格式失败。"
+      },
+      {
+        "code": "ORGANIZE_EXTRA",
+        "path": "optimization_evidence/reference_runs/seed_3001/model/citeseer/metrics.json",
+        "classification": "merge_candidate",
+        "recommendation": "指标通常可并入同目录的 result.json。"
+      },
+      {
+        "code": "ORGANIZE_EXTRA",
+        "path": "optimization_evidence/reference_runs/seed_3001/model/cora/metrics.json",
+        "classification": "merge_candidate",
+        "recommendation": "指标通常可并入同目录的 result.json。"
+      },
+      {
+        "code": "EXTRA_ALLOWED",
+        "path": "optimization_evidence/reference_runs/seed_3002/curve.csv",
+        "classification": "extra_allowed",
+        "recommendation": "规范外附加材料；多交不构成格式失败。"
+      },
+      {
+        "code": "ORGANIZE_EXTRA",
+        "path": "optimization_evidence/reference_runs/seed_3002/model/citeseer/metrics.json",
+        "classification": "merge_candidate",
+        "recommendation": "指标通常可并入同目录的 result.json。"
+      },
+      {
+        "code": "ORGANIZE_EXTRA",
+        "path": "optimization_evidence/reference_runs/seed_3002/model/cora/metrics.json",
+        "classification": "merge_candidate",
+        "recommendation": "指标通常可并入同目录的 result.json。"
+      },
+      {
+        "code": "EXTRA_ALLOWED",
+        "path": "optimization_evidence/u_anchor_oracle",
+        "classification": "extra_allowed",
+        "recommendation": "规范外附加材料；多交不构成格式失败。"
+      }
+    ],
+    "top_level": {
+      "required": [
+        "workspace",
+        "expert_evidence",
+        "optimization_evidence"
+      ],
+      "present": [
+        "workspace",
+        "expert_evidence",
+        "optimization_evidence"
+      ],
+      "missing": []
+    },
+    "harbor_task": {
+      "path": "workspace/harbor_task",
+      "present": true,
+      "reference_present": true,
+      "legacy_trusted_present": false,
+      "legacy_tests_runtime_present": false
+    },
+    "extras": {
+      "extra_allowed": [
+        {
+          "path": "optimization_evidence/_layout_migrated.json",
+          "reason": "规范外附加材料；多交不构成格式失败。"
+        },
+        {
+          "path": "optimization_evidence/_layout_v2.json",
+          "reason": "规范外附加材料；多交不构成格式失败。"
+        },
+        {
+          "path": "optimization_evidence/baseline_runs/seed_3000/curve.csv",
+          "reason": "规范外附加材料；多交不构成格式失败。"
+        },
+        {
+          "path": "optimization_evidence/baseline_runs/seed_3001/curve.csv",
+          "reason": "规范外附加材料；多交不构成格式失败。"
+        },
+        {
+          "path": "optimization_evidence/baseline_runs/seed_3002/curve.csv",
+          "reason": "规范外附加材料；多交不构成格式失败。"
+        },
+        {
+          "path": "optimization_evidence/formal_test_scoring_declared.json",
+          "reason": "规范外附加材料；多交不构成格式失败。"
+        },
+        {
+          "path": "optimization_evidence/historical_development_attempts",
+          "reason": "规范外附加材料；多交不构成格式失败。"
+        },
+        {
+          "path": "optimization_evidence/historical_v7_invalid_reference",
+          "reason": "规范外附加材料；多交不构成格式失败。"
+        },
+        {
+          "path": "optimization_evidence/public_dev_qualification.json",
+          "reason": "规范外附加材料；多交不构成格式失败。"
+        },
+        {
+          "path": "optimization_evidence/README.md",
+          "reason": "规范外附加材料；多交不构成格式失败。"
+        },
+        {
+          "path": "optimization_evidence/reference_runs/seed_3000/curve.csv",
+          "reason": "规范外附加材料；多交不构成格式失败。"
+        },
+        {
+          "path": "optimization_evidence/reference_runs/seed_3001/curve.csv",
+          "reason": "规范外附加材料；多交不构成格式失败。"
+        },
+        {
+          "path": "optimization_evidence/reference_runs/seed_3002/curve.csv",
+          "reason": "规范外附加材料；多交不构成格式失败。"
+        },
+        {
+          "path": "optimization_evidence/u_anchor_oracle",
+          "reason": "规范外附加材料；多交不构成格式失败。"
+        }
+      ],
+      "merge_candidate": [
+        {
+          "path": "optimization_evidence/baseline_runs/seed_3000/model/citeseer/metrics.json",
+          "reason": "指标通常可并入同目录的 result.json。"
+        },
+        {
+          "path": "optimization_evidence/baseline_runs/seed_3000/model/cora/metrics.json",
+          "reason": "指标通常可并入同目录的 result.json。"
+        },
+        {
+          "path": "optimization_evidence/baseline_runs/seed_3001/model/citeseer/metrics.json",
+          "reason": "指标通常可并入同目录的 result.json。"
+        },
+        {
+          "path": "optimization_evidence/baseline_runs/seed_3001/model/cora/metrics.json",
+          "reason": "指标通常可并入同目录的 result.json。"
+        },
+        {
+          "path": "optimization_evidence/baseline_runs/seed_3002/model/citeseer/metrics.json",
+          "reason": "指标通常可并入同目录的 result.json。"
+        },
+        {
+          "path": "optimization_evidence/baseline_runs/seed_3002/model/cora/metrics.json",
+          "reason": "指标通常可并入同目录的 result.json。"
+        },
+        {
+          "path": "optimization_evidence/reference_runs/seed_3000/model/citeseer/metrics.json",
+          "reason": "指标通常可并入同目录的 result.json。"
+        },
+        {
+          "path": "optimization_evidence/reference_runs/seed_3000/model/cora/metrics.json",
+          "reason": "指标通常可并入同目录的 result.json。"
+        },
+        {
+          "path": "optimization_evidence/reference_runs/seed_3001/model/citeseer/metrics.json",
+          "reason": "指标通常可并入同目录的 result.json。"
+        },
+        {
+          "path": "optimization_evidence/reference_runs/seed_3001/model/cora/metrics.json",
+          "reason": "指标通常可并入同目录的 result.json。"
+        },
+        {
+          "path": "optimization_evidence/reference_runs/seed_3002/model/citeseer/metrics.json",
+          "reason": "指标通常可并入同目录的 result.json。"
+        },
+        {
+          "path": "optimization_evidence/reference_runs/seed_3002/model/cora/metrics.json",
+          "reason": "指标通常可并入同目录的 result.json。"
+        }
+      ],
+      "misplaced": []
+    },
+    "expert_evidence": {
+      "present": true,
+      "trajectories": {
+        "trajectory_codex.json": {
+          "path": "expert_evidence/trajectory_codex.json",
+          "present": true,
+          "valid_json": true,
+          "round_count": 193,
+          "format_valid": true,
+          "status": "valid"
+        },
+        "trajectory_seed.json": {
+          "path": "expert_evidence/trajectory_seed.json",
+          "present": true,
+          "valid_json": true,
+          "round_count": 53,
+          "format_valid": true,
+          "status": "valid"
+        }
+      },
+      "completeness_note": "两条模型轨迹是否齐全按 overview 中的 source_path 核验；允许等价文件名，不以目录扫描代替完整性审查。"
+    },
+    "optimization_evidence": {
+      "present": true,
+      "path": "optimization_evidence",
+      "task_kind": "training",
+      "baseline_runs": {
+        "path": "optimization_evidence/baseline_runs",
+        "seeds": [
+          "3000",
+          "3001",
+          "3002"
+        ],
+        "runs": {
+          "3000": {
+            "directory": "optimization_evidence/baseline_runs/seed_3000",
+            "seed_label": "3000",
+            "result": {
+              "valid_json": true,
+              "status": "COMPLETE",
+              "role": "baseline",
+              "seed": 3000,
+              "task_type": "training",
+              "primary_metric": null
+            },
+            "run_log": {
+              "present": true,
+              "nonempty": true
+            },
+            "model": {
+              "present": true,
+              "files": [
+                "optimization_evidence/baseline_runs/seed_3000/model/artifact.json",
+                "optimization_evidence/baseline_runs/seed_3000/model/citeseer/metrics.json",
+                "optimization_evidence/baseline_runs/seed_3000/model/citeseer/model.pt",
+                "optimization_evidence/baseline_runs/seed_3000/model/citeseer/test_pred.npy",
+                "optimization_evidence/baseline_runs/seed_3000/model/citeseer/training.jsonl",
+                "optimization_evidence/baseline_runs/seed_3000/model/citeseer/training_summary.json",
+                "optimization_evidence/baseline_runs/seed_3000/model/citeseer/val_pred.npy",
+                "optimization_evidence/baseline_runs/seed_3000/model/cora/metrics.json",
+                "optimization_evidence/baseline_runs/seed_3000/model/cora/model.pt",
+                "optimization_evidence/baseline_runs/seed_3000/model/cora/test_pred.npy",
+                "optimization_evidence/baseline_runs/seed_3000/model/cora/training.jsonl",
+                "optimization_evidence/baseline_runs/seed_3000/model/cora/training_summary.json",
+                "optimization_evidence/baseline_runs/seed_3000/model/cora/val_pred.npy",
+                "optimization_evidence/baseline_runs/seed_3000/model/reload.log"
+              ],
+              "payloads": [
+                "optimization_evidence/baseline_runs/seed_3000/model/citeseer/model.pt",
+                "optimization_evidence/baseline_runs/seed_3000/model/citeseer/test_pred.npy",
+                "optimization_evidence/baseline_runs/seed_3000/model/citeseer/training.jsonl",
+                "optimization_evidence/baseline_runs/seed_3000/model/citeseer/val_pred.npy",
+                "optimization_evidence/baseline_runs/seed_3000/model/cora/model.pt",
+                "optimization_evidence/baseline_runs/seed_3000/model/cora/test_pred.npy",
+                "optimization_evidence/baseline_runs/seed_3000/model/cora/training.jsonl",
+                "optimization_evidence/baseline_runs/seed_3000/model/cora/val_pred.npy"
+              ],
+              "artifact": true,
+              "reload": true
+            }
+          },
+          "3001": {
+            "directory": "optimization_evidence/baseline_runs/seed_3001",
+            "seed_label": "3001",
+            "result": {
+              "valid_json": true,
+              "status": "COMPLETE",
+              "role": "baseline",
+              "seed": 3001,
+              "task_type": "training",
+              "primary_metric": null
+            },
+            "run_log": {
+              "present": true,
+              "nonempty": true
+            },
+            "model": {
+              "present": true,
+              "files": [
+                "optimization_evidence/baseline_runs/seed_3001/model/artifact.json",
+                "optimization_evidence/baseline_runs/seed_3001/model/citeseer/metrics.json",
+                "optimization_evidence/baseline_runs/seed_3001/model/citeseer/model.pt",
+                "optimization_evidence/baseline_runs/seed_3001/model/citeseer/test_pred.npy",
+                "optimization_evidence/baseline_runs/seed_3001/model/citeseer/training.jsonl",
+                "optimization_evidence/baseline_runs/seed_3001/model/citeseer/training_summary.json",
+                "optimization_evidence/baseline_runs/seed_3001/model/citeseer/val_pred.npy",
+                "optimization_evidence/baseline_runs/seed_3001/model/cora/metrics.json",
+                "optimization_evidence/baseline_runs/seed_3001/model/cora/model.pt",
+                "optimization_evidence/baseline_runs/seed_3001/model/cora/test_pred.npy",
+                "optimization_evidence/baseline_runs/seed_3001/model/cora/training.jsonl",
+                "optimization_evidence/baseline_runs/seed_3001/model/cora/training_summary.json",
+                "optimization_evidence/baseline_runs/seed_3001/model/cora/val_pred.npy",
+                "optimization_evidence/baseline_runs/seed_3001/model/reload.log"
+              ],
+              "payloads": [
+                "optimization_evidence/baseline_runs/seed_3001/model/citeseer/model.pt",
+                "optimization_evidence/baseline_runs/seed_3001/model/citeseer/test_pred.npy",
+                "optimization_evidence/baseline_runs/seed_3001/model/citeseer/training.jsonl",
+                "optimization_evidence/baseline_runs/seed_3001/model/citeseer/val_pred.npy",
+                "optimization_evidence/baseline_runs/seed_3001/model/cora/model.pt",
+                "optimization_evidence/baseline_runs/seed_3001/model/cora/test_pred.npy",
+                "optimization_evidence/baseline_runs/seed_3001/model/cora/training.jsonl",
+                "optimization_evidence/baseline_runs/seed_3001/model/cora/val_pred.npy"
+              ],
+              "artifact": true,
+              "reload": true
+            }
+          },
+          "3002": {
+            "directory": "optimization_evidence/baseline_runs/seed_3002",
+            "seed_label": "3002",
+            "result": {
+              "valid_json": true,
+              "status": "COMPLETE",
+              "role": "baseline",
+              "seed": 3002,
+              "task_type": "training",
+              "primary_metric": null
+            },
+            "run_log": {
+              "present": true,
+              "nonempty": true
+            },
+            "model": {
+              "present": true,
+              "files": [
+                "optimization_evidence/baseline_runs/seed_3002/model/artifact.json",
+                "optimization_evidence/baseline_runs/seed_3002/model/citeseer/metrics.json",
+                "optimization_evidence/baseline_runs/seed_3002/model/citeseer/model.pt",
+                "optimization_evidence/baseline_runs/seed_3002/model/citeseer/test_pred.npy",
+                "optimization_evidence/baseline_runs/seed_3002/model/citeseer/training.jsonl",
+                "optimization_evidence/baseline_runs/seed_3002/model/citeseer/training_summary.json",
+                "optimization_evidence/baseline_runs/seed_3002/model/citeseer/val_pred.npy",
+                "optimization_evidence/baseline_runs/seed_3002/model/cora/metrics.json",
+                "optimization_evidence/baseline_runs/seed_3002/model/cora/model.pt",
+                "optimization_evidence/baseline_runs/seed_3002/model/cora/test_pred.npy",
+                "optimization_evidence/baseline_runs/seed_3002/model/cora/training.jsonl",
+                "optimization_evidence/baseline_runs/seed_3002/model/cora/training_summary.json",
+                "optimization_evidence/baseline_runs/seed_3002/model/cora/val_pred.npy",
+                "optimization_evidence/baseline_runs/seed_3002/model/reload.log"
+              ],
+              "payloads": [
+                "optimization_evidence/baseline_runs/seed_3002/model/citeseer/model.pt",
+                "optimization_evidence/baseline_runs/seed_3002/model/citeseer/test_pred.npy",
+                "optimization_evidence/baseline_runs/seed_3002/model/citeseer/training.jsonl",
+                "optimization_evidence/baseline_runs/seed_3002/model/citeseer/val_pred.npy",
+                "optimization_evidence/baseline_runs/seed_3002/model/cora/model.pt",
+                "optimization_evidence/baseline_runs/seed_3002/model/cora/test_pred.npy",
+                "optimization_evidence/baseline_runs/seed_3002/model/cora/training.jsonl",
+                "optimization_evidence/baseline_runs/seed_3002/model/cora/val_pred.npy"
+              ],
+              "artifact": true,
+              "reload": true
+            }
+          }
+        }
+      },
+      "reference_runs": {
+        "path": "optimization_evidence/reference_runs",
+        "seeds": [
+          "3000",
+          "3001",
+          "3002"
+        ],
+        "runs": {
+          "3000": {
+            "directory": "optimization_evidence/reference_runs/seed_3000",
+            "seed_label": "3000",
+            "result": {
+              "valid_json": true,
+              "status": "COMPLETE",
+              "role": "reference",
+              "seed": 3000,
+              "task_type": "training",
+              "primary_metric": null
+            },
+            "run_log": {
+              "present": true,
+              "nonempty": true
+            },
+            "model": {
+              "present": true,
+              "files": [
+                "optimization_evidence/reference_runs/seed_3000/model/artifact.json",
+                "optimization_evidence/reference_runs/seed_3000/model/citeseer/metrics.json",
+                "optimization_evidence/reference_runs/seed_3000/model/citeseer/model.pt",
+                "optimization_evidence/reference_runs/seed_3000/model/citeseer/test_pred.npy",
+                "optimization_evidence/reference_runs/seed_3000/model/citeseer/training.jsonl",
+                "optimization_evidence/reference_runs/seed_3000/model/citeseer/training_summary.json",
+                "optimization_evidence/reference_runs/seed_3000/model/citeseer/val_pred.npy",
+                "optimization_evidence/reference_runs/seed_3000/model/cora/metrics.json",
+                "optimization_evidence/reference_runs/seed_3000/model/cora/model.pt",
+                "optimization_evidence/reference_runs/seed_3000/model/cora/test_pred.npy",
+                "optimization_evidence/reference_runs/seed_3000/model/cora/training.jsonl",
+                "optimization_evidence/reference_runs/seed_3000/model/cora/training_summary.json",
+                "optimization_evidence/reference_runs/seed_3000/model/cora/val_pred.npy",
+                "optimization_evidence/reference_runs/seed_3000/model/reload.log"
+              ],
+              "payloads": [
+                "optimization_evidence/reference_runs/seed_3000/model/citeseer/model.pt",
+                "optimization_evidence/reference_runs/seed_3000/model/citeseer/test_pred.npy",
+                "optimization_evidence/reference_runs/seed_3000/model/citeseer/training.jsonl",
+                "optimization_evidence/reference_runs/seed_3000/model/citeseer/val_pred.npy",
+                "optimization_evidence/reference_runs/seed_3000/model/cora/model.pt",
+                "optimization_evidence/reference_runs/seed_3000/model/cora/test_pred.npy",
+                "optimization_evidence/reference_runs/seed_3000/model/cora/training.jsonl",
+                "optimization_evidence/reference_runs/seed_3000/model/cora/val_pred.npy"
+              ],
+              "artifact": true,
+              "reload": true
+            }
+          },
+          "3001": {
+            "directory": "optimization_evidence/reference_runs/seed_3001",
+            "seed_label": "3001",
+            "result": {
+              "valid_json": true,
+              "status": "COMPLETE",
+              "role": "reference",
+              "seed": 3001,
+              "task_type": "training",
+              "primary_metric": null
+            },
+            "run_log": {
+              "present": true,
+              "nonempty": true
+            },
+            "model": {
+              "present": true,
+              "files": [
+                "optimization_evidence/reference_runs/seed_3001/model/artifact.json",
+                "optimization_evidence/reference_runs/seed_3001/model/citeseer/metrics.json",
+                "optimization_evidence/reference_runs/seed_3001/model/citeseer/model.pt",
+                "optimization_evidence/reference_runs/seed_3001/model/citeseer/test_pred.npy",
+                "optimization_evidence/reference_runs/seed_3001/model/citeseer/training.jsonl",
+                "optimization_evidence/reference_runs/seed_3001/model/citeseer/training_summary.json",
+                "optimization_evidence/reference_runs/seed_3001/model/citeseer/val_pred.npy",
+                "optimization_evidence/reference_runs/seed_3001/model/cora/metrics.json",
+                "optimization_evidence/reference_runs/seed_3001/model/cora/model.pt",
+                "optimization_evidence/reference_runs/seed_3001/model/cora/test_pred.npy",
+                "optimization_evidence/reference_runs/seed_3001/model/cora/training.jsonl",
+                "optimization_evidence/reference_runs/seed_3001/model/cora/training_summary.json",
+                "optimization_evidence/reference_runs/seed_3001/model/cora/val_pred.npy",
+                "optimization_evidence/reference_runs/seed_3001/model/reload.log"
+              ],
+              "payloads": [
+                "optimization_evidence/reference_runs/seed_3001/model/citeseer/model.pt",
+                "optimization_evidence/reference_runs/seed_3001/model/citeseer/test_pred.npy",
+                "optimization_evidence/reference_runs/seed_3001/model/citeseer/training.jsonl",
+                "optimization_evidence/reference_runs/seed_3001/model/citeseer/val_pred.npy",
+                "optimization_evidence/reference_runs/seed_3001/model/cora/model.pt",
+                "optimization_evidence/reference_runs/seed_3001/model/cora/test_pred.npy",
+                "optimization_evidence/reference_runs/seed_3001/model/cora/training.jsonl",
+                "optimization_evidence/reference_runs/seed_3001/model/cora/val_pred.npy"
+              ],
+              "artifact": true,
+              "reload": true
+            }
+          },
+          "3002": {
+            "directory": "optimization_evidence/reference_runs/seed_3002",
+            "seed_label": "3002",
+            "result": {
+              "valid_json": true,
+              "status": "COMPLETE",
+              "role": "reference",
+              "seed": 3002,
+              "task_type": "training",
+              "primary_metric": null
+            },
+            "run_log": {
+              "present": true,
+              "nonempty": true
+            },
+            "model": {
+              "present": true,
+              "files": [
+                "optimization_evidence/reference_runs/seed_3002/model/artifact.json",
+                "optimization_evidence/reference_runs/seed_3002/model/citeseer/metrics.json",
+                "optimization_evidence/reference_runs/seed_3002/model/citeseer/model.pt",
+                "optimization_evidence/reference_runs/seed_3002/model/citeseer/test_pred.npy",
+                "optimization_evidence/reference_runs/seed_3002/model/citeseer/training.jsonl",
+                "optimization_evidence/reference_runs/seed_3002/model/citeseer/training_summary.json",
+                "optimization_evidence/reference_runs/seed_3002/model/citeseer/val_pred.npy",
+                "optimization_evidence/reference_runs/seed_3002/model/cora/metrics.json",
+                "optimization_evidence/reference_runs/seed_3002/model/cora/model.pt",
+                "optimization_evidence/reference_runs/seed_3002/model/cora/test_pred.npy",
+                "optimization_evidence/reference_runs/seed_3002/model/cora/training.jsonl",
+                "optimization_evidence/reference_runs/seed_3002/model/cora/training_summary.json",
+                "optimization_evidence/reference_runs/seed_3002/model/cora/val_pred.npy",
+                "optimization_evidence/reference_runs/seed_3002/model/reload.log"
+              ],
+              "payloads": [
+                "optimization_evidence/reference_runs/seed_3002/model/citeseer/model.pt",
+                "optimization_evidence/reference_runs/seed_3002/model/citeseer/test_pred.npy",
+                "optimization_evidence/reference_runs/seed_3002/model/citeseer/training.jsonl",
+                "optimization_evidence/reference_runs/seed_3002/model/citeseer/val_pred.npy",
+                "optimization_evidence/reference_runs/seed_3002/model/cora/model.pt",
+                "optimization_evidence/reference_runs/seed_3002/model/cora/test_pred.npy",
+                "optimization_evidence/reference_runs/seed_3002/model/cora/training.jsonl",
+                "optimization_evidence/reference_runs/seed_3002/model/cora/val_pred.npy"
+              ],
+              "artifact": true,
+              "reload": true
+            }
+          }
+        }
+      },
+      "seed_pairing": {
+        "paired": true,
+        "baseline_only": [],
+        "reference_only": [],
+        "paired_seeds": [
+          "3000",
+          "3001",
+          "3002"
+        ]
+      },
+      "comparison_summary": {
+        "path": "optimization_evidence/comparison_summary.json",
+        "present": true,
+        "valid_json": true,
+        "status": "COMPLETE_DECLARED_ENVIRONMENT",
+        "metric": {
+          "name": "macro_average_test_accuracy_percent",
+          "direction": "maximize"
+        },
+        "seeds": [
+          "3000",
+          "3001",
+          "3002"
+        ],
+        "statistics": {
+          "paired_run_count": 6,
+          "baseline_mean": 61.8833,
+          "baseline_sample_std": 1.6003,
+          "reference_mean": 70.5333,
+          "reference_sample_std": 0.7654,
+          "mean_paired_improvement": 8.65,
+          "relative_improvement": 0.1398,
+          "baseline_sigma_multiple": 5.4054
+        },
+        "normalized_score": {
+          "baseline": 0.0,
+          "reference": 0.6528,
+          "formula": "(x - B) / (U - B)"
+        },
+        "significance_rule": {
+          "required_baseline_sigma_multiple": 3.0,
+          "passed": true
+        }
+      }
+    },
+    "reviewed_trajectories": [
+      {
+        "path": "expert_evidence/trajectory_codex.json",
+        "present": true,
+        "valid_json": true,
+        "round_count": 193,
+        "format_valid": true,
+        "status": "valid",
+        "alignment_issues": []
+      },
+      {
+        "path": "expert_evidence/trajectory_seed.json",
+        "present": true,
+        "valid_json": true,
+        "round_count": 53,
+        "format_valid": true,
+        "status": "valid",
+        "alignment_issues": []
+      }
+    ],
+    "review": {
+      "status": "aligned_with_extras",
+      "summary": "三目录职责明确；正式seed聚合目录下含两图模型/曲线/重载，为等价布局；旧开发/污染记录为留档不计分，不能因多交扣错。原始time为历史记录，未回填新字段。",
+      "additional_suggestions": [
+        {
+          "path": "optimization_evidence/historical_development_attempts",
+          "classification": "extra_allowed",
+          "recommendation": "保留失败开发记录，继续与正式结果分开标识。"
+        },
+        {
+          "path": "optimization_evidence/historical_v7_invalid_reference",
+          "classification": "extra_allowed",
+          "recommendation": "保留验证标签泄漏旧Reference为INVALID，勿纳入正式改善。"
+        },
+        {
+          "path": "expert_evidence/repair",
+          "classification": "merge_candidate",
+          "recommendation": "可为多轮迁移说明增加当前事实索引，历史证据保持原样。"
+        }
+      ]
+    }
+  },
+  "content_gates": {
+    "schema_version": 1,
+    "checks": [
+      {
+        "id": "G01",
+        "status": "pass",
+        "summary": "方法接口可实现损失/可靠性估计/无标签读出及阶段计划；DREAM有真实方法语义变化，非纯常量搜索。",
+        "evidence": [
+          "workspace/harbor_task/instruction.md",
+          "workspace/harbor_task/tests/contract_guard.py",
+          "workspace/harbor_task/environment/starter/stage_runtime.py",
+          "workspace/reference/predictor/DREAM_Predictor.py"
+        ],
+        "reason_code": "METHOD_LEVEL_INTERFACE",
+        "remediation": "",
+        "acceptance_evidence": "",
+        "title": "方法级优化空间"
+      },
+      {
+        "id": "G02",
+        "status": "pass",
+        "summary": "Baseline在已提供材料范围内合理；实际200更新并按val选点，预算/seed/数据公平；五维详见底稿及baseline-review.md。",
+        "evidence": [
+          "workspace/harbor_task/instruction.md",
+          "optimization_evidence/训练证据说明.md",
+          "expert_evidence/repair/protocol_decisions.json",
+          "optimization_evidence/baseline_runs/seed_3000/result.json",
+          "optimization_evidence/baseline_runs/seed_3001/result.json",
+          "optimization_evidence/baseline_runs/seed_3002/result.json",
+          "optimization_evidence/reference_runs/seed_3000/result.json",
+          "optimization_evidence/reference_runs/seed_3001/result.json",
+          "optimization_evidence/reference_runs/seed_3002/result.json"
+        ],
+        "reason_code": "HEALTHY_NAIVE_BASELINE",
+        "dimensions": {
+          "training_sufficiency": {
+            "summary": "六个Baseline图级日志均实际200epoch/200更新，非故障截停；各图选点Cora8/7/6、CiteSeer39/4/5，后期train loss约0.01–0.024而val下滑，支持过拟合场景下早期最佳选点，未发现无依据少训练。R全500更新。",
+            "evidence": [
+              "workspace/harbor_task/environment/starter/predictor/Base_Predictor.py",
+              "optimization_evidence/训练证据说明.md",
+              "optimization_evidence/baseline_runs/seed_3000/result.json",
+              "optimization_evidence/baseline_runs/seed_3001/result.json",
+              "optimization_evidence/baseline_runs/seed_3002/result.json",
+              "optimization_evidence/reference_runs/seed_3000/result.json",
+              "optimization_evidence/reference_runs/seed_3001/result.json",
+              "optimization_evidence/reference_runs/seed_3002/result.json"
+            ]
+          },
+          "method_representativeness": {
+            "summary": "任务明确以可运行的plain GCN+CE为朴素起点；其固定骨架与噪声学习问题匹配。未以年代或R提升大推断过弱，未引入未经核验的外部SOTA标准。",
+            "evidence": [
+              "workspace/harbor_task/instruction.md",
+              "workspace/harbor_task/environment/starter/predictor/GCN_Predictor.py",
+              "expert_evidence/专家作业说明文档.md"
+            ]
+          },
+          "budget_comparability": {
+            "summary": "200/500 epoch差异已披露；题面将日程列为研究变量，共同7200秒两图预算。B两图55.77–58.86秒、R425.85–493.55秒，均CPU，未把不同epoch数本身判不公平；收益是整体方法/日程组合，不是等计算量单组件消融。",
+            "evidence": [
+              "workspace/harbor_task/instruction.md",
+              "expert_evidence/repair/protocol_decisions.json",
+              "optimization_evidence/baseline_runs/seed_3000/result.json",
+              "optimization_evidence/baseline_runs/seed_3001/result.json",
+              "optimization_evidence/baseline_runs/seed_3002/result.json",
+              "optimization_evidence/reference_runs/seed_3000/result.json",
+              "optimization_evidence/reference_runs/seed_3001/result.json",
+              "optimization_evidence/reference_runs/seed_3002/result.json"
+            ]
+          },
+          "implementation_correctness": {
+            "summary": "监督仅索引train-only noisy_label，zero_grad→backward→Adam.step生效；val仅选点、label-free reload严格重载；12个正式checkpoint哈希匹配。未加载权重，不声称独立复现。",
+            "evidence": [
+              "workspace/harbor_task/environment/starter/data.py",
+              "workspace/harbor_task/environment/starter/predictor/Base_Predictor.py",
+              "workspace/reference/predictor/DREAM_Predictor.py",
+              "workspace/reference/reload.py",
+              "optimization_evidence/formal_test_scoring_declared.json"
+            ]
+          },
+          "selection_integrity": {
+            "summary": "seed3000/3001/3002完整配对，同一B方法/同一R方法及固定配置；setup_seed实际进入随机过程，12个权重哈希互异；三次未达标开发尝试与v7污染记录保留，未把旧污染成绩计入。",
+            "evidence": [
+              "workspace/harbor_task/environment/starter/utils/tools.py",
+              "optimization_evidence/comparison_summary.json",
+              "optimization_evidence/formal_test_scoring_declared.json",
+              "optimization_evidence/historical_v7_invalid_reference/README.md"
+            ]
+          }
+        },
+        "remediation": "",
+        "acceptance_evidence": "",
+        "title": "Baseline 合理性"
+      },
+      {
+        "id": "G03",
+        "status": "pass",
+        "summary": "完整三seed正式改善Δ8.65=5.40537σ_B；生效锚点归一化0.652832、天花板口径0.226935均达标；oracle剩余4.6略低于3σ的4.80078，作为空间风险。",
+        "evidence": [
+          "optimization_evidence/formal_test_scoring_declared.json",
+          "optimization_evidence/comparison_summary.json",
+          "workspace/harbor_task/tests/calibration.json",
+          "optimization_evidence/u_anchor_oracle/measurement.json",
+          "expert_evidence/repair/protocol_decisions.json"
+        ],
+        "reason_code": "SUFFICIENT_GAIN",
+        "assessment": {
+          "direction": "maximize",
+          "formal_seeds": [
+            3000,
+            3001,
+            3002
+          ],
+          "declared_run_count": 3,
+          "evaluation_mode": "stochastic",
+          "same_protocol": true,
+          "quality_valid": true,
+          "upper_bound": 75.1333,
+          "threshold_basis": "原research-quality.md：正改善、Δ≥3σ_B、归一化[0.15,0.8]；题面§7额外采用100天花板分母，亦达标。U在出分后替换，非预注册；两口径结论一致，原始oracle逐图记录可追溯。",
+          "absolute_min_improvement": null,
+          "absolute_threshold_source": ""
+        },
+        "remediation": "",
+        "acceptance_evidence": "",
+        "title": "Reference 提升充分性",
+        "computed": {
+          "baseline_mean": 61.88333333333333,
+          "reference_mean": 70.53333333333335,
+          "baseline_sample_std": 1.6002603954773547,
+          "reference_sample_std": 0.765397500213671,
+          "improvement": 8.650000000000013,
+          "run_count": 3,
+          "sigma_multiplier": 5.405370291264212,
+          "three_sigma_baseline": 4.800781186432064,
+          "normalized_score": 0.652831831023475
+        },
+        "warnings": [],
+        "automatic_status": "pass"
+      }
+    ]
+  },
+  "runtime_review": {
+    "exception_reason": "本题涉及训练，不适用7小时例外；历史严格时长证明缺口由豁免层处理。",
+    "exception_eligibility": {
+      "non_training": false,
+      "short_iterations": null,
+      "basis": "涉及GCN训练与多阶段重训，不使用7h例外。",
+      "evidence": [
+        "workspace/harbor_task/instruction.md",
+        "workspace/harbor_task/environment/starter/train.py"
+      ]
+    },
+    "trajectories": [
+      {
+        "name": "codex",
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "effective_seconds": null,
+        "evidence": [
+          "expert_evidence/repair/historical_timing_mapping/timing_map.json",
+          "expert_evidence/timing_codex.tsv",
+          "expert_evidence/run_summary.json"
+        ],
+        "time_accounting": "TSV称39613/41572秒，但timing_map严格fully_bound为null且closed turn仅provisional；不以跨度替有效研究，不重复计共享窗口或计未出分失败。",
+        "effective_method_cycles": 193,
+        "next_direction": "可研究更稳健的样本可靠性与无标签图一致性，而非继续微调局部读出阈值。",
+        "best_method_revalidated": true,
+        "best_method_evidence": [
+          "expert_evidence/qa16_best_method_revalidation.json",
+          "expert_evidence/best_method_selection.json"
+        ]
+      },
+      {
+        "name": "seed",
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "effective_seconds": null,
+        "evidence": [
+          "expert_evidence/repair/historical_timing_mapping/timing_map.json",
+          "expert_evidence/timing_seed.tsv",
+          "expert_evidence/run_summary.json"
+        ],
+        "time_accounting": "TSV称39613/41572秒，但timing_map严格fully_bound为null且closed turn仅provisional；不以跨度替有效研究，不重复计共享窗口或计未出分失败。",
+        "effective_method_cycles": 52,
+        "next_direction": "可研究更稳健的样本可靠性与无标签图一致性，而非继续微调局部读出阈值。",
+        "best_method_revalidated": true,
+        "best_method_evidence": [
+          "expert_evidence/qa16_best_method_revalidation.json",
+          "expert_evidence/best_method_selection.json"
+        ]
+      }
+    ],
+    "status": "manual",
+    "summary": "codex缺少有效时长或排除排队/安装/故障的核算证据；seed缺少有效时长或排除排队/安装/故障的核算证据",
+    "evidence": [
+      "expert_evidence/repair/historical_timing_mapping/timing_map.json",
+      "expert_evidence/timing_codex.tsv",
+      "expert_evidence/run_summary.json",
+      "expert_evidence/timing_seed.tsv"
+    ],
+    "remediation": "为codex、seed补一张时长表：研究起止、排队/安装/API失联/故障区间、仍正常运行的训练重叠及有效秒数。可引用已交轨迹和日志片段；不强制提交完整timer或sessions。",
+    "acceptance_evidence": "可复算的两轨起止/扣除表，与轨迹时间相符；默认每轨≥36000有效秒。最终复验、收集和明确故障不计，健康训练并发只计一次。"
+  },
+  "checks": [
+    {
+      "id": "QA01",
+      "title": "八章节与题面信息泄露",
+      "status": "pass",
+      "severity": "info",
+      "summary": "题面八节有实质目标/环境/评分/范围/边界/提交/流程/完成条件；未给参考论文、仓库或方法答案。",
+      "evidence": [
+        "workspace/harbor_task/instruction.md"
+      ],
+      "remediation": "",
+      "acceptance_evidence": ""
+    },
+    {
+      "id": "QA02",
+      "title": "评分公式与 0/1 锚点",
+      "status": "pass",
+      "severity": "info",
+      "summary": "verifier-owned calibration B61.8833 U75.1333；normalize_score为未裁剪线性(x-B)/(U-B)，B→0,U→1。",
+      "evidence": [
+        "workspace/harbor_task/tests/contract_guard.py",
+        "workspace/harbor_task/tests/calibration.json",
+        "workspace/harbor_task/tests/grader.py"
+      ],
+      "remediation": "",
+      "acceptance_evidence": ""
+    },
+    {
+      "id": "QA03",
+      "title": "参考解分数与复现材料",
+      "status": "pass",
+      "severity": "info",
+      "summary": "Reference源码/入口、三seed×两图非空原始日志、逐epoch曲线、模型及独立reload齐全；归一化0.652832。",
+      "evidence": [
+        "workspace/reference/train.py",
+        "workspace/reference/reload.py",
+        "optimization_evidence/formal_test_scoring_declared.json",
+        "optimization_evidence/reference_runs/seed_3000/result.json",
+        "optimization_evidence/reference_runs/seed_3001/result.json",
+        "optimization_evidence/reference_runs/seed_3002/result.json"
+      ],
+      "remediation": "",
+      "acceptance_evidence": ""
+    },
+    {
+      "id": "QA04",
+      "title": "波动指标的 3σ 可分辨性",
+      "status": "pass",
+      "severity": "info",
+      "summary": "固定候选按3000/3001/3002独立重训，setup_seed进入Python/NumPy/Torch；σ_B按n-1复算，改善≥5σ。staged内成员seed不冒充正式重复。",
+      "evidence": [
+        "workspace/harbor_task/environment/starter/utils/tools.py",
+        "optimization_evidence/formal_test_scoring_declared.json",
+        "optimization_evidence/comparison_summary.json",
+        "workspace/harbor_task/instruction.md"
+      ],
+      "remediation": "",
+      "acceptance_evidence": ""
+    },
+    {
+      "id": "QA05",
+      "title": "约束执行实现",
+      "status": "fail",
+      "severity": "medium",
+      "summary": "源码守卫、模型加载门及run.sh每图3600秒训练timeout存在；但删禁网字段后没有联网查原始干净标签的执行防护，此具体迁移缺口按白名单处理。",
+      "evidence": [
+        "workspace/harbor_task/instruction.md",
+        "workspace/harbor_task/tests/contract_guard.py",
+        "workspace/harbor_task/tests/grader.py",
+        "workspace/harbor_task/environment/starter/run.sh",
+        "workspace/harbor_task/task.toml"
+      ],
+      "remediation": "保留真实历史状态；本轮不要求新证明或补跑，由豁免层逐原因处置。",
+      "acceptance_evidence": "依据现有材料与对应历史豁免政策复核，不把未运行写成成功。"
+    },
+    {
+      "id": "QA06",
+      "title": "Verifier 入口、分数与错误处理",
+      "status": "pass",
+      "severity": "info",
+      "summary": "bash /tests/test.sh用隔离Python进入可信grader；成功写有限主reward，两类错误保留分类，未处理异常也落reward。",
+      "evidence": [
+        "workspace/harbor_task/tests/test.sh",
+        "workspace/harbor_task/tests/grader.py"
+      ],
+      "remediation": "",
+      "acceptance_evidence": ""
+    },
+    {
+      "id": "QA07",
+      "title": "instruction 中的 Hidden 信息泄露",
+      "status": "pass",
+      "severity": "info",
+      "summary": "仅审instruction，未披露隐藏测试节点标签、答案或可恢复样本。",
+      "evidence": [
+        "workspace/harbor_task/instruction.md"
+      ],
+      "remediation": "",
+      "acceptance_evidence": ""
+    },
+    {
+      "id": "QA08",
+      "title": "instruction 中的参考解信息泄露",
+      "status": "pass",
+      "severity": "info",
+      "summary": "仅审instruction，已去除B/R具体epoch与耗时提示；未泄露Reference代码、配置或原始分数。",
+      "evidence": [
+        "workspace/harbor_task/instruction.md"
+      ],
+      "remediation": "",
+      "acceptance_evidence": ""
+    },
+    {
+      "id": "QA09",
+      "title": "结果清理与原子写入",
+      "status": "pass",
+      "severity": "info",
+      "summary": "main先clean_stale_rewards删除txt/json，再同目录.tmp经os.replace原子替换，优先json一致写同值。",
+      "evidence": [
+        "workspace/harbor_task/tests/grader.py"
+      ],
+      "remediation": "",
+      "acceptance_evidence": ""
+    },
+    {
+      "id": "QA10",
+      "title": "冻结面保护或恢复实现",
+      "status": "pass",
+      "severity": "info",
+      "summary": "Agent以非root身份，data/starter/public_eval只读；Verifier私有policy/calibration/labels独立预置，候选源码不导入，AST固定scaffold校验；不声称完整物理隔离认证。",
+      "evidence": [
+        "workspace/harbor_task/environment/Dockerfile",
+        "workspace/harbor_task/tests/Dockerfile",
+        "workspace/harbor_task/tests/contract_guard.py",
+        "workspace/harbor_task/tests/test.sh"
+      ],
+      "remediation": "",
+      "acceptance_evidence": ""
+    },
+    {
+      "id": "QA11",
+      "title": "instruction 八项内容",
+      "status": "pass",
+      "severity": "info",
+      "summary": "八部分输入输出/范围/资源/评分互相吻合；训练预算明确不含独立reload，Dev --out统一solution可写路径；run.sh旧注释含reload属陈旧注释，以实际调用与题面明确范围为准。",
+      "evidence": [
+        "workspace/harbor_task/instruction.md",
+        "workspace/harbor_task/task.toml",
+        "workspace/harbor_task/environment/starter/run.sh",
+        "workspace/harbor_task/environment/starter/README.md",
+        "workspace/harbor_task/environment/public_eval/evaluate.py"
+      ],
+      "remediation": "",
+      "acceptance_evidence": ""
+    },
+    {
+      "id": "QA12",
+      "title": "Git 清理",
+      "status": "pass",
+      "severity": "info",
+      "summary": "完整清点未发现.git目录。",
+      "evidence": [
+        "@inventory"
+      ],
+      "remediation": "",
+      "acceptance_evidence": ""
+    },
+    {
+      "id": "QA13",
+      "title": "Baseline 与参考解提升",
+      "status": "fail",
+      "severity": "medium",
+      "summary": "正式配对原值与改善有效；但当前专家说明§4 seed3000表格将70.25-60.05误写+8.10，应+10.20，与formal_test_scoring_declared一致性错误未豁免。",
+      "evidence": [
+        "expert_evidence/专家作业说明文档.md",
+        "optimization_evidence/formal_test_scoring_declared.json",
+        "optimization_evidence/comparison_summary.json"
+      ],
+      "remediation": "仅更正专家说明§4 seed3000的Δ为+10.20；保留正式原始记录和历史失败记录。",
+      "acceptance_evidence": "文档表格由两图宏平均复算，与formal_test_scoring_declared逐seed一致；无需重训或新跑Agent。"
+    },
+    {
+      "id": "QA14",
+      "title": "合法改进空间",
+      "status": "pass",
+      "severity": "info",
+      "summary": "合法方法空间包含图一致性目标、样本可靠性与读出组合；Reference未饱和，oracle headroom4.6略低3σ为风险而非硬失败，数学天花板余量29.4667。",
+      "evidence": [
+        "workspace/harbor_task/instruction.md",
+        "workspace/harbor_task/tests/contract_guard.py",
+        "workspace/reference/predictor/DREAM_Predictor.py",
+        "optimization_evidence/comparison_summary.json"
+      ],
+      "remediation": "",
+      "acceptance_evidence": ""
+    },
+    {
+      "id": "QA15",
+      "title": "评分资源需求估算",
+      "status": "pass",
+      "severity": "info",
+      "summary": "16CPU/0GPU，完整一轮保守估3600秒，包括训练、重载及评分；纯CPU不需要换H20/L20。当前源码重验runtime与历史Docker环境分别保留。",
+      "evidence": [
+        "workspace/harbor_task/task.toml",
+        "optimization_evidence/baseline_runs/seed_3000/result.json",
+        "optimization_evidence/baseline_runs/seed_3001/result.json",
+        "optimization_evidence/baseline_runs/seed_3002/result.json",
+        "optimization_evidence/reference_runs/seed_3000/result.json",
+        "optimization_evidence/reference_runs/seed_3001/result.json",
+        "optimization_evidence/reference_runs/seed_3002/result.json",
+        "expert_evidence/repair/current_source_revalidation/comparison_public.json",
+        "expert_evidence/repair/current_source_revalidation/runtime.json",
+        "expert_evidence/repair/harbor/native_nop_trial/VERSION_BINDING.md"
+      ],
+      "remediation": "",
+      "acceptance_evidence": ""
+    },
+    {
+      "id": "QA16",
+      "title": "轨迹实际迭代时长",
+      "status": "manual",
+      "severity": "medium",
+      "summary": "codex缺少有效时长或排除排队/安装/故障的核算证据；seed缺少有效时长或排除排队/安装/故障的核算证据",
+      "evidence": [
+        "expert_evidence/repair/historical_timing_mapping/timing_map.json",
+        "expert_evidence/timing_codex.tsv",
+        "expert_evidence/run_summary.json",
+        "expert_evidence/timing_seed.tsv"
+      ],
+      "remediation": "为codex、seed补一张时长表：研究起止、排队/安装/API失联/故障区间、仍正常运行的训练重叠及有效秒数。可引用已交轨迹和日志片段；不强制提交完整timer或sessions。",
+      "acceptance_evidence": "可复算的两轨起止/扣除表，与轨迹时间相符；默认每轨≥36000有效秒。最终复验、收集和明确故障不计，健康训练并发只计一次。"
+    },
+    {
+      "id": "QA17",
+      "title": "Harbor Harness 兼容性",
+      "status": "manual",
+      "severity": "medium",
+      "summary": "Harbor 子项未通过：H02 版本与配置；H03 环境与运行路径；H05 Job/Trial 调用配置；H06 NOP 自检记录；详细原因与证据保留在 report.json。",
+      "evidence": [
+        "workspace/harbor_task/task.toml",
+        "workspace/harbor_task/environment/Dockerfile",
+        "workspace/harbor_task/tests/Dockerfile",
+        "workspace/harbor_task/tests/grader.py",
+        "workspace/harbor_task/tests/private/cora_test.npz",
+        "workspace/harbor_task/tests/private/citeseer_test.npz",
+        "workspace/harbor_task/instruction.md",
+        "expert_evidence/repair/harbor/schema_validation.json",
+        "workspace/harbor_task/tests/test.sh",
+        "workspace/harbor_task/environment/starter/run.sh",
+        "expert_evidence/repair/harbor/native_nop_trial/native_trial/config.json",
+        "expert_evidence/repair/harbor/native_nop_trial/native_trial/result.json",
+        "expert_evidence/repair/harbor/native_nop_trial/VERSION_BINDING.md",
+        "expert_evidence/repair/harbor/native_nop_trial/native_trial/verifier/reward.json",
+        "expert_evidence/repair/harbor/native_nop_trial/native_trial/verifier/reward.txt",
+        "expert_evidence/repair/harbor/native_nop_trial/native_trial/trial.log",
+        "expert_evidence/repair/harbor/native_nop_trial/native_trial/verifier/test-stdout.txt"
+      ],
+      "remediation": "保留真实历史状态；本轮不要求新证明或补跑，由豁免层逐原因处置。",
+      "acceptance_evidence": "依据现有材料与对应历史豁免政策复核，不把未运行写成成功。"
+    },
+    {
+      "id": "QA18",
+      "title": "轨迹、日志与分析",
+      "status": "manual",
+      "severity": "medium",
+      "summary": "两条193/53轮均属本题、不同模型独立探索；已读全部轮次及映射。启动最高档/空输出/历史Prompt全量等证明不足；未见已确认两轨任务条件实质差异，不能声称已证实相同。",
+      "evidence": [
+        "expert_evidence/trajectory_codex.json",
+        "expert_evidence/trajectory_seed.json",
+        "expert_evidence/run_summary.json",
+        "expert_evidence/repair/historical_timing_mapping/timing_map.json",
+        "expert_evidence/best_method_selection.json",
+        "expert_evidence/qa16_best_method_revalidation.json",
+        "expert_evidence/run_summary.json#task_binding"
+      ],
+      "remediation": "保留真实历史状态；本轮不要求新证明或补跑，由豁免层逐原因处置。",
+      "acceptance_evidence": "依据现有材料与对应历史豁免政策复核，不把未运行写成成功。"
+    },
+    {
+      "id": "QA19",
+      "title": "seed 与有效提升阈值",
+      "status": "pass",
+      "severity": "info",
+      "summary": "题面§7公开冻结corruption seed及训练seed集合，说明Δ>0、≥3样本σ和[0.15,0.8]资格阈值，区分候选单份评分。",
+      "evidence": [
+        "workspace/harbor_task/instruction.md",
+        "workspace/harbor_task/environment/public_eval/protocol.json"
+      ],
+      "remediation": "",
+      "acceptance_evidence": ""
+    },
+    {
+      "id": "QA20",
+      "title": "修改范围、网络与工具策略",
+      "status": "pass",
+      "severity": "info",
+      "summary": "题面§4/5明确修改范围、禁止外部干净标签查表、网络现状与平台默认工具策略。",
+      "evidence": [
+        "workspace/harbor_task/instruction.md"
+      ],
+      "remediation": "",
+      "acceptance_evidence": ""
+    },
+    {
+      "id": "QA21",
+      "title": "三个 JSON 的填写内容",
+      "status": "manual",
+      "severity": "medium",
+      "summary": "trajectory/annotation/summary可解析，246轮八字段齐全、best对应；当前四项hash可重算，但当前指纹不能倒推绑定历史dream-v1运行，按迁移缺口处理。",
+      "evidence": [
+        "expert_evidence/trajectory_codex.json",
+        "expert_evidence/trajectory_seed.json",
+        "expert_evidence/run_summary.json",
+        "expert_evidence/expert_annotation.json",
+        "expert_evidence/best_method_selection.json"
+      ],
+      "remediation": "保留真实历史状态；本轮不要求新证明或补跑，由豁免层逐原因处置。",
+      "acceptance_evidence": "依据现有材料与对应历史豁免政策复核，不把未运行写成成功。"
+    }
+  ],
+  "extra_checks": [],
+  "runtime_candidates": [
+    {
+      "seconds": 39613.0,
+      "evidence": "expert_evidence/run_summary.json#.runs[0].run_duration_seconds",
+      "run_id": "auto2768-codex"
+    },
+    {
+      "seconds": 40885.0,
+      "evidence": "expert_evidence/run_summary.json#.runs[0]:start/end",
+      "run_id": "auto2768-codex"
+    },
+    {
+      "seconds": 41572.0,
+      "evidence": "expert_evidence/run_summary.json#.runs[1].run_duration_seconds",
+      "run_id": "auto2768-seed"
+    },
+    {
+      "seconds": 55814.0,
+      "evidence": "expert_evidence/run_summary.json#.runs[1]:start/end",
+      "run_id": "auto2768-seed"
+    },
+    {
+      "seconds": 39613.0,
+      "evidence": "expert_evidence/trajectory_codex.json#.run_duration_seconds",
+      "run_id": "auto2768-codex"
+    },
+    {
+      "seconds": 40885.0,
+      "evidence": "expert_evidence/trajectory_codex.json#:start/end",
+      "run_id": "auto2768-codex"
+    },
+    {
+      "seconds": 41572.0,
+      "evidence": "expert_evidence/trajectory_seed.json#.run_duration_seconds",
+      "run_id": "auto2768-seed"
+    },
+    {
+      "seconds": 55814.0,
+      "evidence": "expert_evidence/trajectory_seed.json#:start/end",
+      "run_id": "auto2768-seed"
+    }
+  ],
+  "runtime_parse_errors": [],
+  "harbor": {
+    "ruleset": "harbor-compatibility-2026-10-15-v0.3.10",
+    "sources": [
+      "https://bytedance.larkoffice.com/wiki/A7FUwJBALici6Gku3rWc4EsinLf",
+      "https://docs.harborframework.com/core-concepts/tasks/separate-verifier"
+    ],
+    "target_version": "harbor@4b94505a91c5ddcb70b5740ac95718ddee13e5a0 (0.24.0 local reference)",
+    "provider": "maso",
+    "observations": {
+      "task_candidates": [
+        "workspace/harbor_task"
+      ],
+      "task_root": "workspace/harbor_task",
+      "toml_parser": "tomllib",
+      "config_sections": [
+        "schema_version",
+        "artifacts",
+        "metadata",
+        "agent",
+        "environment",
+        "verifier"
+      ],
+      "schema_version": "1.4",
+      "verifier_environment_mode": "separate",
+      "parse_error": null,
+      "job_configs": [],
+      "trial_results": [
+        "expert_evidence/repair/current_source_revalidation/reference_seed_3000_citeseer/result.json",
+        "expert_evidence/repair/current_source_revalidation/reference_seed_3000_cora/result.json",
+        "expert_evidence/repair/harbor/native_nop_trial/native_trial/result.json",
+        "expert_evidence/repair/historical_docker_simulation_not_nop/result.json",
+        "optimization_evidence/baseline_runs/seed_3000/result.json",
+        "optimization_evidence/baseline_runs/seed_3001/result.json",
+        "optimization_evidence/baseline_runs/seed_3002/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_01/baseline_seed_3000_citeseer/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_01/baseline_seed_3000_cora/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_01/baseline_seed_3001_citeseer/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_01/baseline_seed_3001_cora/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_01/baseline_seed_3002_citeseer/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_01/baseline_seed_3002_cora/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_01/reference_seed_3000_citeseer/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_01/reference_seed_3000_cora/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_01/reference_seed_3001_citeseer/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_01/reference_seed_3001_cora/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_01/reference_seed_3002_citeseer/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_01/reference_seed_3002_cora/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_02/baseline_seed_3000_citeseer/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_02/baseline_seed_3000_cora/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_02/baseline_seed_3001_citeseer/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_02/baseline_seed_3001_cora/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_02/baseline_seed_3002_citeseer/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_02/baseline_seed_3002_cora/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_02/reference_seed_3000_citeseer/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_02/reference_seed_3000_cora/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_02/reference_seed_3001_citeseer/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_02/reference_seed_3001_cora/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_02/reference_seed_3002_citeseer/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_02/reference_seed_3002_cora/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_03_cpu/baseline_seed_3000_citeseer/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_03_cpu/baseline_seed_3000_cora/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_03_cpu/baseline_seed_3001_citeseer/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_03_cpu/baseline_seed_3001_cora/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_03_cpu/baseline_seed_3002_citeseer/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_03_cpu/baseline_seed_3002_cora/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_03_cpu/reference_seed_3000_citeseer/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_03_cpu/reference_seed_3000_cora/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_03_cpu/reference_seed_3001_citeseer/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_03_cpu/reference_seed_3001_cora/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_03_cpu/reference_seed_3002_citeseer/result.json",
+        "optimization_evidence/historical_development_attempts/paired_public_03_cpu/reference_seed_3002_cora/result.json",
+        "optimization_evidence/historical_v7_invalid_reference/baseline_runs/seed_3000_citeseer/result.json",
+        "optimization_evidence/historical_v7_invalid_reference/baseline_runs/seed_3000_cora/result.json",
+        "optimization_evidence/historical_v7_invalid_reference/baseline_runs/seed_3001_citeseer/result.json",
+        "optimization_evidence/historical_v7_invalid_reference/baseline_runs/seed_3001_cora/result.json",
+        "optimization_evidence/historical_v7_invalid_reference/baseline_runs/seed_3002_citeseer/result.json",
+        "optimization_evidence/historical_v7_invalid_reference/baseline_runs/seed_3002_cora/result.json",
+        "optimization_evidence/historical_v7_invalid_reference/reference_runs/seed_3000_citeseer/result.json",
+        "optimization_evidence/historical_v7_invalid_reference/reference_runs/seed_3000_cora/result.json",
+        "optimization_evidence/historical_v7_invalid_reference/reference_runs/seed_3001_citeseer/result.json",
+        "optimization_evidence/historical_v7_invalid_reference/reference_runs/seed_3001_cora/result.json",
+        "optimization_evidence/historical_v7_invalid_reference/reference_runs/seed_3002_citeseer/result.json",
+        "optimization_evidence/historical_v7_invalid_reference/reference_runs/seed_3002_cora/result.json",
+        "optimization_evidence/reference_runs/seed_3000/result.json",
+        "optimization_evidence/reference_runs/seed_3001/result.json",
+        "optimization_evidence/reference_runs/seed_3002/result.json",
+        "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3000_citeseer/result.json",
+        "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3000_cora/result.json",
+        "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3001_citeseer/result.json",
+        "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3001_cora/result.json",
+        "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3002_citeseer/result.json",
+        "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3002_cora/result.json"
+      ]
+    },
+    "path_contract": {
+      "profile": "harbor-environment-v1",
+      "profile_basis": "当前environment与tests各自为build context，专用Verifier构建预置/tests。",
+      "sources": [
+        "https://www.harborframework.com/docs/tasks"
+      ],
+      "task_root": "workspace/harbor_task",
+      "dockerfile": "workspace/harbor_task/environment/Dockerfile",
+      "build_context": "workspace/harbor_task/environment",
+      "verifier_dockerfile": "workspace/harbor_task/tests/Dockerfile",
+      "verifier_build_context": "workspace/harbor_task/tests",
+      "runtime_task_root": null,
+      "test_entry": "/tests/test.sh",
+      "image": "agent",
+      "copy_operations": [
+        {
+          "instruction": "COPY",
+          "line": 21,
+          "sources": [
+            "requirements.txt"
+          ],
+          "destination": "/tmp/requirements.txt",
+          "resolved_sources": [
+            "workspace/harbor_task/environment/requirements.txt"
+          ]
+        },
+        {
+          "instruction": "COPY",
+          "line": 25,
+          "sources": [
+            "public_assets/"
+          ],
+          "destination": "/workspace/data/",
+          "resolved_sources": [
+            "workspace/harbor_task/environment/public_assets"
+          ]
+        },
+        {
+          "instruction": "COPY",
+          "line": 28,
+          "sources": [
+            "starter/"
+          ],
+          "destination": "/workspace/starter/",
+          "resolved_sources": [
+            "workspace/harbor_task/environment/starter"
+          ]
+        },
+        {
+          "instruction": "COPY",
+          "line": 33,
+          "sources": [
+            "public_eval/"
+          ],
+          "destination": "/workspace/public_eval/",
+          "resolved_sources": [
+            "workspace/harbor_task/environment/public_eval"
+          ]
+        }
+      ],
+      "findings": [
+        {
+          "code": "paths_consistent",
+          "status": "pass",
+          "message": "静态路径与所选 profile 一致；未构建镜像、未验证适配器或运行成功。",
+          "evidence": [
+            "workspace/harbor_task/environment/Dockerfile"
+          ]
+        },
+        {
+          "code": "verifier_dynamic_runtime_command",
+          "status": "manual",
+          "message": "启动命令包含变量或内嵌 shell，需沿调用链核对路径。",
+          "evidence": [
+            "workspace/harbor_task/tests/Dockerfile:34"
+          ],
+          "image": "verifier"
+        },
+        {
+          "code": "verifier_runtime_declared",
+          "status": "pass",
+          "message": "依据基础镜像 python:3.12-slim 或显式 bash 安装声明推断评分 shell 可用；仅为静态检查，未验证构建、其他依赖或评分执行。",
+          "evidence": [
+            "workspace/harbor_task/tests/Dockerfile"
+          ],
+          "image": "verifier"
+        }
+      ],
+      "status": "manual",
+      "observed_workdir": "/workspace",
+      "mapped_files": [
+        "/tmp/requirements.txt",
+        "/workspace/data/citeseer.pt",
+        "/workspace/data/cora.pt",
+        "/workspace/data/manifest.json",
+        "/workspace/public_eval/evaluate.py",
+        "/workspace/public_eval/protocol.json",
+        "/workspace/starter/README.md",
+        "/workspace/starter/config/_dataset/citeseer.yaml",
+        "/workspace/starter/config/_dataset/cora.yaml",
+        "/workspace/starter/config/gcn/gcn_citeseer.yaml",
+        "/workspace/starter/config/gcn/gcn_cora.yaml",
+        "/workspace/starter/data.py",
+        "/workspace/starter/numeric_api.py",
+        "/workspace/starter/predictor/Base_Predictor.py",
+        "/workspace/starter/predictor/GCN_Predictor.py",
+        "/workspace/starter/predictor/__init__.py",
+        "/workspace/starter/predictor/module/GNNs.py",
+        "/workspace/starter/predictor/module/__init__.py",
+        "/workspace/starter/reload.py",
+        "/workspace/starter/run.sh",
+        "/workspace/starter/stage_runtime.py",
+        "/workspace/starter/train.py",
+        "/workspace/starter/utils/__init__.py",
+        "/workspace/starter/utils/dataloader.py",
+        "/workspace/starter/utils/datasplit.py",
+        "/workspace/starter/utils/functional.py",
+        "/workspace/starter/utils/labelnoise.py",
+        "/workspace/starter/utils/logger.py",
+        "/workspace/starter/utils/tools.py"
+      ],
+      "image_selection": {
+        "source": "tests_dockerfile",
+        "tests_delivery": "baked"
+      },
+      "verifier": {
+        "profile": "harbor-environment-v1",
+        "profile_basis": "Harbor Task Structure：独立 Verifier 使用 tests/ 构建镜像。",
+        "sources": [
+          "https://www.harborframework.com/docs/tasks"
+        ],
+        "task_root": "workspace/harbor_task",
+        "dockerfile": "workspace/harbor_task/tests/Dockerfile",
+        "build_context": "workspace/harbor_task/tests",
+        "verifier_dockerfile": null,
+        "verifier_build_context": null,
+        "runtime_task_root": null,
+        "test_entry": "/tests/test.sh",
+        "image": "verifier",
+        "copy_operations": [
+          {
+            "instruction": "COPY",
+            "line": 16,
+            "sources": [
+              "requirements.txt"
+            ],
+            "destination": "/tmp/requirements.txt",
+            "resolved_sources": [
+              "workspace/harbor_task/tests/requirements.txt"
+            ]
+          },
+          {
+            "instruction": "COPY",
+            "line": 20,
+            "sources": [
+              "grader.py"
+            ],
+            "destination": "/tests/grader.py",
+            "resolved_sources": [
+              "workspace/harbor_task/tests/grader.py"
+            ]
+          },
+          {
+            "instruction": "COPY",
+            "line": 21,
+            "sources": [
+              "val_leak_guard.py"
+            ],
+            "destination": "/tests/val_leak_guard.py",
+            "resolved_sources": [
+              "workspace/harbor_task/tests/val_leak_guard.py"
+            ]
+          },
+          {
+            "instruction": "COPY",
+            "line": 22,
+            "sources": [
+              "contract_guard.py"
+            ],
+            "destination": "/tests/contract_guard.py",
+            "resolved_sources": [
+              "workspace/harbor_task/tests/contract_guard.py"
+            ]
+          },
+          {
+            "instruction": "COPY",
+            "line": 23,
+            "sources": [
+              "contract_policy.json"
+            ],
+            "destination": "/tests/contract_policy.json",
+            "resolved_sources": [
+              "workspace/harbor_task/tests/contract_policy.json"
+            ]
+          },
+          {
+            "instruction": "COPY",
+            "line": 24,
+            "sources": [
+              "calibration.json"
+            ],
+            "destination": "/tests/calibration.json",
+            "resolved_sources": [
+              "workspace/harbor_task/tests/calibration.json"
+            ]
+          },
+          {
+            "instruction": "COPY",
+            "line": 25,
+            "sources": [
+              "test.sh"
+            ],
+            "destination": "/tests/test.sh",
+            "resolved_sources": [
+              "workspace/harbor_task/tests/test.sh"
+            ]
+          },
+          {
+            "instruction": "COPY",
+            "line": 26,
+            "sources": [
+              "private/"
+            ],
+            "destination": "/tests/private/",
+            "resolved_sources": [
+              "workspace/harbor_task/tests/private"
+            ]
+          }
+        ],
+        "findings": [
+          {
+            "code": "dynamic_runtime_command",
+            "status": "manual",
+            "message": "启动命令包含变量或内嵌 shell，需沿调用链核对路径。",
+            "evidence": [
+              "workspace/harbor_task/tests/Dockerfile:34"
+            ]
+          },
+          {
+            "code": "runtime_declared",
+            "status": "pass",
+            "message": "依据基础镜像 python:3.12-slim 或显式 bash 安装声明推断评分 shell 可用；仅为静态检查，未验证构建、其他依赖或评分执行。",
+            "evidence": [
+              "workspace/harbor_task/tests/Dockerfile"
+            ]
+          }
+        ],
+        "status": "manual",
+        "observed_workdir": null,
+        "mapped_files": [
+          "/tests/calibration.json",
+          "/tests/contract_guard.py",
+          "/tests/contract_policy.json",
+          "/tests/grader.py",
+          "/tests/private/citeseer_test.npz",
+          "/tests/private/cora_test.npz",
+          "/tests/test.sh",
+          "/tests/val_leak_guard.py",
+          "/tmp/requirements.txt"
+        ],
+        "image_selection": {
+          "source": "tests_dockerfile",
+          "tests_delivery": "baked"
+        }
+      },
+      "manual_resolution": {
+        "summary": "tests/Dockerfile CMD sh -c sleep infinity只保持Verifier存活，无动态评分路径；实际评分由Harbor在移交后显式bash /tests/test.sh进入隔离Python的/tests/grader.py。environment的CMD /bin/bash与WORKDIR /workspace可达。",
+        "evidence": [
+          "workspace/harbor_task/environment/Dockerfile",
+          "workspace/harbor_task/tests/Dockerfile",
+          "workspace/harbor_task/tests/test.sh",
+          "workspace/harbor_task/task.toml"
+        ]
+      },
+      "adapter_evidence": []
+    },
+    "checks": [
+      {
+        "id": "H01",
+        "title": "任务目录",
+        "status": "pass",
+        "summary": "task根workspace/harbor_task；Agent仅public资产/Dev/starter；tests/private两份npz仅Verifier预置，grader按图读取。",
+        "evidence": [
+          "workspace/harbor_task/task.toml",
+          "workspace/harbor_task/environment/Dockerfile",
+          "workspace/harbor_task/tests/Dockerfile",
+          "workspace/harbor_task/tests/grader.py",
+          "workspace/harbor_task/tests/private/cora_test.npz",
+          "workspace/harbor_task/tests/private/citeseer_test.npz"
+        ]
+      },
+      {
+        "id": "H02",
+        "title": "版本与配置",
+        "status": "manual",
+        "summary": "TOML可解析、显式separate、CPU0GPU且无storage/禁网/Compose；联网查表防护迁移缺口须单列，未把本地Harbor版本视为内场部署认证。",
+        "evidence": [
+          "workspace/harbor_task/task.toml",
+          "workspace/harbor_task/instruction.md",
+          "expert_evidence/repair/harbor/schema_validation.json"
+        ]
+      },
+      {
+        "id": "H03",
+        "title": "环境与运行路径",
+        "status": "manual",
+        "summary": "分别environment/tests上下文COPY路径闭合，单容器本地训练/评分；未调用额外工作环境。独立内场镜像准备与动态启动待平台，静态不冒称已构建。",
+        "evidence": [
+          "workspace/harbor_task/environment/Dockerfile",
+          "workspace/harbor_task/tests/Dockerfile",
+          "workspace/harbor_task/tests/test.sh",
+          "workspace/harbor_task/task.toml",
+          "workspace/harbor_task/environment/starter/run.sh"
+        ]
+      },
+      {
+        "id": "H04",
+        "title": "测试入口与 reward",
+        "status": "pass",
+        "summary": "专用Verifier镜像预置/tests/test.sh；隔离Python只导入可信/tests；artifacts同绝对路径移交，优先reward.json有限非空数值。",
+        "evidence": [
+          "workspace/harbor_task/tests/test.sh",
+          "workspace/harbor_task/tests/grader.py",
+          "workspace/harbor_task/task.toml"
+        ]
+      },
+      {
+        "id": "H05",
+        "title": "Job/Trial 调用配置",
+        "status": "manual",
+        "summary": "已有native NOP配置选旧Docker provider、force_build与历史构建加速Compose覆盖；这是任务外旧平台准备，不是当前任务入口。未将旧调用当innerfield部署验证。",
+        "evidence": [
+          "expert_evidence/repair/harbor/native_nop_trial/native_trial/config.json",
+          "expert_evidence/repair/harbor/native_nop_trial/native_trial/result.json",
+          "workspace/harbor_task/task.toml",
+          "expert_evidence/repair/harbor/native_nop_trial/VERSION_BINDING.md"
+        ]
+      },
+      {
+        "id": "H06",
+        "title": "NOP 自检记录",
+        "status": "manual",
+        "summary": "已有原生nop Trial身份一致、separate、正常结束无exception、json/txt/result均0且非空日志；FORMAT_ERROR缺预测早退仅覆盖旧无提交分支。当前38/46匹配、8项变更，6项进构建评分链，当前未跑。",
+        "evidence": [
+          "expert_evidence/repair/harbor/native_nop_trial/native_trial/config.json",
+          "expert_evidence/repair/harbor/native_nop_trial/native_trial/result.json",
+          "expert_evidence/repair/harbor/native_nop_trial/native_trial/verifier/reward.json",
+          "expert_evidence/repair/harbor/native_nop_trial/native_trial/verifier/reward.txt",
+          "expert_evidence/repair/harbor/native_nop_trial/native_trial/trial.log",
+          "expert_evidence/repair/harbor/native_nop_trial/native_trial/verifier/test-stdout.txt",
+          "expert_evidence/repair/harbor/native_nop_trial/VERSION_BINDING.md"
+        ]
+      }
+    ],
+    "static_status": "manual",
+    "runtime_status": "unverified",
+    "version_basis": "包内task.toml与schema_validation记录的本地上游参考；验收profile固定innerfield-maso-v1，未导入Harbor schema，平台实际版本未认证。",
+    "task_root": "workspace/harbor_task",
+    "hidden_review": {
+      "mode": "prebuilt",
+      "summary": "tests/private/cora_test.npz、citeseer_test.npz由专用Verifier Dockerfile预置，grader只在Verifier读取；Agent上下文environment不含tests或reference，公开Dev独立保留。",
+      "evidence": [
+        "workspace/harbor_task/environment/Dockerfile",
+        "workspace/harbor_task/tests/Dockerfile",
+        "workspace/harbor_task/tests/grader.py"
+      ],
+      "asset_paths": [
+        "workspace/harbor_task/tests/private/cora_test.npz",
+        "workspace/harbor_task/tests/private/citeseer_test.npz"
+      ],
+      "status": "pass",
+      "basis": "reviewed_evidence",
+      "note": "仅核验声明与文件引用；材料用途、隔离和生成/注入可用性由语义复核负责。"
+    },
+    "artifact_contract": {
+      "status": "pass",
+      "submission_paths": [
+        "/workspace/solution"
+      ],
+      "sources": [
+        "/logs/artifacts",
+        "/workspace/solution"
+      ],
+      "default_sources": [
+        "/logs/artifacts"
+      ],
+      "uncovered": [],
+      "ambiguous_extra_sources": false,
+      "summary": "读取路径已由默认 /logs/artifacts 或显式源路径覆盖；运行移交另看 Trial 证据。"
+    },
+    "deployment_contract": {
+      "profile": "innerfield-maso-v1",
+      "status": "pass",
+      "config_status": "pass",
+      "compose_status": "pass",
+      "constraint_status": "pass",
+      "gpu_status": "pass",
+      "innerfield_compliant": true,
+      "effective_environments": {
+        "agent": {
+          "build_timeout_sec": 1800,
+          "cpus": 16,
+          "memory_mb": 65536,
+          "gpus": 0,
+          "workdir": "/workspace"
+        },
+        "verifier": {
+          "build_timeout_sec": 1800,
+          "cpus": 16,
+          "memory_mb": 65536,
+          "gpus": 0,
+          "workdir": "/tests"
+        }
+      },
+      "image_selection": {
+        "source": "tests_dockerfile",
+        "tests_delivery": "baked"
+      },
+      "agent_compose_selected": false,
+      "config_source": "workspace/harbor_task/task.toml",
+      "compose_review": {
+        "selection": "unused",
+        "roles": [
+          "agent",
+          "verifier"
+        ],
+        "summary": "正式environment/tests直属无Compose文件；入口沿run.sh/train/reload及test.sh/grader均本地执行，旧Trial额外Compose为平台外历史镜像准备。",
+        "evidence": [
+          "workspace/harbor_task/task.toml",
+          "workspace/harbor_task/environment/Dockerfile",
+          "workspace/harbor_task/tests/Dockerfile",
+          "workspace/harbor_task/tests/test.sh",
+          "workspace/harbor_task/environment/starter/run.sh",
+          "expert_evidence/repair/harbor/native_nop_trial/native_trial/config.json"
+        ]
+      },
+      "basis": null,
+      "capability_review": {
+        "status": "pass",
+        "outcome": "not_required",
+        "summary": "当前配置CPU16/0GPU、未使用storage_mb/禁网/allowlist/Compose；不依赖平台禁网实现。旧network字段和Docker Compose覆盖仅历史资料；查表防护缺口另在QA05/H02逐原因记录。",
+        "evidence": [
+          "workspace/harbor_task/task.toml",
+          "workspace/harbor_task/instruction.md",
+          "workspace/harbor_task/environment/Dockerfile",
+          "workspace/harbor_task/tests/Dockerfile"
+        ]
+      },
+      "findings": [
+        {
+          "code": "capability_semantic_review",
+          "status": "pass",
+          "message": "当前配置CPU16/0GPU、未使用storage_mb/禁网/allowlist/Compose；不依赖平台禁网实现。旧network字段和Docker Compose覆盖仅历史资料；查表防护缺口另在QA05/H02逐原因记录。",
+          "category": "constraint",
+          "evidence": [
+            "workspace/harbor_task/task.toml",
+            "workspace/harbor_task/instruction.md",
+            "workspace/harbor_task/environment/Dockerfile",
+            "workspace/harbor_task/tests/Dockerfile"
+          ]
+        }
+      ],
+      "summary": "当前交付符合内场能力检查；Solver/Verifier 仍须不同 sandbox。",
+      "evidence": [
+        "workspace/harbor_task/task.toml",
+        "workspace/harbor_task/instruction.md",
+        "workspace/harbor_task/environment/Dockerfile",
+        "workspace/harbor_task/tests/Dockerfile"
+      ],
+      "remediation": "按所列有效配置移除未支持约束或 Compose；核对现有配置及日志，说明当前仍依赖的限制是否真实生效。历史 warning 已修正时引用现有修正依据。",
+      "acceptance_evidence": "当前目标配置及现有说明/日志相互一致；不以 warning 或联网 fallback 作为约束生效证据。"
+    },
+    "config_shape_errors": [],
+    "trial_evidence": null,
+    "qa17_status": "manual"
+  },
+  "task_fingerprint": {
+    "hash_profile": "harbor-task-inputs-v1",
+    "task_content_sha256": "c536321cdf7e7e01577d47a8773bd206fb2d7b475f9c49efdabcd4bbf49b64e2",
+    "components": [
+      "environment",
+      "task.toml",
+      "tests",
+      "instruction.md"
+    ],
+    "file_count": 45,
+    "entries": [
+      {
+        "path": "environment",
+        "type": "directory"
+      },
+      {
+        "path": "environment/.dockerignore",
+        "type": "file",
+        "sha256": "9edc0abe4e5e783e8ed4f58d30518f4000347410c8c432511a2651e3a96995f4"
+      },
+      {
+        "path": "environment/Dockerfile",
+        "type": "file",
+        "sha256": "bc46054cbb00e80b37d3c9ea6209b202a78fc92e92a206288c8414a82327c978"
+      },
+      {
+        "path": "environment/public_assets",
+        "type": "directory"
+      },
+      {
+        "path": "environment/public_assets/citeseer.pt",
+        "type": "file",
+        "sha256": "21c5dd7fa952ab8d2982c0f26cae64ee2fb5b37e7153987323079b6c87d7ce78"
+      },
+      {
+        "path": "environment/public_assets/cora.pt",
+        "type": "file",
+        "sha256": "1a8ee6a81376c4361f365331bf6f1b09941ca054ce2dbfa33cf46d29aa2df1f9"
+      },
+      {
+        "path": "environment/public_assets/manifest.json",
+        "type": "file",
+        "sha256": "fe55020c55e1ebdce56f81f5de1ea5ca0ed691bf529daac63cee791a4bd3f3e2"
+      },
+      {
+        "path": "environment/public_eval",
+        "type": "directory"
+      },
+      {
+        "path": "environment/public_eval/evaluate.py",
+        "type": "file",
+        "sha256": "e20fb8f82e410e7374780ffbc12aba3081f89559e3a89d4628679d5db1428c71"
+      },
+      {
+        "path": "environment/public_eval/protocol.json",
+        "type": "file",
+        "sha256": "32e3371732a5b31409d65a125f5e224e1225edd8e751f40634bdd7f3f1b3ebce"
+      },
+      {
+        "path": "environment/requirements.txt",
+        "type": "file",
+        "sha256": "6c941d8de0ea656595763d1013ddb11766483f16e47a95143a11c847535165be"
+      },
+      {
+        "path": "environment/starter",
+        "type": "directory"
+      },
+      {
+        "path": "environment/starter/README.md",
+        "type": "file",
+        "sha256": "16ecdf0720310803fc076a0ae12036c639a378b1b2e013c94f960587d87b56fc"
+      },
+      {
+        "path": "environment/starter/config",
+        "type": "directory"
+      },
+      {
+        "path": "environment/starter/config/_dataset",
+        "type": "directory"
+      },
+      {
+        "path": "environment/starter/config/_dataset/citeseer.yaml",
+        "type": "file",
+        "sha256": "699cad5a5e57dc42c6c6c7eedc75f54c3e07e6a08552d843ec62c47a39cb6127"
+      },
+      {
+        "path": "environment/starter/config/_dataset/cora.yaml",
+        "type": "file",
+        "sha256": "699cad5a5e57dc42c6c6c7eedc75f54c3e07e6a08552d843ec62c47a39cb6127"
+      },
+      {
+        "path": "environment/starter/config/gcn",
+        "type": "directory"
+      },
+      {
+        "path": "environment/starter/config/gcn/gcn_citeseer.yaml",
+        "type": "file",
+        "sha256": "2b23a1aa0d6f2837850a0bd475e2f29053a1d4888a884f19b22039a1c714f86b"
+      },
+      {
+        "path": "environment/starter/config/gcn/gcn_cora.yaml",
+        "type": "file",
+        "sha256": "2b23a1aa0d6f2837850a0bd475e2f29053a1d4888a884f19b22039a1c714f86b"
+      },
+      {
+        "path": "environment/starter/data.py",
+        "type": "file",
+        "sha256": "0c40b9e73c5e59fdd41b389d818d1e38c7dde95beddb5db62570f35c5bf3a2b8"
+      },
+      {
+        "path": "environment/starter/numeric_api.py",
+        "type": "file",
+        "sha256": "514c70f2a2f674cd54bdc074e49fc6119c86683062c4f85d29b882444ed9611a"
+      },
+      {
+        "path": "environment/starter/predictor",
+        "type": "directory"
+      },
+      {
+        "path": "environment/starter/predictor/Base_Predictor.py",
+        "type": "file",
+        "sha256": "c2017bf1316f3588b0cdb588d8de59b98ca823a089af2fe8994985ec73ad112f"
+      },
+      {
+        "path": "environment/starter/predictor/GCN_Predictor.py",
+        "type": "file",
+        "sha256": "b85a14b51908c7e8eec9e0ca089a4d3fb8a1d655f1645bdff93d0ca5ea358f21"
+      },
+      {
+        "path": "environment/starter/predictor/__init__.py",
+        "type": "file",
+        "sha256": "0dd0d75ef7507804e42849c19069b40136f5773c0b5940254bcd81ffef2064bf"
+      },
+      {
+        "path": "environment/starter/predictor/module",
+        "type": "directory"
+      },
+      {
+        "path": "environment/starter/predictor/module/GNNs.py",
+        "type": "file",
+        "sha256": "181c2122922f81dd81d05d07654a05643a75f08a7bc1925353054121a0a5c407"
+      },
+      {
+        "path": "environment/starter/predictor/module/__init__.py",
+        "type": "file",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "environment/starter/reload.py",
+        "type": "file",
+        "sha256": "96b2fd16bccf2d18ed78a0d041c0991bb8aa159d86f15fc341ebde2012b7b59e"
+      },
+      {
+        "path": "environment/starter/run.sh",
+        "type": "file",
+        "sha256": "bc045f79b15e43a817aee402e5610782cb23dbb0e594a309a466def6a84348bd"
+      },
+      {
+        "path": "environment/starter/stage_runtime.py",
+        "type": "file",
+        "sha256": "be751fc7cf678c48ad6d91c7b7417f3eecd3c1209c9944008b7357c38e1667e4"
+      },
+      {
+        "path": "environment/starter/train.py",
+        "type": "file",
+        "sha256": "bfe9f7fe73ad47365a504576804a5e86244eb74c2afbc547c30c640020325e29"
+      },
+      {
+        "path": "environment/starter/utils",
+        "type": "directory"
+      },
+      {
+        "path": "environment/starter/utils/__init__.py",
+        "type": "file",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "environment/starter/utils/dataloader.py",
+        "type": "file",
+        "sha256": "a2ef6d287050ee24c9d472919752827db0db375c143c89ff534eb9dec5d32c36"
+      },
+      {
+        "path": "environment/starter/utils/datasplit.py",
+        "type": "file",
+        "sha256": "40739c89054bfba70f84e5b12a111a818e27f2d2e921158694f974d612b2ffbf"
+      },
+      {
+        "path": "environment/starter/utils/functional.py",
+        "type": "file",
+        "sha256": "c17cf70aa6b0dc6942fc6bbc28252d44ef10c9f28509d025ad3cf8549f836865"
+      },
+      {
+        "path": "environment/starter/utils/labelnoise.py",
+        "type": "file",
+        "sha256": "cb37f3efc609429bcffb7763a1e9ef1051a1fb4d0667db6ba935869aba584f09"
+      },
+      {
+        "path": "environment/starter/utils/logger.py",
+        "type": "file",
+        "sha256": "bd97e9b83ce7c2164490130461aea6a7389241171662b69f07b94935371b91e0"
+      },
+      {
+        "path": "environment/starter/utils/tools.py",
+        "type": "file",
+        "sha256": "ab338a371a587f550a00074b32b45190fc6a8765edf4d4a8c19a3e0fd273ea04"
+      },
+      {
+        "path": "instruction.md",
+        "type": "file",
+        "sha256": "aadc2fc7544e9471b255769f25ab39c79507f6e7f27fb7a0e9228fb92287d99e"
+      },
+      {
+        "path": "task.toml",
+        "type": "file",
+        "sha256": "573e33a67ea8d882ed5713c6aae2ae53e379464036cc65c4bc53bc532c16e258"
+      },
+      {
+        "path": "tests",
+        "type": "directory"
+      },
+      {
+        "path": "tests/.dockerignore",
+        "type": "file",
+        "sha256": "9edc0abe4e5e783e8ed4f58d30518f4000347410c8c432511a2651e3a96995f4"
+      },
+      {
+        "path": "tests/Dockerfile",
+        "type": "file",
+        "sha256": "5d9dcfe39e02540d546522af485e2c1954321d0deee3ae959312705149ce80d6"
+      },
+      {
+        "path": "tests/calibration.json",
+        "type": "file",
+        "sha256": "2f9597d90f5d70ab1d7619146546de6daffb837b06a3325829c65b775d8ebdd2"
+      },
+      {
+        "path": "tests/contract_guard.py",
+        "type": "file",
+        "sha256": "04c22f96751f06c39733f5541e0d7301219600929c06cce9ffbc939f8504443e"
+      },
+      {
+        "path": "tests/contract_policy.json",
+        "type": "file",
+        "sha256": "d7dc4d1c491d420f5ddfd0adc305511c1ab559914393a6fc077cb70a8ab9adc4"
+      },
+      {
+        "path": "tests/grader.py",
+        "type": "file",
+        "sha256": "cc20a5a4ad768654899427f403b45966cf5e280270591dd730a7296eed45112f"
+      },
+      {
+        "path": "tests/private",
+        "type": "directory"
+      },
+      {
+        "path": "tests/private/citeseer_test.npz",
+        "type": "file",
+        "sha256": "a996f953ac2fbc9333ffa15f3e8fbdb6ae803a93ac3b97bfcfe6cff06cd0ac7c"
+      },
+      {
+        "path": "tests/private/cora_test.npz",
+        "type": "file",
+        "sha256": "d9660e290e7d62a7cb4411aad1aae1f46f94d62c3174d80c1ca0195a55ab4055"
+      },
+      {
+        "path": "tests/requirements.txt",
+        "type": "file",
+        "sha256": "049ec6b4e4643271288c571e9fb13e67d805bb184dc5a333986f31c1b9cd6927"
+      },
+      {
+        "path": "tests/test.sh",
+        "type": "file",
+        "sha256": "0cf941567e516766a9a806e67e1c14eba5fe4cef5dd7140b199842b9364cf97e"
+      },
+      {
+        "path": "tests/test_contract_guard.py",
+        "type": "file",
+        "sha256": "8822d40124fbbdfbabbc929afe37d49c0e23e0d21f5edbaeaf80c3680aa7fe5e"
+      },
+      {
+        "path": "tests/val_leak_guard.py",
+        "type": "file",
+        "sha256": "510b890da52a8b8bd92146dbe53cd0a8584ffa9f0439af6837470eff8bbdda74"
+      }
+    ],
+    "status": "pass",
+    "summary": "已重算四项输入指纹；这本身不证明历史运行使用了该版本。"
+  },
+  "trajectory_review": {
+    "status": "manual",
+    "summary": "codex：分数有效性待确认；seed：分数有效性待确认",
+    "sources": [
+      {
+        "path": "expert_evidence/trajectory_codex.json",
+        "status": "readable",
+        "records": 1,
+        "tool_calls": 0,
+        "inspectable_tool_calls": 0,
+        "redacted_tool_calls": 0,
+        "partial_export": false,
+        "candidates": [],
+        "error": null
+      },
+      {
+        "path": "expert_evidence/trajectory_seed.json",
+        "status": "readable",
+        "records": 1,
+        "tool_calls": 0,
+        "inspectable_tool_calls": 0,
+        "redacted_tool_calls": 0,
+        "partial_export": false,
+        "candidates": [],
+        "error": null
+      }
+    ],
+    "candidate_count": 0,
+    "task_fingerprint": {
+      "hash_profile": "harbor-task-inputs-v1",
+      "task_content_sha256": "c536321cdf7e7e01577d47a8773bd206fb2d7b475f9c49efdabcd4bbf49b64e2",
+      "components": [
+        "environment",
+        "task.toml",
+        "tests",
+        "instruction.md"
+      ],
+      "file_count": 45,
+      "entries": [
+        {
+          "path": "environment",
+          "type": "directory"
+        },
+        {
+          "path": "environment/.dockerignore",
+          "type": "file",
+          "sha256": "9edc0abe4e5e783e8ed4f58d30518f4000347410c8c432511a2651e3a96995f4"
+        },
+        {
+          "path": "environment/Dockerfile",
+          "type": "file",
+          "sha256": "bc46054cbb00e80b37d3c9ea6209b202a78fc92e92a206288c8414a82327c978"
+        },
+        {
+          "path": "environment/public_assets",
+          "type": "directory"
+        },
+        {
+          "path": "environment/public_assets/citeseer.pt",
+          "type": "file",
+          "sha256": "21c5dd7fa952ab8d2982c0f26cae64ee2fb5b37e7153987323079b6c87d7ce78"
+        },
+        {
+          "path": "environment/public_assets/cora.pt",
+          "type": "file",
+          "sha256": "1a8ee6a81376c4361f365331bf6f1b09941ca054ce2dbfa33cf46d29aa2df1f9"
+        },
+        {
+          "path": "environment/public_assets/manifest.json",
+          "type": "file",
+          "sha256": "fe55020c55e1ebdce56f81f5de1ea5ca0ed691bf529daac63cee791a4bd3f3e2"
+        },
+        {
+          "path": "environment/public_eval",
+          "type": "directory"
+        },
+        {
+          "path": "environment/public_eval/evaluate.py",
+          "type": "file",
+          "sha256": "e20fb8f82e410e7374780ffbc12aba3081f89559e3a89d4628679d5db1428c71"
+        },
+        {
+          "path": "environment/public_eval/protocol.json",
+          "type": "file",
+          "sha256": "32e3371732a5b31409d65a125f5e224e1225edd8e751f40634bdd7f3f1b3ebce"
+        },
+        {
+          "path": "environment/requirements.txt",
+          "type": "file",
+          "sha256": "6c941d8de0ea656595763d1013ddb11766483f16e47a95143a11c847535165be"
+        },
+        {
+          "path": "environment/starter",
+          "type": "directory"
+        },
+        {
+          "path": "environment/starter/README.md",
+          "type": "file",
+          "sha256": "16ecdf0720310803fc076a0ae12036c639a378b1b2e013c94f960587d87b56fc"
+        },
+        {
+          "path": "environment/starter/config",
+          "type": "directory"
+        },
+        {
+          "path": "environment/starter/config/_dataset",
+          "type": "directory"
+        },
+        {
+          "path": "environment/starter/config/_dataset/citeseer.yaml",
+          "type": "file",
+          "sha256": "699cad5a5e57dc42c6c6c7eedc75f54c3e07e6a08552d843ec62c47a39cb6127"
+        },
+        {
+          "path": "environment/starter/config/_dataset/cora.yaml",
+          "type": "file",
+          "sha256": "699cad5a5e57dc42c6c6c7eedc75f54c3e07e6a08552d843ec62c47a39cb6127"
+        },
+        {
+          "path": "environment/starter/config/gcn",
+          "type": "directory"
+        },
+        {
+          "path": "environment/starter/config/gcn/gcn_citeseer.yaml",
+          "type": "file",
+          "sha256": "2b23a1aa0d6f2837850a0bd475e2f29053a1d4888a884f19b22039a1c714f86b"
+        },
+        {
+          "path": "environment/starter/config/gcn/gcn_cora.yaml",
+          "type": "file",
+          "sha256": "2b23a1aa0d6f2837850a0bd475e2f29053a1d4888a884f19b22039a1c714f86b"
+        },
+        {
+          "path": "environment/starter/data.py",
+          "type": "file",
+          "sha256": "0c40b9e73c5e59fdd41b389d818d1e38c7dde95beddb5db62570f35c5bf3a2b8"
+        },
+        {
+          "path": "environment/starter/numeric_api.py",
+          "type": "file",
+          "sha256": "514c70f2a2f674cd54bdc074e49fc6119c86683062c4f85d29b882444ed9611a"
+        },
+        {
+          "path": "environment/starter/predictor",
+          "type": "directory"
+        },
+        {
+          "path": "environment/starter/predictor/Base_Predictor.py",
+          "type": "file",
+          "sha256": "c2017bf1316f3588b0cdb588d8de59b98ca823a089af2fe8994985ec73ad112f"
+        },
+        {
+          "path": "environment/starter/predictor/GCN_Predictor.py",
+          "type": "file",
+          "sha256": "b85a14b51908c7e8eec9e0ca089a4d3fb8a1d655f1645bdff93d0ca5ea358f21"
+        },
+        {
+          "path": "environment/starter/predictor/__init__.py",
+          "type": "file",
+          "sha256": "0dd0d75ef7507804e42849c19069b40136f5773c0b5940254bcd81ffef2064bf"
+        },
+        {
+          "path": "environment/starter/predictor/module",
+          "type": "directory"
+        },
+        {
+          "path": "environment/starter/predictor/module/GNNs.py",
+          "type": "file",
+          "sha256": "181c2122922f81dd81d05d07654a05643a75f08a7bc1925353054121a0a5c407"
+        },
+        {
+          "path": "environment/starter/predictor/module/__init__.py",
+          "type": "file",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "environment/starter/reload.py",
+          "type": "file",
+          "sha256": "96b2fd16bccf2d18ed78a0d041c0991bb8aa159d86f15fc341ebde2012b7b59e"
+        },
+        {
+          "path": "environment/starter/run.sh",
+          "type": "file",
+          "sha256": "bc045f79b15e43a817aee402e5610782cb23dbb0e594a309a466def6a84348bd"
+        },
+        {
+          "path": "environment/starter/stage_runtime.py",
+          "type": "file",
+          "sha256": "be751fc7cf678c48ad6d91c7b7417f3eecd3c1209c9944008b7357c38e1667e4"
+        },
+        {
+          "path": "environment/starter/train.py",
+          "type": "file",
+          "sha256": "bfe9f7fe73ad47365a504576804a5e86244eb74c2afbc547c30c640020325e29"
+        },
+        {
+          "path": "environment/starter/utils",
+          "type": "directory"
+        },
+        {
+          "path": "environment/starter/utils/__init__.py",
+          "type": "file",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "environment/starter/utils/dataloader.py",
+          "type": "file",
+          "sha256": "a2ef6d287050ee24c9d472919752827db0db375c143c89ff534eb9dec5d32c36"
+        },
+        {
+          "path": "environment/starter/utils/datasplit.py",
+          "type": "file",
+          "sha256": "40739c89054bfba70f84e5b12a111a818e27f2d2e921158694f974d612b2ffbf"
+        },
+        {
+          "path": "environment/starter/utils/functional.py",
+          "type": "file",
+          "sha256": "c17cf70aa6b0dc6942fc6bbc28252d44ef10c9f28509d025ad3cf8549f836865"
+        },
+        {
+          "path": "environment/starter/utils/labelnoise.py",
+          "type": "file",
+          "sha256": "cb37f3efc609429bcffb7763a1e9ef1051a1fb4d0667db6ba935869aba584f09"
+        },
+        {
+          "path": "environment/starter/utils/logger.py",
+          "type": "file",
+          "sha256": "bd97e9b83ce7c2164490130461aea6a7389241171662b69f07b94935371b91e0"
+        },
+        {
+          "path": "environment/starter/utils/tools.py",
+          "type": "file",
+          "sha256": "ab338a371a587f550a00074b32b45190fc6a8765edf4d4a8c19a3e0fd273ea04"
+        },
+        {
+          "path": "instruction.md",
+          "type": "file",
+          "sha256": "aadc2fc7544e9471b255769f25ab39c79507f6e7f27fb7a0e9228fb92287d99e"
+        },
+        {
+          "path": "task.toml",
+          "type": "file",
+          "sha256": "573e33a67ea8d882ed5713c6aae2ae53e379464036cc65c4bc53bc532c16e258"
+        },
+        {
+          "path": "tests",
+          "type": "directory"
+        },
+        {
+          "path": "tests/.dockerignore",
+          "type": "file",
+          "sha256": "9edc0abe4e5e783e8ed4f58d30518f4000347410c8c432511a2651e3a96995f4"
+        },
+        {
+          "path": "tests/Dockerfile",
+          "type": "file",
+          "sha256": "5d9dcfe39e02540d546522af485e2c1954321d0deee3ae959312705149ce80d6"
+        },
+        {
+          "path": "tests/calibration.json",
+          "type": "file",
+          "sha256": "2f9597d90f5d70ab1d7619146546de6daffb837b06a3325829c65b775d8ebdd2"
+        },
+        {
+          "path": "tests/contract_guard.py",
+          "type": "file",
+          "sha256": "04c22f96751f06c39733f5541e0d7301219600929c06cce9ffbc939f8504443e"
+        },
+        {
+          "path": "tests/contract_policy.json",
+          "type": "file",
+          "sha256": "d7dc4d1c491d420f5ddfd0adc305511c1ab559914393a6fc077cb70a8ab9adc4"
+        },
+        {
+          "path": "tests/grader.py",
+          "type": "file",
+          "sha256": "cc20a5a4ad768654899427f403b45966cf5e280270591dd730a7296eed45112f"
+        },
+        {
+          "path": "tests/private",
+          "type": "directory"
+        },
+        {
+          "path": "tests/private/citeseer_test.npz",
+          "type": "file",
+          "sha256": "a996f953ac2fbc9333ffa15f3e8fbdb6ae803a93ac3b97bfcfe6cff06cd0ac7c"
+        },
+        {
+          "path": "tests/private/cora_test.npz",
+          "type": "file",
+          "sha256": "d9660e290e7d62a7cb4411aad1aae1f46f94d62c3174d80c1ca0195a55ab4055"
+        },
+        {
+          "path": "tests/requirements.txt",
+          "type": "file",
+          "sha256": "049ec6b4e4643271288c571e9fb13e67d805bb184dc5a333986f31c1b9cd6927"
+        },
+        {
+          "path": "tests/test.sh",
+          "type": "file",
+          "sha256": "0cf941567e516766a9a806e67e1c14eba5fe4cef5dd7140b199842b9364cf97e"
+        },
+        {
+          "path": "tests/test_contract_guard.py",
+          "type": "file",
+          "sha256": "8822d40124fbbdfbabbc929afe37d49c0e23e0d21f5edbaeaf80c3680aa7fe5e"
+        },
+        {
+          "path": "tests/val_leak_guard.py",
+          "type": "file",
+          "sha256": "510b890da52a8b8bd92146dbe53cd0a8584ffa9f0439af6837470eff8bbdda74"
+        }
+      ],
+      "status": "pass",
+      "summary": "已重算四项输入指纹；这本身不证明历史运行使用了该版本。"
+    },
+    "trajectories": [
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "name": "codex",
+        "status": "manual",
+        "score_status": "unverified",
+        "content_status": "manual",
+        "content_summary": "分数有效性待确认",
+        "scope_note": "仅审查已交轮次/方法摘要；未提供工具调用或sessions，结论限于这些材料。",
+        "status_summary": "分数有效性待确认",
+        "coverage": "rounds_only",
+        "reviewed_sources": [
+          "expert_evidence/trajectory_codex.json"
+        ],
+        "unresolved_candidates": [],
+        "task_binding": {
+          "status": "pass",
+          "basis": "summary_hash_matches",
+          "authenticity_verified": false,
+          "summary": "run_summary 的四项题包哈希与当前包一致。",
+          "evidence": [
+            "expert_evidence/trajectory_codex.json",
+            "expert_evidence/run_summary.json#task_binding"
+          ]
+        },
+        "findings": [],
+        "behavior_review": {
+          "status": "pass",
+          "summary": "全部轮次方法/状态/失败/best已读，另审计时恢复映射与已交命令事件；没有完整工具sessions可供扩大行为认证，未发现可确认Hidden读取或reward篡改事实。",
+          "evidence": [
+            "expert_evidence/trajectory_codex.json",
+            "expert_evidence/repair/historical_timing_mapping/timing_map.json"
+          ]
+        },
+        "score_review": {
+          "status": "pass",
+          "summary": "历史66.7，已有原字节复验66.7；非当前协议Hidden成绩。 旧原始展示分数与当前复验值分开列示；未把Seed35重复记为独立成功，正式R来源独立。",
+          "evidence": [
+            "expert_evidence/trajectory_codex.json",
+            "expert_evidence/repair/historical_timing_mapping/timing_map.json",
+            "expert_evidence/best_method_selection.json",
+            "expert_evidence/qa16_best_method_revalidation.json"
+          ]
+        },
+        "summary": "GCE/小损失分类配额→邻域平滑/硬投票→裕量与单源支配门控，r183最佳66.7，后续184–193未提升。 历史score不认证当前协议；未将Agent分数用于正式B/R。",
+        "evidence": [
+          "expert_evidence/trajectory_codex.json",
+          "expert_evidence/run_summary.json",
+          "expert_evidence/repair/historical_timing_mapping/timing_map.json",
+          "expert_evidence/best_method_selection.json",
+          "expert_evidence/qa16_best_method_revalidation.json",
+          "expert_evidence/run_summary.json#task_binding"
+        ]
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "name": "seed",
+        "status": "manual",
+        "score_status": "unverified",
+        "content_status": "manual",
+        "content_summary": "分数有效性待确认",
+        "scope_note": "仅审查已交轮次/方法摘要；未提供工具调用或sessions，结论限于这些材料。",
+        "status_summary": "分数有效性待确认",
+        "coverage": "rounds_only",
+        "reviewed_sources": [
+          "expert_evidence/trajectory_seed.json"
+        ],
+        "unresolved_candidates": [],
+        "task_binding": {
+          "status": "pass",
+          "basis": "summary_hash_matches",
+          "authenticity_verified": false,
+          "summary": "run_summary 的四项题包哈希与当前包一致。",
+          "evidence": [
+            "expert_evidence/trajectory_seed.json",
+            "expert_evidence/run_summary.json#task_binding"
+          ]
+        },
+        "findings": [],
+        "behavior_review": {
+          "status": "pass",
+          "summary": "全部轮次方法/状态/失败/best已读，另审计时恢复映射与已交命令事件；没有完整工具sessions可供扩大行为认证，未发现可确认Hidden读取或reward篡改事实。",
+          "evidence": [
+            "expert_evidence/trajectory_seed.json",
+            "expert_evidence/repair/historical_timing_mapping/timing_map.json"
+          ]
+        },
+        "score_review": {
+          "status": "pass",
+          "summary": "历史71.4，原字节复验71.1；迁移当前数值接口后Dev71.2(74.2/68.2)，不是历史71.4复现或正式R。 旧原始展示分数与当前复验值分开列示；未把Seed35重复记为独立成功，正式R来源独立。",
+          "evidence": [
+            "expert_evidence/trajectory_seed.json",
+            "expert_evidence/repair/historical_timing_mapping/timing_map.json",
+            "expert_evidence/best_method_selection.json",
+            "expert_evidence/qa16_best_method_revalidation.json"
+          ]
+        },
+        "summary": "small-loss/双路LP→TLP→多阶段共识5成员集成→度数感知硬化，r43最佳71.4；ILC/EMA/SWA等失败或持平完整保留，35与36非两个独立成功试验。 历史score不认证当前协议；未将Agent分数用于正式B/R。",
+        "evidence": [
+          "expert_evidence/trajectory_seed.json",
+          "expert_evidence/run_summary.json",
+          "expert_evidence/repair/historical_timing_mapping/timing_map.json",
+          "expert_evidence/best_method_selection.json",
+          "expert_evidence/qa16_best_method_revalidation.json",
+          "expert_evidence/run_summary.json#task_binding"
+        ]
+      }
+    ],
+    "evidence": [
+      "expert_evidence/trajectory_codex.json",
+      "expert_evidence/run_summary.json",
+      "expert_evidence/repair/historical_timing_mapping/timing_map.json",
+      "expert_evidence/best_method_selection.json",
+      "expert_evidence/qa16_best_method_revalidation.json",
+      "expert_evidence/run_summary.json#task_binding",
+      "expert_evidence/trajectory_seed.json"
+    ],
+    "content_status": "manual",
+    "content_summary": "codex：分数有效性待确认；seed：分数有效性待确认",
+    "unreviewed_sources": [],
+    "invalid_formal_run_paths": [],
+    "binding_errors": [],
+    "remediation": "codex（expert_evidence/trajectory_codex.json）：分数有效性待确认；引用该组已有轮次、代码或评分日志解释具体疑点。只核对所交材料，不要求补交未提供的sessions。；seed（expert_evidence/trajectory_seed.json）：分数有效性待确认；引用该组已有轮次、代码或评分日志解释具体疑点。只核对所交材料，不要求补交未提供的sessions。",
+    "acceptance_evidence": "所列疑点的代码/日志位置与说明一致；成功分数来源、失败状态和最佳候选能够对应。"
+  },
+  "resource_review": {
+    "status": "pass",
+    "summary": "16CPU/0GPU，完整一轮保守估3600秒，包括训练、重载及评分；纯CPU不需要换H20/L20。当前源码重验runtime与历史Docker环境分别保留。",
+    "limits": {
+      "score_seconds": 7200,
+      "gpu_count": 8,
+      "gpu_types": [
+        "H20",
+        "L20"
+      ],
+      "cpu_cores": 64
+    },
+    "formal_run_paths": [
+      "optimization_evidence/baseline_runs/seed_3000/result.json",
+      "optimization_evidence/baseline_runs/seed_3001/result.json",
+      "optimization_evidence/baseline_runs/seed_3002/result.json",
+      "optimization_evidence/historical_v7_invalid_reference/baseline_runs/seed_3000_citeseer/result.json",
+      "optimization_evidence/historical_v7_invalid_reference/baseline_runs/seed_3000_cora/result.json",
+      "optimization_evidence/historical_v7_invalid_reference/baseline_runs/seed_3001_citeseer/result.json",
+      "optimization_evidence/historical_v7_invalid_reference/baseline_runs/seed_3001_cora/result.json",
+      "optimization_evidence/historical_v7_invalid_reference/baseline_runs/seed_3002_citeseer/result.json",
+      "optimization_evidence/historical_v7_invalid_reference/baseline_runs/seed_3002_cora/result.json",
+      "optimization_evidence/historical_v7_invalid_reference/reference_runs/seed_3000_citeseer/result.json",
+      "optimization_evidence/historical_v7_invalid_reference/reference_runs/seed_3000_cora/result.json",
+      "optimization_evidence/historical_v7_invalid_reference/reference_runs/seed_3001_citeseer/result.json",
+      "optimization_evidence/historical_v7_invalid_reference/reference_runs/seed_3001_cora/result.json",
+      "optimization_evidence/historical_v7_invalid_reference/reference_runs/seed_3002_citeseer/result.json",
+      "optimization_evidence/historical_v7_invalid_reference/reference_runs/seed_3002_cora/result.json",
+      "optimization_evidence/reference_runs/seed_3000/result.json",
+      "optimization_evidence/reference_runs/seed_3001/result.json",
+      "optimization_evidence/reference_runs/seed_3002/result.json"
+    ],
+    "agent_scores": [
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 1
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 2
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 3
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 4
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 5
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 6
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 7
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 8
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 9
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 10
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 11
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 12
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 13
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 14
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 15
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 16
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 17
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 18
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 19
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 20
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 21
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 22
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 23
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 24
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 25
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 26
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 27
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 28
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 29
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 30
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 31
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 32
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 33
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 34
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 35
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 36
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 37
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 38
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 39
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 40
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 41
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 42
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 43
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 44
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 45
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 46
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 47
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 48
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 49
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 50
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 51
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 52
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 53
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 54
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 55
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 56
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 57
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 58
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 59
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 60
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 61
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 62
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 63
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 64
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 65
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 66
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 67
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 68
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 69
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 70
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 71
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 72
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 73
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 74
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 75
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 76
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 77
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 78
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 79
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 80
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 81
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 82
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 83
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 84
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 85
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 86
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 87
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 88
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 89
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 90
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 91
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 92
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 93
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 94
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 95
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 96
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 97
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 98
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 99
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 100
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 101
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 102
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 103
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 104
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 105
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 106
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 107
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 108
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 109
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 110
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 111
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 112
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 113
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 114
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 115
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 116
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 117
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 118
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 119
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 120
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 121
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 122
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 123
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 124
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 125
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 126
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 127
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 128
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 129
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 130
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 131
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 132
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 133
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 134
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 135
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 136
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 137
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 138
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 139
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 140
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 141
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 142
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 143
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 144
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 145
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 146
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 147
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 148
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 149
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 150
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 151
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 152
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 153
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 154
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 155
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 156
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 157
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 158
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 159
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 160
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 161
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 162
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 163
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 164
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 165
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 166
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 167
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 168
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 169
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 170
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 171
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 172
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 173
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 174
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 175
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 176
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 177
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 178
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 179
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 180
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 181
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 182
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 183
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 184
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 185
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 186
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 187
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 188
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 189
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 190
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 191
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 192
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 193
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 1
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 2
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 3
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 4
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 5
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 6
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 7
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 8
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 9
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 10
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 11
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 12
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 13
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 14
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 15
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 16
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 17
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 18
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 19
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 20
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 21
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 22
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 23
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 24
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 25
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 26
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 27
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 28
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 29
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 30
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 31
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 32
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 33
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 34
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 35
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 36
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 37
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 38
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 39
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 40
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 41
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 42
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 43
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 44
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 45
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 46
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 47
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 48
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 49
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 50
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 51
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 52
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 53
+      }
+    ],
+    "observations": [
+      {
+        "path": "expert_evidence/run_summary.json",
+        "role": null,
+        "execution": null,
+        "protocol": null
+      },
+      {
+        "path": "expert_evidence/trajectory_codex.json",
+        "role": null,
+        "execution": null,
+        "protocol": null
+      },
+      {
+        "path": "expert_evidence/trajectory_seed.json",
+        "role": null,
+        "execution": null,
+        "protocol": null
+      },
+      {
+        "path": "optimization_evidence/baseline_runs/seed_3000/result.json",
+        "role": "baseline",
+        "execution": {
+          "started_at": null,
+          "ended_at": null,
+          "elapsed_seconds": 58.86,
+          "exit_code": 0,
+          "per_dataset_seconds": {
+            "cora": 25.57853269499992,
+            "citeseer": 33.2834204950002
+          }
+        },
+        "protocol": {
+          "job_id": "auto2768",
+          "protocol_id": "robust-node-v8-train-only-20261008",
+          "metric": "macro_average_test_accuracy_percent",
+          "direction": "maximize",
+          "split": "private_test",
+          "seed_set": [
+            3000,
+            3001,
+            3002
+          ],
+          "corruption": "uniform@0.3, frozen realization seed=3000",
+          "environment": "python 3.12 + numpy<2, offline Docker, independent reload",
+          "data": "cora + citeseer (public assets, frozen splits)",
+          "metrics_recorded_in_result_json": "validation split (public_val_accuracy_percent); hidden test metrics are declared in optimization_evidence/formal_test_scoring_declared.json",
+          "_note_20261022": "metrics.* 原以 *_test_* 命名，但存储值为验证集精度（与 reload.public_val_accuracy_percent 逐位相同，val_pred.npy shape=(500,)/test_pred.npy shape=(1000,)）；2026-10-22 更正为 *_val_*。protocol.metric/split 保持协议声明不变，仅新增本注记说明 result.json 实际记录的是 val。"
+        }
+      },
+      {
+        "path": "optimization_evidence/baseline_runs/seed_3001/result.json",
+        "role": "baseline",
+        "execution": {
+          "started_at": null,
+          "ended_at": null,
+          "elapsed_seconds": 58.11,
+          "exit_code": 0,
+          "per_dataset_seconds": {
+            "cora": 23.927577435000103,
+            "citeseer": 34.185851248999825
+          }
+        },
+        "protocol": {
+          "job_id": "auto2768",
+          "protocol_id": "robust-node-v8-train-only-20261008",
+          "metric": "macro_average_test_accuracy_percent",
+          "direction": "maximize",
+          "split": "private_test",
+          "seed_set": [
+            3000,
+            3001,
+            3002
+          ],
+          "corruption": "uniform@0.3, frozen realization seed=3000",
+          "environment": "python 3.12 + numpy<2, offline Docker, independent reload",
+          "data": "cora + citeseer (public assets, frozen splits)",
+          "metrics_recorded_in_result_json": "validation split (public_val_accuracy_percent); hidden test metrics are declared in optimization_evidence/formal_test_scoring_declared.json",
+          "_note_20261022": "metrics.* 原以 *_test_* 命名，但存储值为验证集精度（与 reload.public_val_accuracy_percent 逐位相同，val_pred.npy shape=(500,)/test_pred.npy shape=(1000,)）；2026-10-22 更正为 *_val_*。protocol.metric/split 保持协议声明不变，仅新增本注记说明 result.json 实际记录的是 val。"
+        }
+      },
+      {
+        "path": "optimization_evidence/baseline_runs/seed_3002/result.json",
+        "role": "baseline",
+        "execution": {
+          "started_at": null,
+          "ended_at": null,
+          "elapsed_seconds": 55.77,
+          "exit_code": 0,
+          "per_dataset_seconds": {
+            "cora": 23.127650059999723,
+            "citeseer": 32.645277502000226
+          }
+        },
+        "protocol": {
+          "job_id": "auto2768",
+          "protocol_id": "robust-node-v8-train-only-20261008",
+          "metric": "macro_average_test_accuracy_percent",
+          "direction": "maximize",
+          "split": "private_test",
+          "seed_set": [
+            3000,
+            3001,
+            3002
+          ],
+          "corruption": "uniform@0.3, frozen realization seed=3000",
+          "environment": "python 3.12 + numpy<2, offline Docker, independent reload",
+          "data": "cora + citeseer (public assets, frozen splits)",
+          "metrics_recorded_in_result_json": "validation split (public_val_accuracy_percent); hidden test metrics are declared in optimization_evidence/formal_test_scoring_declared.json",
+          "_note_20261022": "metrics.* 原以 *_test_* 命名，但存储值为验证集精度（与 reload.public_val_accuracy_percent 逐位相同，val_pred.npy shape=(500,)/test_pred.npy shape=(1000,)）；2026-10-22 更正为 *_val_*。protocol.metric/split 保持协议声明不变，仅新增本注记说明 result.json 实际记录的是 val。"
+        }
+      },
+      {
+        "path": "optimization_evidence/historical_v7_invalid_reference/baseline_runs/seed_3000_citeseer/result.json",
+        "role": "baseline",
+        "execution": {
+          "command": "train.py --dataset citeseer --method gcn --seed 3000 --device cpu",
+          "elapsed_sec": 66.4,
+          "exit_code": 0
+        },
+        "protocol": {
+          "data": "citeseer (PyG Planetoid, default split)",
+          "noise": "uniform@0.3, frozen realization (seed=3000)",
+          "metric": "test accuracy (%)",
+          "direction": "maximize",
+          "backbone": "GCN n_hidden=64 n_layer=2 dropout=0.5"
+        }
+      },
+      {
+        "path": "optimization_evidence/historical_v7_invalid_reference/baseline_runs/seed_3000_cora/result.json",
+        "role": "baseline",
+        "execution": {
+          "command": "train.py --dataset cora --method gcn --seed 3000 --device cpu",
+          "elapsed_sec": 62.1,
+          "exit_code": 0
+        },
+        "protocol": {
+          "data": "cora (PyG Planetoid, default split)",
+          "noise": "uniform@0.3, frozen realization (seed=3000)",
+          "metric": "test accuracy (%)",
+          "direction": "maximize",
+          "backbone": "GCN n_hidden=64 n_layer=2 dropout=0.5"
+        }
+      },
+      {
+        "path": "optimization_evidence/historical_v7_invalid_reference/baseline_runs/seed_3001_citeseer/result.json",
+        "role": "baseline",
+        "execution": {
+          "command": "train.py --dataset citeseer --method gcn --seed 3001 --device cpu",
+          "elapsed_sec": 31.1,
+          "exit_code": 0
+        },
+        "protocol": {
+          "data": "citeseer (PyG Planetoid, default split)",
+          "noise": "uniform@0.3, frozen realization (seed=3000)",
+          "metric": "test accuracy (%)",
+          "direction": "maximize",
+          "backbone": "GCN n_hidden=64 n_layer=2 dropout=0.5"
+        }
+      },
+      {
+        "path": "optimization_evidence/historical_v7_invalid_reference/baseline_runs/seed_3001_cora/result.json",
+        "role": "baseline",
+        "execution": {
+          "command": "train.py --dataset cora --method gcn --seed 3001 --device cpu",
+          "elapsed_sec": 33.8,
+          "exit_code": 0
+        },
+        "protocol": {
+          "data": "cora (PyG Planetoid, default split)",
+          "noise": "uniform@0.3, frozen realization (seed=3000)",
+          "metric": "test accuracy (%)",
+          "direction": "maximize",
+          "backbone": "GCN n_hidden=64 n_layer=2 dropout=0.5"
+        }
+      },
+      {
+        "path": "optimization_evidence/historical_v7_invalid_reference/baseline_runs/seed_3002_citeseer/result.json",
+        "role": "baseline",
+        "execution": {
+          "command": "train.py --dataset citeseer --method gcn --seed 3002 --device cpu",
+          "elapsed_sec": 31.6,
+          "exit_code": 0
+        },
+        "protocol": {
+          "data": "citeseer (PyG Planetoid, default split)",
+          "noise": "uniform@0.3, frozen realization (seed=3000)",
+          "metric": "test accuracy (%)",
+          "direction": "maximize",
+          "backbone": "GCN n_hidden=64 n_layer=2 dropout=0.5"
+        }
+      },
+      {
+        "path": "optimization_evidence/historical_v7_invalid_reference/baseline_runs/seed_3002_cora/result.json",
+        "role": "baseline",
+        "execution": {
+          "command": "train.py --dataset cora --method gcn --seed 3002 --device cpu",
+          "elapsed_sec": 24.3,
+          "exit_code": 0
+        },
+        "protocol": {
+          "data": "cora (PyG Planetoid, default split)",
+          "noise": "uniform@0.3, frozen realization (seed=3000)",
+          "metric": "test accuracy (%)",
+          "direction": "maximize",
+          "backbone": "GCN n_hidden=64 n_layer=2 dropout=0.5"
+        }
+      },
+      {
+        "path": "optimization_evidence/historical_v7_invalid_reference/reference_runs/seed_3000_citeseer/result.json",
+        "role": "reference",
+        "execution": {
+          "command": "train.py --dataset citeseer --method dream --seed 3000 --device cpu",
+          "elapsed_sec": 310.1,
+          "exit_code": 0
+        },
+        "protocol": {
+          "data": "citeseer (PyG Planetoid, default split)",
+          "noise": "uniform@0.3, frozen realization (seed=3000)",
+          "metric": "test accuracy (%)",
+          "direction": "maximize",
+          "backbone": "GCN n_hidden=64 n_layer=2 dropout=0.5"
+        }
+      },
+      {
+        "path": "optimization_evidence/historical_v7_invalid_reference/reference_runs/seed_3000_cora/result.json",
+        "role": "reference",
+        "execution": {
+          "command": "train.py --dataset cora --method dream --seed 3000 --device cpu",
+          "elapsed_sec": 330.3,
+          "exit_code": 0
+        },
+        "protocol": {
+          "data": "cora (PyG Planetoid, default split)",
+          "noise": "uniform@0.3, frozen realization (seed=3000)",
+          "metric": "test accuracy (%)",
+          "direction": "maximize",
+          "backbone": "GCN n_hidden=64 n_layer=2 dropout=0.5"
+        }
+      },
+      {
+        "path": "optimization_evidence/historical_v7_invalid_reference/reference_runs/seed_3001_citeseer/result.json",
+        "role": "reference",
+        "execution": {
+          "command": "train.py --dataset citeseer --method dream --seed 3001 --device cpu",
+          "elapsed_sec": 192.7,
+          "exit_code": 0
+        },
+        "protocol": {
+          "data": "citeseer (PyG Planetoid, default split)",
+          "noise": "uniform@0.3, frozen realization (seed=3000)",
+          "metric": "test accuracy (%)",
+          "direction": "maximize",
+          "backbone": "GCN n_hidden=64 n_layer=2 dropout=0.5"
+        }
+      },
+      {
+        "path": "optimization_evidence/historical_v7_invalid_reference/reference_runs/seed_3001_cora/result.json",
+        "role": "reference",
+        "execution": {
+          "command": "train.py --dataset cora --method dream --seed 3001 --device cpu",
+          "elapsed_sec": 129.4,
+          "exit_code": 0
+        },
+        "protocol": {
+          "data": "cora (PyG Planetoid, default split)",
+          "noise": "uniform@0.3, frozen realization (seed=3000)",
+          "metric": "test accuracy (%)",
+          "direction": "maximize",
+          "backbone": "GCN n_hidden=64 n_layer=2 dropout=0.5"
+        }
+      },
+      {
+        "path": "optimization_evidence/historical_v7_invalid_reference/reference_runs/seed_3002_citeseer/result.json",
+        "role": "reference",
+        "execution": {
+          "command": "train.py --dataset citeseer --method dream --seed 3002 --device cpu",
+          "elapsed_sec": 170.3,
+          "exit_code": 0
+        },
+        "protocol": {
+          "data": "citeseer (PyG Planetoid, default split)",
+          "noise": "uniform@0.3, frozen realization (seed=3000)",
+          "metric": "test accuracy (%)",
+          "direction": "maximize",
+          "backbone": "GCN n_hidden=64 n_layer=2 dropout=0.5"
+        }
+      },
+      {
+        "path": "optimization_evidence/historical_v7_invalid_reference/reference_runs/seed_3002_cora/result.json",
+        "role": "reference",
+        "execution": {
+          "command": "train.py --dataset cora --method dream --seed 3002 --device cpu",
+          "elapsed_sec": 85.8,
+          "exit_code": 0
+        },
+        "protocol": {
+          "data": "cora (PyG Planetoid, default split)",
+          "noise": "uniform@0.3, frozen realization (seed=3000)",
+          "metric": "test accuracy (%)",
+          "direction": "maximize",
+          "backbone": "GCN n_hidden=64 n_layer=2 dropout=0.5"
+        }
+      },
+      {
+        "path": "optimization_evidence/reference_runs/seed_3000/result.json",
+        "role": "reference",
+        "execution": {
+          "started_at": null,
+          "ended_at": null,
+          "elapsed_seconds": 425.85,
+          "exit_code": 0,
+          "per_dataset_seconds": {
+            "cora": 115.13962867199996,
+            "citeseer": 310.71464525
+          }
+        },
+        "protocol": {
+          "job_id": "auto2768",
+          "protocol_id": "robust-node-v8-train-only-20261008",
+          "metric": "macro_average_test_accuracy_percent",
+          "direction": "maximize",
+          "split": "private_test",
+          "seed_set": [
+            3000,
+            3001,
+            3002
+          ],
+          "corruption": "uniform@0.3, frozen realization seed=3000",
+          "environment": "python 3.12 + numpy<2, offline Docker, independent reload",
+          "data": "cora + citeseer (public assets, frozen splits)",
+          "metrics_recorded_in_result_json": "validation split (public_val_accuracy_percent); hidden test metrics are declared in optimization_evidence/formal_test_scoring_declared.json",
+          "_note_20261022": "metrics.* 原以 *_test_* 命名，但存储值为验证集精度（与 reload.public_val_accuracy_percent 逐位相同，val_pred.npy shape=(500,)/test_pred.npy shape=(1000,)）；2026-10-22 更正为 *_val_*。protocol.metric/split 保持协议声明不变，仅新增本注记说明 result.json 实际记录的是 val。"
+        }
+      },
+      {
+        "path": "optimization_evidence/reference_runs/seed_3001/result.json",
+        "role": "reference",
+        "execution": {
+          "started_at": null,
+          "ended_at": null,
+          "elapsed_seconds": 493.55,
+          "exit_code": 0,
+          "per_dataset_seconds": {
+            "cora": 140.46205327200005,
+            "citeseer": 353.08376292799994
+          }
+        },
+        "protocol": {
+          "job_id": "auto2768",
+          "protocol_id": "robust-node-v8-train-only-20261008",
+          "metric": "macro_average_test_accuracy_percent",
+          "direction": "maximize",
+          "split": "private_test",
+          "seed_set": [
+            3000,
+            3001,
+            3002
+          ],
+          "corruption": "uniform@0.3, frozen realization seed=3000",
+          "environment": "python 3.12 + numpy<2, offline Docker, independent reload",
+          "data": "cora + citeseer (public assets, frozen splits)",
+          "metrics_recorded_in_result_json": "validation split (public_val_accuracy_percent); hidden test metrics are declared in optimization_evidence/formal_test_scoring_declared.json",
+          "_note_20261022": "metrics.* 原以 *_test_* 命名，但存储值为验证集精度（与 reload.public_val_accuracy_percent 逐位相同，val_pred.npy shape=(500,)/test_pred.npy shape=(1000,)）；2026-10-22 更正为 *_val_*。protocol.metric/split 保持协议声明不变，仅新增本注记说明 result.json 实际记录的是 val。"
+        }
+      },
+      {
+        "path": "optimization_evidence/reference_runs/seed_3002/result.json",
+        "role": "reference",
+        "execution": {
+          "started_at": null,
+          "ended_at": null,
+          "elapsed_seconds": 486.17,
+          "exit_code": 0,
+          "per_dataset_seconds": {
+            "cora": 122.65902374100006,
+            "citeseer": 363.50788656199984
+          }
+        },
+        "protocol": {
+          "job_id": "auto2768",
+          "protocol_id": "robust-node-v8-train-only-20261008",
+          "metric": "macro_average_test_accuracy_percent",
+          "direction": "maximize",
+          "split": "private_test",
+          "seed_set": [
+            3000,
+            3001,
+            3002
+          ],
+          "corruption": "uniform@0.3, frozen realization seed=3000",
+          "environment": "python 3.12 + numpy<2, offline Docker, independent reload",
+          "data": "cora + citeseer (public assets, frozen splits)",
+          "metrics_recorded_in_result_json": "validation split (public_val_accuracy_percent); hidden test metrics are declared in optimization_evidence/formal_test_scoring_declared.json",
+          "_note_20261022": "metrics.* 原以 *_test_* 命名，但存储值为验证集精度（与 reload.public_val_accuracy_percent 逐位相同，val_pred.npy shape=(500,)/test_pred.npy shape=(1000,)）；2026-10-22 更正为 *_val_*。protocol.metric/split 保持协议声明不变，仅新增本注记说明 result.json 实际记录的是 val。"
+        }
+      }
+    ],
+    "parse_errors": [],
+    "declared_environment": {
+      "build_timeout_sec": 1800,
+      "cpus": 16,
+      "memory_mb": 65536,
+      "gpus": 0,
+      "workdir": "/workspace"
+    },
+    "declared_verifier_environment": {
+      "build_timeout_sec": 1800,
+      "cpus": 16,
+      "memory_mb": 65536,
+      "gpus": 0,
+      "workdir": "/tests"
+    },
+    "declared_verifier_timeout": 3600,
+    "evidence": [
+      "workspace/harbor_task/task.toml",
+      "optimization_evidence/baseline_runs/seed_3000/result.json",
+      "optimization_evidence/baseline_runs/seed_3001/result.json",
+      "optimization_evidence/baseline_runs/seed_3002/result.json",
+      "optimization_evidence/reference_runs/seed_3000/result.json",
+      "optimization_evidence/reference_runs/seed_3001/result.json",
+      "optimization_evidence/reference_runs/seed_3002/result.json",
+      "expert_evidence/repair/current_source_revalidation/comparison_public.json",
+      "expert_evidence/repair/current_source_revalidation/runtime.json",
+      "expert_evidence/repair/harbor/native_nop_trial/VERSION_BINDING.md"
+    ],
+    "runs": [],
+    "enforcement_review": null,
+    "estimate": {
+      "score_seconds": 3600,
+      "gpu_count": 0,
+      "gpu_type": null,
+      "cpu_cores": 16,
+      "basis": "正式最慢两图493.55秒；更重3阶段×5成员×200epoch当前复验已完成。预留约1小时覆盖进程启动、独立reload和私有评分，非内场实测或任意候选上界证明。",
+      "time_accounting": "完整一轮训练+独立重载+评分；非10h研究时间，排队安装不计。",
+      "evidence": [
+        "workspace/harbor_task/task.toml",
+        "optimization_evidence/baseline_runs/seed_3000/result.json",
+        "optimization_evidence/baseline_runs/seed_3001/result.json",
+        "optimization_evidence/baseline_runs/seed_3002/result.json",
+        "optimization_evidence/reference_runs/seed_3000/result.json",
+        "optimization_evidence/reference_runs/seed_3001/result.json",
+        "optimization_evidence/reference_runs/seed_3002/result.json",
+        "expert_evidence/repair/current_source_revalidation/comparison_public.json"
+      ],
+      "observation_reconciliation": {
+        "summary": "有GPU型号的宿主/历史A100 NOP只是环境记录；正式B/R及当前重验均device cpu，不将宿主GPU当任务GPU需求。declared-only与实际执行记录分开。",
+        "evidence": [
+          "workspace/harbor_task/task.toml",
+          "expert_evidence/repair/current_source_revalidation/runtime.json",
+          "expert_evidence/repair/harbor/native_nop_trial/VERSION_BINDING.md"
+        ]
+      }
+    },
+    "observation_conflicts": [],
+    "observation_reconciliation": {
+      "summary": "有GPU型号的宿主/历史A100 NOP只是环境记录；正式B/R及当前重验均device cpu，不将宿主GPU当任务GPU需求。declared-only与实际执行记录分开。",
+      "evidence": [
+        "workspace/harbor_task/task.toml",
+        "expert_evidence/repair/current_source_revalidation/runtime.json",
+        "expert_evidence/repair/harbor/native_nop_trial/VERSION_BINDING.md"
+      ]
+    },
+    "hardware_review": {
+      "task_type": "cpu",
+      "score_comparability": "same_hardware",
+      "summary": "B/R同一声明Docker环境均CPU；后续Python3.10主机Dev重验不是正式B/R迁到新卡成绩。交付两侧0GPU；无证据确认正式B/R跨卡不公平。",
+      "evidence": [
+        "optimization_evidence/baseline_runs/seed_3000/result.json",
+        "optimization_evidence/baseline_runs/seed_3001/result.json",
+        "optimization_evidence/baseline_runs/seed_3002/result.json",
+        "optimization_evidence/reference_runs/seed_3000/result.json",
+        "optimization_evidence/reference_runs/seed_3001/result.json",
+        "optimization_evidence/reference_runs/seed_3002/result.json",
+        "workspace/harbor_task/task.toml",
+        "expert_evidence/repair/current_source_revalidation/runtime.json"
+      ],
+      "status": "pass",
+      "score_status": "pass",
+      "affects_formal_scores": false,
+      "affected_formal_runs": [],
+      "problems": [],
+      "gaps": [],
+      "remediation": "按任务性质核对当前Solver/Verifier资源。换卡只复核受影响的成绩或耗时，并引用已有配置、说明或运行记录；旧测量保留原硬件标签。",
+      "acceptance_evidence": "CPU题不申请GPU；GPU题的实际目标卡型为H20/L20；受影响正式分数有目标硬件对应依据，不能只改型号沿用旧分。"
+    },
+    "missing_run_paths": [
+      "optimization_evidence/baseline_runs/seed_3000/result.json",
+      "optimization_evidence/baseline_runs/seed_3001/result.json",
+      "optimization_evidence/baseline_runs/seed_3002/result.json",
+      "optimization_evidence/historical_v7_invalid_reference/baseline_runs/seed_3000_citeseer/result.json",
+      "optimization_evidence/historical_v7_invalid_reference/baseline_runs/seed_3000_cora/result.json",
+      "optimization_evidence/historical_v7_invalid_reference/baseline_runs/seed_3001_citeseer/result.json",
+      "optimization_evidence/historical_v7_invalid_reference/baseline_runs/seed_3001_cora/result.json",
+      "optimization_evidence/historical_v7_invalid_reference/baseline_runs/seed_3002_citeseer/result.json",
+      "optimization_evidence/historical_v7_invalid_reference/baseline_runs/seed_3002_cora/result.json",
+      "optimization_evidence/historical_v7_invalid_reference/reference_runs/seed_3000_citeseer/result.json",
+      "optimization_evidence/historical_v7_invalid_reference/reference_runs/seed_3000_cora/result.json",
+      "optimization_evidence/historical_v7_invalid_reference/reference_runs/seed_3001_citeseer/result.json",
+      "optimization_evidence/historical_v7_invalid_reference/reference_runs/seed_3001_cora/result.json",
+      "optimization_evidence/historical_v7_invalid_reference/reference_runs/seed_3002_citeseer/result.json",
+      "optimization_evidence/historical_v7_invalid_reference/reference_runs/seed_3002_cora/result.json",
+      "optimization_evidence/reference_runs/seed_3000/result.json",
+      "optimization_evidence/reference_runs/seed_3001/result.json",
+      "optimization_evidence/reference_runs/seed_3002/result.json"
+    ],
+    "missing_agent_scores": [
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 1
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 2
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 3
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 4
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 5
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 6
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 7
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 8
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 9
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 10
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 11
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 12
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 13
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 14
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 15
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 16
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 17
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 18
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 19
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 20
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 21
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 22
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 23
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 24
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 25
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 26
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 27
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 28
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 29
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 30
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 31
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 32
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 33
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 34
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 35
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 36
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 37
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 38
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 39
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 40
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 41
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 42
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 43
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 44
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 45
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 46
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 47
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 48
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 49
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 50
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 51
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 52
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 53
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 54
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 55
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 56
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 57
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 58
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 59
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 60
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 61
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 62
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 63
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 64
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 65
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 66
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 67
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 68
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 69
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 70
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 71
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 72
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 73
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 74
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 75
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 76
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 77
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 78
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 79
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 80
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 81
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 82
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 83
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 84
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 85
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 86
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 87
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 88
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 89
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 90
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 91
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 92
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 93
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 94
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 95
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 96
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 97
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 98
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 99
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 100
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 101
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 102
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 103
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 104
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 105
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 106
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 107
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 108
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 109
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 110
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 111
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 112
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 113
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 114
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 115
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 116
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 117
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 118
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 119
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 120
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 121
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 122
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 123
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 124
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 125
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 126
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 127
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 128
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 129
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 130
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 131
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 132
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 133
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 134
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 135
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 136
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 137
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 138
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 139
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 140
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 141
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 142
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 143
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 144
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 145
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 146
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 147
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 148
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 149
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 150
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 151
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 152
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 153
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 154
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 155
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 156
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 157
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 158
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 159
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 160
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 161
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 162
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 163
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 164
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 165
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 166
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 167
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 168
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 169
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 170
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 171
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 172
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 173
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 174
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 175
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 176
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 177
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 178
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 179
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 180
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 181
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 182
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 183
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 184
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 185
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 186
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 187
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 188
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 189
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 190
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 191
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 192
+      },
+      {
+        "source_path": "expert_evidence/trajectory_codex.json",
+        "round": 193
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 1
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 2
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 3
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 4
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 5
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 6
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 7
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 8
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 9
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 10
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 11
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 12
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 13
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 14
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 15
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 16
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 17
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 18
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 19
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 20
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 21
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 22
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 23
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 24
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 25
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 26
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 27
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 28
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 29
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 30
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 31
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 32
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 33
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 34
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 35
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 36
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 37
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 38
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 39
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 40
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 41
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 42
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 43
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 44
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 45
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 46
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 47
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 48
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 49
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 50
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 51
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 52
+      },
+      {
+        "source_path": "expert_evidence/trajectory_seed.json",
+        "round": 53
+      }
+    ],
+    "problems": [],
+    "gaps": [],
+    "feasibility_summary": "正式最慢两图493.55秒；更重3阶段×5成员×200epoch当前复验已完成。预留约1小时覆盖进程启动、独立reload和私有评分，非内场实测或任意候选上界证明。",
+    "remediation": "",
+    "acceptance_evidence": ""
+  },
+  "review": {
+    "completed": false,
+    "stage": "semantic_review",
+    "method": "research gates and per-item semantic evidence review"
+  },
+  "risk_notes": [],
+  "assumptions": [],
+  "limitations": [
+    "通过仅表示存在对应实现或材料，不证明独立复现和运行安全。"
+  ],
+  "summary": {
+    "decision": "FAIL",
+    "counts": {
+      "pass": 15,
+      "fail": 2,
+      "manual": 4,
+      "warn": 0,
+      "not_applicable": 0
+    },
+    "gate_counts": {
+      "pass": 3,
+      "fail": 0,
+      "manual": 0
+    },
+    "blockers": 2
+  }
+}

@@ -2,6 +2,17 @@
 
 这里收**你用本 skill 质检后得到的失败或存疑报告**。每份报告都是一个真实判据压力测试，要么暴露检查器的误报，要么暴露漏报；偶尔也会证明判据在另一个包上依然成立，这同样有价值。
 
+## 已入库样本
+
+| 目录 | 内容 |
+|---|---|
+| `20261025-auto2768-official-review/` | 平台官方质检第 1 轮，FAIL，4 项 fail（QA05/QA08/QA11/QA17），含 SUMMARY |
+| `20261026-auto2768-official-review/` | 第 2 轮，FAIL，1 项 fail（QA13 数值一致性），含 SUMMARY |
+| `20261027-auto2768-official-review/` | 第 3 轮，PASS_WITH_WAIVERS（0 fail，5 项豁免），含 SUMMARY |
+| `20261107-auto2768-terminal-audit/` | 平台终检审计（A/B 两段，findings 空但 coverage_complete=false），含 SUMMARY |
+
+四个目录来自同一题包 auto2768 的两条平台链路，是判据反推的原始素材，读法见各自 SUMMARY。
+
 ## 提交前先看
 
 1. **脱敏**。报告 JSON 里的 `root`、`task_toml` 字段是本机绝对路径，改成 `<package-root>` 这样的占位符。题包内容只保留触发判据的最小片段，不要整包上传。

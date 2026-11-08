@@ -1,0 +1,276 @@
+{
+  "identity": {
+    "table_id": "tblHNtQNFPVwuKiP",
+    "record_id": "recvxeP2AYB9GI",
+    "task_number": "auto2768",
+    "submission_event": 124417
+  },
+  "package_sha256": "608c25681411083167cdcfb6ca3ae9963212fda9b807d62187d32294805aebe4",
+  "skills_sha256": "105b9aa25e8bd309246eb8a01215b47997cfb87c1b8059ee78a6591a3ccb4b60",
+  "a_main_conclusion": "auto2768：无必须修改。",
+  "a_checks": [
+    {
+      "code": "A01",
+      "status": "未执行",
+      "scope": "原始会话清单与材料类型盘点；历史结果只记录",
+      "reason": "未提供原始主、子、恢复、重试会话；trace-inventory.json 为 {}，无法建立完整会话到当前候选及权威评分的对应。已有历史 NOP 不能替代当前正式求解轨迹。"
+    },
+    {
+      "code": "A02",
+      "status": "未执行",
+      "scope": "原始会话清单与 trajectory 文件结构",
+      "reason": "两份 trajectory JSON 为轮次摘要而非逐消息会话；未执行实际违规轨迹审查，不据摘要断言合规或违规。"
+    },
+    {
+      "code": "A03",
+      "status": "已检查",
+      "scope": "instruction.md 全文；task.toml；test.sh；grader.py；contract_guard.py/policy/calibration；public_eval/protocol.json",
+      "reason": "通读题面与实际评分链：两图测试准确率等权宏平均，按可信 B/U 归一化；单套预测评分、不重训、不三种子聚合及模型仅加载质量门均已明确披露。未确认影响正常合规提交的直接冲突。",
+      "evidence": [
+        {
+          "path": "evidence-input/workspace/harbor_task/tests/grader.py",
+          "location": "L108-L187",
+          "detail": "先静态检查与可信校准，再加载模型质量门及两图预测，和私有 y_test 比较，宏平均并归一化写 reward。"
+        },
+        {
+          "path": "evidence-input/workspace/harbor_task/tests/contract_guard.py",
+          "location": "L856-L997",
+          "detail": "注册表与完整 scaffold profile 检查，静态源码数据流和配置校验；不执行候选模块。"
+        }
+      ]
+    },
+    {
+      "code": "A04",
+      "status": "已检查",
+      "scope": "grader.py 候选路径→两图 accuracy→normalize_score→write_reward",
+      "reason": "目标预测实际从 artifacts/<dataset>/test_pred.npy 读取并与私有测试标签比较后进入 reward；训练日志、解释及来源附件不另立优化内容缺失问题。",
+      "evidence": [
+        {
+          "path": "evidence-input/workspace/harbor_task/tests/grader.py",
+          "location": "L108-L187",
+          "detail": "先静态检查与可信校准，再加载模型质量门及两图预测，和私有 y_test 比较，宏平均并归一化写 reward。"
+        },
+        {
+          "path": "evidence-input/workspace/harbor_task/tests/contract_guard.py",
+          "location": "L856-L997",
+          "detail": "注册表与完整 scaffold profile 检查，静态源码数据流和配置校验；不执行候选模块。"
+        }
+      ]
+    },
+    {
+      "code": "A05",
+      "status": "已检查",
+      "scope": "两侧 Dockerfile/requirements/dockerignore；公开适配器、训练/重载入口、Dev evaluator",
+      "reason": "公开数据、starter、Dev 入口的 COPY 资产存在；Dev 默认从 /workspace/data 读取验证标签，输出到可写 solution。无正常调用未恢复失败或正常调用必然失败的直接证据。依赖可安装性未实跑验证。",
+      "evidence": [
+        {
+          "path": "evidence-input/workspace/harbor_task/environment/Dockerfile",
+          "location": "L5-L47",
+          "detail": "官方基础镜像；公开资产、starter、public_eval 分别复制；agent 身份与 solution 写权限明确，不复制 tests/reference/expert_evidence。"
+        },
+        {
+          "path": "evidence-input/workspace/harbor_task/tests/Dockerfile",
+          "location": "L3-L34",
+          "detail": "专用 tests context 预置 grader、可信 guard/policy/calibration、私有标签及入口，独立准备评分依赖。COPY 源文件均存在且未被 dockerignore 排除。"
+        }
+      ]
+    },
+    {
+      "code": "A06",
+      "status": "已检查",
+      "scope": "environment 构建上下文与公开源码、manifest；tests 专用 context；私有材料装配边界",
+      "reason": "按 Dockerfile/context 确定公开面：仅 public_assets/starter/public_eval；tests/private、校准与参考方法未进入 Agent 镜像。公开 baseline、Dev 标签、seed 不作为泄漏。未证明具体 Hidden/参考解公开可见或成功重建使用；二进制资产未反序列化。",
+      "evidence": [
+        {
+          "path": "evidence-input/workspace/harbor_task/environment/Dockerfile",
+          "location": "L5-L47",
+          "detail": "官方基础镜像；公开资产、starter、public_eval 分别复制；agent 身份与 solution 写权限明确，不复制 tests/reference/expert_evidence。"
+        },
+        {
+          "path": "evidence-input/workspace/harbor_task/tests/Dockerfile",
+          "location": "L3-L34",
+          "detail": "专用 tests context 预置 grader、可信 guard/policy/calibration、私有标签及入口，独立准备评分依赖。COPY 源文件均存在且未被 dockerignore 排除。"
+        }
+      ]
+    }
+  ],
+  "b_source_rules": [
+    {
+      "code": "B-C01",
+      "status": "符合",
+      "evidence": [
+        {
+          "path": "evidence-input/workspace/harbor_task/task.toml",
+          "location": "L17-L61",
+          "detail": "唯一任务源配置；artifacts 为 /workspace/solution，separate 声明，无有效 docker_image 项。"
+        }
+      ],
+      "reason": "完整 evidence-input 文件树仅一份 task.toml，位于指定 workspace/harbor_task/task.toml。"
+    },
+    {
+      "code": "B-C02",
+      "status": "符合",
+      "evidence": [
+        {
+          "path": "evidence-input/workspace/harbor_task/task.toml",
+          "location": "L17-L61",
+          "detail": "唯一任务源配置；artifacts 为 /workspace/solution，separate 声明，无有效 docker_image 项。"
+        },
+        {
+          "path": "evidence-input/workspace/harbor_task/environment/Dockerfile",
+          "location": "L5-L47",
+          "detail": "官方基础镜像；公开资产、starter、public_eval 分别复制；agent 身份与 solution 写权限明确，不复制 tests/reference/expert_evidence。"
+        },
+        {
+          "path": "evidence-input/workspace/harbor_task/tests/Dockerfile",
+          "location": "L3-L34",
+          "detail": "专用 tests context 预置 grader、可信 guard/policy/calibration、私有标签及入口，独立准备评分依赖。COPY 源文件均存在且未被 dockerignore 排除。"
+        }
+      ],
+      "reason": "源配置无 docker_image；两侧 Dockerfile 非空，实际 COPY 资产均在各自 context，dockerignore 只排缓存等。源声明选 tests/Dockerfile 专用分支；平台实际选择版本未提供，不能由两份文件推定隔离或构建成功。"
+    },
+    {
+      "code": "B-C03",
+      "status": "符合",
+      "evidence": [
+        {
+          "path": "evidence-input/workspace/harbor_task/environment/Dockerfile",
+          "location": "L12-L22",
+          "detail": "APT 未改写默认源；PIP_INDEX_URL 默认 https://pypi.org/simple。"
+        },
+        {
+          "path": "evidence-input/workspace/harbor_task/tests/requirements.txt",
+          "location": "L1-L3",
+          "detail": "使用 PyTorch 官方 CPU 索引，numpy<2，torch==2.4.1。"
+        }
+      ],
+      "reason": "当前生效声明使用官方默认 APT、PyPI 与 PyTorch CPU 源；未见非官方依赖源。ARG 可覆盖不是已发生的违规；无平台构建参数，无法确认运行时是否覆盖。"
+    },
+    {
+      "code": "B-C04",
+      "status": "不适用",
+      "evidence": [
+        {
+          "path": "evidence-input/workspace/harbor_task/environment/Dockerfile",
+          "location": "L5-L47",
+          "detail": "官方基础镜像；公开资产、starter、public_eval 分别复制；agent 身份与 solution 写权限明确，不复制 tests/reference/expert_evidence。"
+        },
+        {
+          "path": "evidence-input/workspace/harbor_task/tests/Dockerfile",
+          "location": "L3-L34",
+          "detail": "专用 tests context 预置 grader、可信 guard/policy/calibration、私有标签及入口，独立准备评分依赖。COPY 源文件均存在且未被 dockerignore 排除。"
+        }
+      ],
+      "reason": "源包实际构建安装链为 apt/pip，不使用 npm；不要求添加 npm。若使用 npm，应适用 bnpm 指定例外。"
+    }
+  ],
+  "b_stages": [
+    {
+      "stage": "准备",
+      "status": "材料未提供",
+      "evidence": [
+        {
+          "path": "evidence-input/expert_evidence/repair/harbor/native_nop_trial/native_trial/verifier/test-stdout.txt",
+          "location": "L1-L8",
+          "detail": "历史 NOP 缺少 cora/test_pred.npy；INVALID/FORMAT_ERROR，reward 0.0，grader rc=1。"
+        },
+        {
+          "path": "evidence-input/expert_evidence/repair/harbor/native_nop_trial/native_trial/result.json",
+          "location": "字段 trial_name、task_checksum、verifier_result、exception_info",
+          "detail": "历史 trial auto2768-nop-20261008T163026Z；权威归档 rewards.reward=0.0，exception_info=null。"
+        }
+      ],
+      "reason": "platform-evidence 为空；当前包构建步骤、实际参数、镜像 digest/选用配置未提供。本次不执行构建。包内历史本地 Trial 设置结束记录不等于当前平台准备成功。",
+      "recovered": false
+    },
+    {
+      "stage": "执行",
+      "status": "材料未提供",
+      "evidence": [
+        {
+          "path": "evidence-input/expert_evidence/repair/harbor/native_nop_trial/native_trial/verifier/test-stdout.txt",
+          "location": "L1-L8",
+          "detail": "历史 NOP 缺少 cora/test_pred.npy；INVALID/FORMAT_ERROR，reward 0.0，grader rc=1。"
+        },
+        {
+          "path": "evidence-input/expert_evidence/repair/harbor/native_nop_trial/native_trial/result.json",
+          "location": "字段 trial_name、task_checksum、verifier_result、exception_info",
+          "detail": "历史 trial auto2768-nop-20261008T163026Z；权威归档 rewards.reward=0.0，exception_info=null。"
+        }
+      ],
+      "reason": "当前平台 Agent/子会话/恢复重试、实际身份挂载和候选移交材料未提供。本次未执行；历史 nop 非求解会话，不能替代当前 Agent。",
+      "recovered": false
+    },
+    {
+      "stage": "评分",
+      "status": "材料未提供",
+      "evidence": [
+        {
+          "path": "evidence-input/expert_evidence/repair/harbor/native_nop_trial/native_trial/verifier/test-stdout.txt",
+          "location": "L1-L8",
+          "detail": "历史 NOP 缺少 cora/test_pred.npy；INVALID/FORMAT_ERROR，reward 0.0，grader rc=1。"
+        },
+        {
+          "path": "evidence-input/expert_evidence/repair/harbor/native_nop_trial/native_trial/result.json",
+          "location": "字段 trial_name、task_checksum、verifier_result、exception_info",
+          "detail": "历史 trial auto2768-nop-20261008T163026Z；权威归档 rewards.reward=0.0，exception_info=null。"
+        }
+      ],
+      "reason": "当前正式候选→Verifier 输入→原始指标→平台 reward→回传链未提供。历史 nop 已归档 reward=0.0，但为无提交 FORMAT_ERROR、grader rc=1；非当前有效正式评分，不将零分与非零退出或超时等同。",
+      "recovered": false
+    }
+  ],
+  "trace_coverage": [],
+  "original_results": [
+    {
+      "trial_id": "auto2768-nop-20261008T163026Z",
+      "scope": "包内历史本地原生 NOP，非当前题包正式运行",
+      "platform_status": "Trial completed!",
+      "error_type": "FORMAT_ERROR",
+      "grader_exit_code": 1,
+      "reward": 0.0,
+      "exception_info": null,
+      "current_candidate": false,
+      "valid_formal_scoring": false,
+      "evidence": [
+        {
+          "path": "evidence-input/expert_evidence/repair/harbor/native_nop_trial/native_trial/verifier/test-stdout.txt",
+          "location": "L1-L8",
+          "detail": "历史 NOP 缺少 cora/test_pred.npy；INVALID/FORMAT_ERROR，reward 0.0，grader rc=1。"
+        },
+        {
+          "path": "evidence-input/expert_evidence/repair/harbor/native_nop_trial/native_trial/result.json",
+          "location": "字段 trial_name、task_checksum、verifier_result、exception_info",
+          "detail": "历史 trial auto2768-nop-20261008T163026Z；权威归档 rewards.reward=0.0，exception_info=null。"
+        }
+      ]
+    },
+    {
+      "trial_id": "historical_docker_simulation_not_nop",
+      "scope": "历史本地模拟，非原生 Trial、非当前正式运行",
+      "reward": -0.1383622641509434,
+      "grader_exit_code": 0,
+      "current_candidate": false,
+      "valid_formal_scoring": false,
+      "evidence": [
+        {
+          "path": "evidence-input/expert_evidence/repair/historical_docker_simulation_not_nop/result.json",
+          "location": "字段 verifier_result、note",
+          "detail": "保留历史原分和退出码；historical_evidence_assessment 将其明确识别为模拟链路，不以此证明当前候选。"
+        }
+      ]
+    }
+  ],
+  "findings": [],
+  "limitations": [
+    "原始会话清单 trace-inventory.json 实际内容为 {}，没有列出的会话或消息总数；trace_coverage=[]，不伪造 total_messages/read_ranges/complete。A01/A02 未执行。",
+    "包内 trajectory_codex.json、trajectory_seed.json 只有 rounds 等摘要字段，训练 training.jsonl 和旧 events 不能充当完整主/子/恢复/重试工具会话；无法作轨迹通过结论。",
+    "platform-evidence 目录为空；未提供当前平台准备、执行和评分材料。历史本地探针与 Trial 只能证明各自记录范围，不能替代当前包、当前候选或平台运行。",
+    "静态审查不执行题包、构建、Harbor、Verifier、训练、安装或下载；未反序列化 .pt 模型或图资产，不能实证二进制内容与声明一致，不能证明网络可达或依赖完整兼容。",
+    "当前题包 SHA256 与 Skills SHA256 按用户和模板记录；未提供原始压缩包供重算，未将解压目录哈希冒充包哈希。",
+    "未取得可信的当前候选完整评分链，难度跳过，仅供参考，不作验收要求。",
+    "材料缺失仅限制本次覆盖；不产生专家补历史双轨、NOP、3σ、时限或校准义务，不自设全局待核验验收结论。"
+  ],
+  "mandatory_unresolved": [],
+  "coverage_complete": false
+}

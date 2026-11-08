@@ -1,0 +1,23 @@
+{
+  "identity": {
+    "table_id": "tblHNtQNFPVwuKiP",
+    "record_id": "recvxeP2AYB9GI",
+    "task_number": "auto2768",
+    "submission_event": 124417
+  },
+  "package_sha256": "608c25681411083167cdcfb6ca3ae9963212fda9b807d62187d32294805aebe4",
+  "skills": {
+    "version": "1.0.1",
+    "sha256": "105b9aa25e8bd309246eb8a01215b47997cfb87c1b8059ee78a6591a3ccb4b60",
+    "files": {
+      "SKILL.md": "216bdd29e97dd149690ff954c720b93c2dc25efecaee630793bec39cefc15e36",
+      "references/PLATFORM_EVAL_CASES.md": "cc746dceedaa8ab24c14459f363cd64556669826d2ab3e7a1392b3ca7a1131c1",
+      "references/original/EVAL_CASES.md": "f2815886ab5c0b55c613c86b99d77c8890465360f93c6676cb94e69474063a4b",
+      "references/original/SKILL.md": "e1907b9b699568da65e8ae1f59f0534b971800e0e5015657b9d3c984bb7ed928",
+      "references/platform-audit.md": "d34eeded44918f856fdb724c24f5d3ba0ef79ae005d1f74b861ccce7c3f45e56",
+      "references/rules-and-sources.md": "05f3aca392f05270cc792bf0a51b0e24dd66f2007096a2065175a7eaf6849822"
+    }
+  },
+  "platform_files": {},
+  "scope": "A增量审计+B平台专项；非完整基础质检重跑"
+}
