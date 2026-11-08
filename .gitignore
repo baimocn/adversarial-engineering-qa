@@ -9,3 +9,6 @@ pr-*.json
 dc-*.json
 dcf-*.json
 dcg-*.json
+
+# 校准快照（一次性机械检查输出，不入库）
+dc3*.json
