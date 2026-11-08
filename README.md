@@ -4,6 +4,8 @@
 
 这个 skill 从三十多轮真实质检里长出来。每一版背后都有一次被打脸。第二轮质检放过了 1841 的 5 项清单失配，交叉审计才发现检查器把 revision_log 里的历史哈希当成了当前声明；2604 的 reward 双写藏在变量赋值加循环镜像里，行级扫描看不见，逼出了 D-C03 的强特征。规则也反复翻烧饼，`docker_image` 从要求到禁止再到"旧规则建议"，B-C01/B-C02 降了三次级。如果平台规则变了，先看 `references/platform-criteria-inference.md` 里的反转记录，再决定要不要改判据。
 
+> **征集失败报告**。仓库开了 [field-reports/](field-reports/) 目录，专门收你用这套 skill 质检后得到的失败或存疑报告。历次校准全都来自真实误报，我们自己的包越跑越"顺"，反而难再撞出新的判据缺口；你的报告就是下一个回归用例的来源。提交方式见该目录的 README，脱敏后一报告一文件即可。
+
 **当前版本 v2.5.1（2026-11-07）**
 
 ## 它解决什么问题
@@ -89,6 +91,8 @@ references/         规则契约：review 契约、判据反推（含平台规�
                     分派提示词模板、报告 schema
 official/           内嵌只读官方副本（task-qa / baseline-quality /
                     supplement-platform-audit，SHA256 锁定）
+field-reports/      他人质检失败/存疑报告收集处（脱敏后一报告一文件，
+                    可复现的误报会转成回归用例）
 assets/             review.json 模板
 tests/              unittest 自测（94 用例，含各检查器的误报回归）
 ```
