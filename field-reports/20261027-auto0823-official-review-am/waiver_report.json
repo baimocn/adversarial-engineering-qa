@@ -1,0 +1,138 @@
+{
+  "adapter_version": "0.3.10-standard-waiver.5",
+  "decision": "FAIL",
+  "accepted": [
+    {
+      "target": "QA05",
+      "causes": [
+        {
+          "summary": "题面仍声明Agent无出网且工具不可用；当前TOML已移除不支持的禁网字段，仅HF_HUB_OFFLINE与custom-readout seccomp不等于整个Agent禁网。属已批准unsupported_network_policy_transition，非宣称已落实网络隔离。"
+        }
+      ]
+    },
+    {
+      "target": "QA15",
+      "causes": [
+        {
+          "summary": "历史RTX3080Ti未改标；目标H20/L20估算无实际验证，未见当前明确超限。"
+        }
+      ]
+    },
+    {
+      "target": "QA16",
+      "causes": [
+        {
+          "summary": "现有窗口37831/37810s，逐调用合计37829/37810；Seed最后45s无新增轮应扣，得37765；内部安装/API/阻塞未分类，不能据墙钟证明各≥10h有效研究。训练题不适用7h。"
+        }
+      ]
+    },
+    {
+      "target": "QA18",
+      "causes": [
+        {
+          "summary": "实际模型/独立目录据自述/启动器与方法演进支持；最高推理档及完整Prompt快照缺历史证明，不虚称同条件。"
+        }
+      ]
+    },
+    {
+      "target": "QA18",
+      "causes": [
+        {
+          "summary": "Seed旧集成仅保存首成员，当前撤回所有得分主张；只保留研究过程，不作为正式B/R或当前best。"
+        }
+      ]
+    },
+    {
+      "target": "QA18",
+      "causes": [
+        {
+          "summary": "已实际对比现有两轨材料，旧版材料仍不足以证明所有历史条件一致；仅此记录缺口豁免，不声称已证实同条件。六维已审：两轨任务均CIFAR10LT、起点67.16、相同公开Dev及训练/读出研究面，启动器独立CODEX_HOME/task/output；build_round_prompt共享HARNESSprompt/BRIEF引用而原文未交，不能认证逐字或全部反馈权限相同。未找到identical_prompt=false或已确认实质差异；driver会话粒度81次对3次是研究行为，不自动等于不同题目反馈。历史同3080Ti/20CPU自述，无目标卡实测。"
+        }
+      ]
+    },
+    {
+      "target": "QA21",
+      "causes": [
+        {
+          "summary": "重算四项8970072d…与run_summary匹配；该字段记录当前v34，不能追溯证明两轨历史输入相同。"
+        }
+      ]
+    },
+    {
+      "target": "H02",
+      "causes": [
+        {
+          "summary": "题面仍声明Agent无出网且工具不可用；当前TOML已移除不支持的禁网字段，仅HF_HUB_OFFLINE与custom-readout seccomp不等于整个Agent禁网。属已批准unsupported_network_policy_transition，非宣称已落实网络隔离。"
+        }
+      ]
+    },
+    {
+      "target": "H03",
+      "causes": [
+        {
+          "summary": "有效双Dockerfile/COPY/入口具备；当前内场镜像导入/tag仍由平台准备。"
+        }
+      ]
+    },
+    {
+      "target": "H03",
+      "causes": [
+        {
+          "summary": "root/chroot/seccomp/实际依赖/产物移交未在当前内场运行核实，不作为作者缺陷。"
+        }
+      ]
+    },
+    {
+      "target": "H05",
+      "causes": [
+        {
+          "summary": "旧Trial参数已审；当前内场有效覆盖/实际镜像选择待平台执行核对。"
+        }
+      ]
+    },
+    {
+      "target": "H06",
+      "causes": [
+        {
+          "summary": "两份原生旧NOP同次config/result均nop/separate、已结束无exception、reward一致且日志非空；无相同sandbox ID反证，亦无完整物理认证。旧v2 CPU5epoch实际覆盖重放分支但题包hash不同，当前Trial缺失。"
+        }
+      ]
+    },
+    {
+      "target": "T01",
+      "causes": [
+        {
+          "summary": "所交轨迹可读且属本题，旧启动/最高档/净有效时间证明不足。"
+        }
+      ]
+    },
+    {
+      "target": "T02",
+      "causes": [
+        {
+          "summary": "所交轨迹可读且属本题，旧启动/最高档/净有效时间证明不足。"
+        }
+      ]
+    }
+  ],
+  "remaining_findings": [
+    {
+      "key": "QA21",
+      "status": "fail",
+      "summary": "当前最佳方法说明仍有两处实质对应错误：gpt56的README把Seed的5成员仅保存1个缺口写成本目录限制；专家表把winner隐藏reward写1.3179，与83.96及现B/U应得1.307072不符。原B/R与JSON复算值不因此无效。",
+      "remediation": "仅修正当前说明：best_method/README.md:87-89的5成员缺失说明应归track_seed；专家作业说明文档.md:125的winner隐藏reward应与83.96及现锚点一致为1.3070719603，明确旧口径时另标；不改原始轨迹或正式B/R，不要求重跑历史研究。"
+    },
+    {
+      "key": "QA21",
+      "status": "fail",
+      "summary": "当前最佳方法说明仍有两处实质对应错误：gpt56的README把Seed的5成员仅保存1个缺口写成本目录限制；专家表把winner隐藏reward写1.3179，与83.96及现B/U应得1.307072不符。原B/R与JSON复算值不因此无效。",
+      "remediation": ""
+    }
+  ],
+  "rejected": [],
+  "integrity_issues": [],
+  "platform_followup_pending": [],
+  "review_sha256": "d59f57139e4d90eaed61cbf9afb96a59648045ac40f7e643a7e78dd17fe3caf8",
+  "legacy_review_sha256": "b1da9428a219107c087f929651d14f4d86d1786ad32343964f93440c8d0922d7",
+  "final_report_sha256": "93bd242b6546339ebf0f482e5703dc628d3260dea495292f8e69fc56c0b4a228"
+}

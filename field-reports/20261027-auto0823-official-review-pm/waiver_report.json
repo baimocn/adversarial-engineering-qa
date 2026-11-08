@@ -1,0 +1,194 @@
+{
+  "adapter_version": "0.3.10-standard-waiver.5",
+  "decision": "FAIL",
+  "accepted": [
+    {
+      "target": "QA05",
+      "causes": [
+        {
+          "summary": "资产预置/HF_HUB_OFFLINE不构成Agent整体禁网，读出seccomp只在自定义读出进程生效；移除不支持网络字段后的过渡按批次授权免本轮补证，未认证联网约束。"
+        }
+      ]
+    },
+    {
+      "target": "QA15",
+      "causes": [
+        {
+          "summary": "原记录3080Ti与当前目标H20/L20不同，旧测量未改标；正式B/R仍在同机同上限可比。"
+        }
+      ]
+    },
+    {
+      "target": "QA15",
+      "causes": [
+        {
+          "summary": "6600秒为保守工程估计，缺目标卡训练/Dev/CPU重放完整测量，历史31模型高成本方案不是当前可提交方法。"
+        }
+      ]
+    },
+    {
+      "target": "QA16",
+      "causes": [
+        {
+          "summary": "窗口合计约10.5h但内部空转/故障扣除不足；实际有效秒数未知，保持原manual，不声称达标。"
+        }
+      ]
+    },
+    {
+      "target": "QA18",
+      "causes": [
+        {
+          "summary": "实际模型可由轨迹/header/启动说明关联；推理最高档位、完整公共Prompt快照和空输出启动认证缺口按旧证明豁免。"
+        }
+      ]
+    },
+    {
+      "target": "QA18",
+      "causes": [
+        {
+          "summary": "Seed轨原集成4成员未保存，85.70另一配置无从核对；分数unverified且不作现行成绩/B/R，已有方法重训与全47轮仍审完。免的是迁移后的证明义务，不把历史分判有效。"
+        }
+      ]
+    },
+    {
+      "target": "QA18",
+      "causes": [
+        {
+          "summary": "已实际对比现有两轨材料，旧版材料仍不足以证明所有历史条件一致；仅此记录缺口豁免，不声称已证实同条件。已逐维比较实际材料：两轨同题CIFAR10-LT、相同baseline起点67.16、公开Dev与seed训练规则，分别独立凭据/CODEX_HOME/output；共同prompt构造器引用shared HARNESS_PROMPT/AGENT_BRIEF，但两份模板原件未交，故不能声称已证明逐字/语义完全相同。没有identical_prompt=false或已确认反馈/IPC/只读实质分轨差异的记录。历史两轨使用3080Ti而当前目标H20/L20的迁移另列；共用旧评分→当前可信重放改变双方验收，不等于A/B间差异。"
+        }
+      ]
+    },
+    {
+      "target": "QA21",
+      "causes": [
+        {
+          "summary": "当前四项指纹一致但注明仅返修树；历史轨迹使用早期评分/部署版本，不能用当前hash补造历史绑定。"
+        }
+      ]
+    },
+    {
+      "target": "H02",
+      "causes": [
+        {
+          "summary": "tomllib可解析，显式separate、原生CPU/GPU配置；旧entrypoint/submit为信息扩展不替代真实tests入口。默认内场不支持整体禁网；题面禁网承诺尚有迁移缺口。"
+        }
+      ]
+    },
+    {
+      "target": "H03",
+      "causes": [
+        {
+          "summary": "有完整双Dockerfile源镜像构建方案；内场最终tag/选中镜像由平台准备，未声明已导入。"
+        }
+      ]
+    },
+    {
+      "target": "H03",
+      "causes": [
+        {
+          "summary": "本沙盒本地进程/降权chroot静态调用清楚，当前root/seccomp、构建和实际移交未验证；并非额外容器。"
+        }
+      ]
+    },
+    {
+      "target": "H05",
+      "causes": [
+        {
+          "summary": "已有历史Trial配置已审；迁移后当前Job配置与启动/镜像选择由平台核验。"
+        }
+      ]
+    },
+    {
+      "target": "H06",
+      "causes": [
+        {
+          "summary": "正式v2旧NOP身份/终止/reward/日志一致，task_toml103cec…与当前49ee…不同，旧v1记录和GPU宿主补充均不冒充现行NOP。当前runtime=not_run；免补跑但原记录不改判当前成功。"
+        }
+      ]
+    },
+    {
+      "target": "H06",
+      "causes": [
+        {
+          "summary": "v2历史NOP同Trial身份、separate、结束、reward与日志一致；原校验器只因旧task.toml103cec…不同于当前49ee…记manual。此原因免补跑，不写成当前成功。"
+        }
+      ]
+    },
+    {
+      "target": "H06",
+      "causes": [
+        {
+          "summary": "v1归档NOP在原只读预测评分链下reward一致，旧task.toml103cec…不是当前版本；保留其覆盖边界与版本缺口，未将v1用于现行trusted replay证明。"
+        }
+      ]
+    },
+    {
+      "target": "H06",
+      "causes": [
+        {
+          "summary": "GPU全预算宿主记录缺原生nop Agent/config/result结构、separate/原生reward日志布局，不合原H06；保留原fail。后续已有v2双镜像nop结构与可信评分源码修正，但当前迁移题包尚未Trial，仅此历史当前验证缺口豁免。"
+        }
+      ]
+    },
+    {
+      "target": "T01",
+      "causes": [
+        {
+          "summary": "各轨墙钟约10.5h不等于真实有效时长；扣除不足按旧时长缺口处置。"
+        }
+      ]
+    },
+    {
+      "target": "T01",
+      "causes": [
+        {
+          "summary": "旧运行无完整最高推理档和Prompt/空输出认证；已交内容审完，不假称认证了未交工具行为。"
+        }
+      ]
+    },
+    {
+      "target": "T02",
+      "causes": [
+        {
+          "summary": "各轨墙钟约10.5h不等于真实有效时长；扣除不足按旧时长缺口处置。"
+        }
+      ]
+    },
+    {
+      "target": "T02",
+      "causes": [
+        {
+          "summary": "旧运行无完整最高推理档和Prompt/空输出认证；已交内容审完，不假称认证了未交工具行为。"
+        }
+      ]
+    },
+    {
+      "target": "T02",
+      "causes": [
+        {
+          "summary": "历史多成员集成只保留首成员；该轨得分unverified、不参与正式B/R或当前winner，已有不同配置重训不能证明85.70。"
+        }
+      ]
+    }
+  ],
+  "remaining_findings": [
+    {
+      "key": "QA21",
+      "status": "fail",
+      "summary": "主JSON/八字段可解析，当前四项指纹一致；但best_method训练输出未生成inference.json，run.sh直接调用当前Dev合同，实际回放缺省单视图恒等读出，与所称18视图仿射方法不符。",
+      "remediation": "使best_method当前训练/快速开始入口在每次运行后，依据该次新模型和校准矩阵生成inference.json：单model.pt、18视图、log_mean_probabilities、该次calibration_weight/class_bias，并在Dev调用前交付；不能盲复制旧checkpoint的矩阵。同步说明训练先验系数1与推理初始化0.7375的区别。"
+    },
+    {
+      "key": "QA21",
+      "status": "fail",
+      "summary": "主JSON/八字段可解析，当前四项指纹一致；但best_method训练输出未生成inference.json，run.sh直接调用当前Dev合同，实际回放缺省单视图恒等读出，与所称18视图仿射方法不符。",
+      "remediation": ""
+    }
+  ],
+  "rejected": [],
+  "integrity_issues": [],
+  "platform_followup_pending": [],
+  "review_sha256": "d6ceef56443f55395ae4ca773974834dec9fa21765f748716676c24515a84f74",
+  "legacy_review_sha256": "58a58ece58eaafb5741415a8debbdb52cc08a31218c9dbd6afed416a09da0fc1",
+  "final_report_sha256": "1735b7af73f18d86d45aec5fcf84148413a33401487ffe57f39794db04ae56b2"
+}

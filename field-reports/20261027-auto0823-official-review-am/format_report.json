@@ -1,0 +1,201 @@
+{
+  "schema_version": 1,
+  "version": "0.3.10-format-repair.3.1",
+  "stage": "format_repair",
+  "generated_at": "2026-10-27T14:25:34.638100+00:00",
+  "decision": "PASS_WITH_WAIVERS",
+  "code": "FORMAT_REPAIR_ACCEPTED",
+  "is_task_rejection": false,
+  "checks": [
+    {
+      "id": "F01",
+      "status": "pass",
+      "summary": "当前task四部分、TOML可解析且显式separate；原生资源配置有效表，旧entrypoint/submit仅说明；标准入口/tests/test.sh存在。",
+      "evidence": [
+        "workspace/harbor_task/task.toml",
+        "workspace/harbor_task/instruction.md",
+        "workspace/harbor_task/tests/test.sh"
+      ],
+      "resolutions": [],
+      "remediation": "",
+      "acceptance_evidence": "",
+      "title": "当前必需目录、文件与 TOML 接口",
+      "review_status": "pass",
+      "automatic_findings": []
+    },
+    {
+      "id": "F02",
+      "status": "pass",
+      "summary": "双Dockerfile均context内COPY，Agent ARG默认python3.11-slim，依赖声明完整；内部tag/构建由平台准备，不冒充已经运行。",
+      "evidence": [
+        "workspace/harbor_task/environment/Dockerfile",
+        "workspace/harbor_task/tests/Dockerfile"
+      ],
+      "resolutions": [],
+      "remediation": "",
+      "acceptance_evidence": "",
+      "title": "有效构建或镜像方案、构建上下文及 COPY 来源",
+      "review_status": "pass",
+      "automatic_findings": []
+    },
+    {
+      "id": "F03",
+      "status": "pass",
+      "summary": "专用tests镜像预置绝对入口、CPUtorch/numpy、私有数据和readout运行时根，数值reward在/logs/verifier。",
+      "evidence": [
+        "workspace/harbor_task/tests/Dockerfile",
+        "workspace/harbor_task/tests/test.sh",
+        "workspace/harbor_task/tests/grader.py",
+        "workspace/harbor_task/tests/requirements.txt"
+      ],
+      "resolutions": [],
+      "remediation": "",
+      "acceptance_evidence": "",
+      "title": "评分入口、独立依赖声明与固定输出路径",
+      "review_status": "pass",
+      "automatic_findings": []
+    },
+    {
+      "id": "F04",
+      "status": "pass",
+      "summary": "顶层artifacts=/workspace/solution覆盖grader读取的同一绝对目录；无destination容器重映射误用。",
+      "evidence": [
+        "workspace/harbor_task/task.toml",
+        "workspace/harbor_task/tests/test.sh",
+        "workspace/harbor_task/tests/grader.py"
+      ],
+      "resolutions": [],
+      "remediation": "",
+      "acceptance_evidence": "",
+      "title": "提交物 artifacts 移交契约",
+      "review_status": "pass",
+      "automatic_findings": []
+    },
+    {
+      "id": "F05",
+      "status": "pass",
+      "summary": "公开Dev/data/starter进入Agent，私有tests仅进入独立Verifier，custom运行时仅小资产/features/logits；未见静态COPY泄漏。",
+      "evidence": [
+        "workspace/harbor_task/environment/Dockerfile",
+        "workspace/harbor_task/tests/Dockerfile",
+        "workspace/harbor_task/tests/grader.py",
+        "workspace/harbor_task/tests/sandbox_readout.py"
+      ],
+      "resolutions": [],
+      "remediation": "",
+      "acceptance_evidence": "",
+      "title": "公开 Dev、私有 Hidden 供给与 Agent 隔离",
+      "review_status": "pass",
+      "automatic_findings": []
+    },
+    {
+      "id": "F06",
+      "status": "pass",
+      "summary": "GPU任务Agent1×H20/L20/20CPU，Verifier8CPU/0GPU，separate；直属无Compose/不支持字段；调用仅本地进程，不额外调度GPU环境。",
+      "evidence": [
+        "workspace/harbor_task/task.toml",
+        "workspace/harbor_task/tests/sandbox_readout.py",
+        "workspace/harbor_task/environment/public_eval/run_round.sh"
+      ],
+      "resolutions": [],
+      "remediation": "",
+      "acceptance_evidence": "",
+      "title": "separate、单容器、无 Compose 与当前目标资源配置",
+      "review_status": "pass",
+      "automatic_findings": []
+    },
+    {
+      "id": "F07",
+      "status": "pass",
+      "summary": "当前评分可执行链静态完整，参考数据来自可信镜像，清理/重放/原子reward，未见硬编码伪分或作者泄漏。当前best说明不一致另由QA21保留。",
+      "evidence": [
+        "workspace/harbor_task/tests/grader.py",
+        "workspace/harbor_task/tests/submission_contract.py",
+        "workspace/harbor_task/tests/sandbox_readout.py"
+      ],
+      "resolutions": [],
+      "remediation": "",
+      "acceptance_evidence": "",
+      "title": "当前评分实现与冻结面无确证故障或作者泄漏造假",
+      "review_status": "pass",
+      "automatic_findings": []
+    }
+  ],
+  "current_findings": [],
+  "semantic_observations": [],
+  "platform_followup_pending": [
+    {
+      "id": "ICM_IMAGE_PREPARATION",
+      "summary": "字节内部准备、构建或导入镜像并配置实际 ICM tag；本轮不要求专家补内部镜像运行记录。",
+      "blocking": false
+    },
+    {
+      "id": "BUILD_AND_STARTUP",
+      "summary": "平台实际构建和启动，核对依赖、基础镜像 digest 及 bash/解释器；静态推断不能冒充运行结果。",
+      "blocking": false
+    },
+    {
+      "id": "SANDBOX_CONFIGURATION",
+      "summary": "平台核对 root、seccomp、网络及实际分配的沙盒权限设置。",
+      "blocking": false
+    },
+    {
+      "id": "CURRENT_TRIAL_NOP",
+      "summary": "平台后续执行当前版本 Harbor Trial/NOP、独立 Verifier 和 reward 收集；其缺口不作为本轮专家返修门槛。",
+      "blocking": false
+    },
+    {
+      "id": "RUNTIME_TRANSFER",
+      "summary": "平台实际核对提交物移交及目标 H20/L20（GPU 题）运行；本轮不重算历史资源或成绩。",
+      "blocking": false
+    },
+    {
+      "id": "NETWORK_POLICY_TRANSITION",
+      "summary": "移除不支持的禁网字段后，新的联网或外部查表防护尚未落实，列为平台迁移事项，不要求本批专家新增防护实现或补跑；当前确证 Hidden 暴露或假 reward 仍属当前核心缺陷。",
+      "blocking": false
+    }
+  ],
+  "platform_runtime_status": "not_executed",
+  "historical_rules_not_checked": [
+    {
+      "summary": "历史运行字段、资源差异和旧卡记录",
+      "blocking": false
+    },
+    {
+      "summary": "历史轨迹八字段、状态、时间及行为重审",
+      "blocking": false
+    },
+    {
+      "summary": "历史运行时长、方法轮次和最高推理档记录",
+      "blocking": false
+    },
+    {
+      "summary": "旧题包指纹、哈希和旧版本重新绑定",
+      "blocking": false
+    },
+    {
+      "summary": "历史 Baseline/Reference 成绩重跑与换卡复验",
+      "blocking": false
+    },
+    {
+      "summary": "旧版未要求的当前 Trial/NOP 记录",
+      "blocking": false
+    }
+  ],
+  "task_code_executed": false,
+  "review_diagnostics": [],
+  "input_and_review_errors": [],
+  "scope_note": "本批只审当前格式与核心交付语义；历史记录与平台实跑事项不作为本轮门槛。",
+  "task_root": "workspace/harbor_task",
+  "bundle_root": ".",
+  "platform_observations": [],
+  "artifact_contract": {
+    "definite_sources": [
+      "/logs/artifacts",
+      "/workspace/solution"
+    ],
+    "uncertain_sources": [],
+    "submission_paths": []
+  },
+  "report_scope": "仅格式子报告，不代表整题质检结论；总审见 report.json / report.md / report.txt。"
+}

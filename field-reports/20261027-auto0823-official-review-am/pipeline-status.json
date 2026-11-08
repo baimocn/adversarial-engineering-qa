@@ -1,0 +1,12 @@
+{
+  "state": "completed",
+  "record_id": "reczz28JcXbwvFqT",
+  "table_id": "tblZRCgkFlAMaUBy",
+  "run_id": "497d3f8be8ba42658a7a199b0f82446b",
+  "sha256": "3ed405d943dcb4a83090767005b5396d24214e8875cf86c50ab32bd7e9cab8db",
+  "skill_content_sha256": "4cacd6e212a38c2efff2cb8945e9f8ff966a56ada26372053114576c1c5649ae",
+  "effective_decision": "FAIL",
+  "updated_at": 1793111136.9360363,
+  "skill_version": "0.3.10-standard-waiver.5-toolfix.1",
+  "skill_root": "/data00/wangsiyu/autoresearch-qa-standalone-20261014/skill-versions/0.3.10-standard-waiver.5-toolfix.1"
+}

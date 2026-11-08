@@ -10,11 +10,13 @@
 | `20261030-auto0340-official-review/` | auto0340 第 2 轮，FAIL，4 项 fail（QA05/QA06/QA11/QA17），含 SUMMARY |
 | `20261024-auto2001-official-review/` | auto2001 第 1 轮，FAIL，7 项 fail（QA02/QA03/QA04/QA13/QA17/QA18/QA21），含 SUMMARY |
 | `20261029-auto2001-official-review/` | auto2001 第 2 轮，FAIL，4 项 fail（QA05/QA06/QA11/QA17），含 SUMMARY |
+| `20261027-auto0823-official-review-am/` | auto0823 同日上午轮，FAIL，1 项 fail（QA21），含 SUMMARY |
+| `20261027-auto0823-official-review-pm/` | auto0823 同日晚间轮，FAIL，1 项 fail（QA21，晚间新增读出回放缺口），含 SUMMARY |
 | `20261025-auto2768-official-review/` | auto2768 第 1 轮，FAIL，4 项 fail（QA05/QA08/QA11/QA17），含 SUMMARY |
 | `20261026-auto2768-official-review/` | auto2768 第 2 轮，FAIL，1 项 fail（QA13 数值一致性），含 SUMMARY |
 | `20261027-auto2768-official-review/` | auto2768 第 3 轮，PASS_WITH_WAIVERS（0 fail，5 项豁免），含 SUMMARY |
 
-七轮来自三个题包（auto0340、auto2001、auto2768）的同一条官方链路（`standard_review_with_waivers` 阶段），全部从飞书平台附件下载，是判据反推的原始素材，读法见各自 SUMMARY。三个包的 fail 分布有明确共性，QA05 在三个包的第一轮全部命中，QA17 紧随其后；这正是 `check_execution_path.py` 十条规则的选题依据。
+九轮来自四个题包（auto0340、auto2001、auto0823、auto2768）的同一条官方链路（`standard_review_with_waivers` 阶段），全部从飞书平台两张表的附件字段下载（三期领题表与三期专家自行选题表），是判据反推的原始素材，读法见各自 SUMMARY。fail 分布有明确共性，QA05 在 0340/2001/2768 三个包的第一轮全部命中，QA17 紧随其后；这正是 `check_execution_path.py` 十条规则的选题依据。
 
 ## 你可以交什么
 
