@@ -1,0 +1,141 @@
+{
+  "task_number": "auto2001",
+  "record_id": "recvwCzQqh1beR",
+  "table_id": "tblHNtQNFPVwuKiP",
+  "run_id": "2ae7fc3bb12a49f5802e8e53d6ab3f1f",
+  "source_file_token": "BXwSbTMhooRTYExzJhUceA98nLe",
+  "files": {
+    "report.json": {
+      "bytes": 845554,
+      "sha256": "95df271a4dc9fd910f2a1b4bbb4b1d1f84370117b1c6f9cd07cceaa0e3b112f7"
+    },
+    "report.md": {
+      "bytes": 62086,
+      "sha256": "050da9a8c6957e2081d6b0f08b3d0c232af326fde212f80cc2aa184fe1bdfd41"
+    },
+    "report.txt": {
+      "bytes": 62086,
+      "sha256": "050da9a8c6957e2081d6b0f08b3d0c232af326fde212f80cc2aa184fe1bdfd41"
+    },
+    "return_to_expert.txt": {
+      "bytes": 62086,
+      "sha256": "050da9a8c6957e2081d6b0f08b3d0c232af326fde212f80cc2aa184fe1bdfd41"
+    },
+    "review.json": {
+      "bytes": 57917,
+      "sha256": "16e3deac22f7bf0889e291743bb9bec4928bc3f6501ec1061a76dcc1a4ade339"
+    },
+    "baseline-review.md": {
+      "bytes": 7762,
+      "sha256": "c7ad3769df7400ffc73b254762ad8283d6eba1eb1dc71e9672a33df4638438e9"
+    },
+    "pipeline-status.json": {
+      "bytes": 542,
+      "sha256": "fe8107554eff012656c3ddcb679902a6050b316b8924d1247e449b3e68f34e88"
+    },
+    "skills-revision.json": {
+      "bytes": 8491,
+      "sha256": "c6c560200b1ca4b6f96a50a0b6aad3332595d65390785c321f4080a1772c9fda"
+    },
+    "waiver_report.json": {
+      "bytes": 13903,
+      "sha256": "7540c4e88f2cf77684ba54101d12cda282a00bab8424a36201eea4d77369f520"
+    },
+    "waiver_report.md": {
+      "bytes": 62086,
+      "sha256": "050da9a8c6957e2081d6b0f08b3d0c232af326fde212f80cc2aa184fe1bdfd41"
+    },
+    "waiver_report.txt": {
+      "bytes": 62086,
+      "sha256": "050da9a8c6957e2081d6b0f08b3d0c232af326fde212f80cc2aa184fe1bdfd41"
+    },
+    "waiver_return_to_expert.txt": {
+      "bytes": 62086,
+      "sha256": "050da9a8c6957e2081d6b0f08b3d0c232af326fde212f80cc2aa184fe1bdfd41"
+    },
+    "legacy_review.json": {
+      "bytes": 94211,
+      "sha256": "4f0a0a7405b49717cddd92f4b66f6aa43e1cd9061a0e6a69740f6cc05c972cb6"
+    },
+    "standard-waiver/_standard_review_input.json": {
+      "bytes": 57917,
+      "sha256": "16e3deac22f7bf0889e291743bb9bec4928bc3f6501ec1061a76dcc1a4ade339"
+    },
+    "standard-waiver/format_precheck.json": {
+      "bytes": 8861,
+      "sha256": "30c6760e4c587df0199468a79b07d7ff63c40302e74618f0365ae7ed79510078"
+    },
+    "standard-waiver/format_report.json": {
+      "bytes": 7226,
+      "sha256": "26afae88320971111af4b61d7172d4d37458de7519eb71ebe1d0ad382cb245ab"
+    },
+    "standard-waiver/format_report.md": {
+      "bytes": 4034,
+      "sha256": "a68c6dd0a3d584bad37fa2912d7f7ef7c102cfc411a40994cfa6f57f35bbb279"
+    },
+    "standard-waiver/format_report.txt": {
+      "bytes": 4034,
+      "sha256": "a68c6dd0a3d584bad37fa2912d7f7ef7c102cfc411a40994cfa6f57f35bbb279"
+    },
+    "standard-waiver/legacy_review_report.json": {
+      "bytes": 845554,
+      "sha256": "95df271a4dc9fd910f2a1b4bbb4b1d1f84370117b1c6f9cd07cceaa0e3b112f7"
+    },
+    "standard-waiver/legacy_review_report.md": {
+      "bytes": 62086,
+      "sha256": "050da9a8c6957e2081d6b0f08b3d0c232af326fde212f80cc2aa184fe1bdfd41"
+    },
+    "standard-waiver/legacy_review_report.txt": {
+      "bytes": 62086,
+      "sha256": "050da9a8c6957e2081d6b0f08b3d0c232af326fde212f80cc2aa184fe1bdfd41"
+    },
+    "standard-waiver/report.json": {
+      "bytes": 845554,
+      "sha256": "95df271a4dc9fd910f2a1b4bbb4b1d1f84370117b1c6f9cd07cceaa0e3b112f7"
+    },
+    "standard-waiver/report.md": {
+      "bytes": 62086,
+      "sha256": "050da9a8c6957e2081d6b0f08b3d0c232af326fde212f80cc2aa184fe1bdfd41"
+    },
+    "standard-waiver/report.txt": {
+      "bytes": 62086,
+      "sha256": "050da9a8c6957e2081d6b0f08b3d0c232af326fde212f80cc2aa184fe1bdfd41"
+    },
+    "standard-waiver/return_to_expert.txt": {
+      "bytes": 62086,
+      "sha256": "050da9a8c6957e2081d6b0f08b3d0c232af326fde212f80cc2aa184fe1bdfd41"
+    },
+    "standard-waiver/review_template.json": {
+      "bytes": 9566,
+      "sha256": "12b892ae21248ab16c7c75b517e08a907fab9d33f6a16553b9c2234404321add"
+    },
+    "standard-waiver/standard/inventory.json": {
+      "bytes": 50452,
+      "sha256": "006da9ec7ea86fbeae1801e03a0e949dc524ddbd8042dcbfa4724d6cca360e3a"
+    },
+    "standard-waiver/standard/report.json": {
+      "bytes": 196576,
+      "sha256": "fdc89cd2b0d43d0fd9a5b6afcd0205b3472d775d11315d8d1fa3dfacd238c40d"
+    },
+    "standard-waiver/standard/report.md": {
+      "bytes": 28998,
+      "sha256": "11d2d2d95ea83721a24b7dfe9951a4d2d68d8d340eb22af84bc2afc44b0cfe5f"
+    },
+    "standard-waiver/standard/report.txt": {
+      "bytes": 28998,
+      "sha256": "11d2d2d95ea83721a24b7dfe9951a4d2d68d8d340eb22af84bc2afc44b0cfe5f"
+    },
+    "standard-waiver/standard/return_to_expert.txt": {
+      "bytes": 12973,
+      "sha256": "64c4ec3c568096bc3e67fa17b479f8b04a8bb83db03697b18782248e6081be1c"
+    },
+    "standard-waiver/standard_resolution_template.json": {
+      "bytes": 3815,
+      "sha256": "b538fe9673eaf12f1acbdf15a3388db6b2d14d68178711687b1b3576be76018e"
+    },
+    "standard-waiver/standard_review_template.json": {
+      "bytes": 8788,
+      "sha256": "7095f62c47d3e9bc1d519c334db9c6ae689407b65a27b95b7efe6922e3bd582f"
+    }
+  }
+}

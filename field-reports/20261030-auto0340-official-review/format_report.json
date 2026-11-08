@@ -1,0 +1,213 @@
+{
+  "schema_version": 1,
+  "version": "0.3.10-format-repair.3.1",
+  "stage": "format_repair",
+  "generated_at": "2026-10-30T07:14:18.717515+00:00",
+  "decision": "FAIL",
+  "code": "CURRENT_FORMAT_FAULTS",
+  "is_task_rejection": true,
+  "checks": [
+    {
+      "id": "F01",
+      "status": "pass",
+      "summary": "三目录与任务根完整，TOML可解析，核心接口存在。",
+      "evidence": [
+        "workspace/harbor_task/task.toml",
+        "workspace/harbor_task/instruction.md"
+      ],
+      "remediation": "",
+      "acceptance_evidence": "",
+      "resolutions": [],
+      "title": "当前必需目录、文件与 TOML 接口",
+      "review_status": "pass",
+      "automatic_findings": []
+    },
+    {
+      "id": "F02",
+      "status": "pass",
+      "summary": "Agent context=environment、Verifier context=tests，COPY来源均在各自context；有效源构建方案存在，ICM镜像由平台准备。",
+      "evidence": [
+        "workspace/harbor_task/environment/Dockerfile",
+        "workspace/harbor_task/tests/Dockerfile"
+      ],
+      "remediation": "",
+      "acceptance_evidence": "",
+      "resolutions": [],
+      "title": "有效构建或镜像方案、构建上下文及 COPY 来源",
+      "review_status": "pass",
+      "automatic_findings": []
+    },
+    {
+      "id": "F03",
+      "status": "pass",
+      "summary": "评分入口/tests/test.sh及独立依赖在位，reward固定/logs/verifier路径；实际逻辑故障列F07。",
+      "evidence": [
+        "workspace/harbor_task/tests/test.sh",
+        "workspace/harbor_task/tests/Dockerfile",
+        "workspace/harbor_task/tests/requirements.txt"
+      ],
+      "remediation": "",
+      "acceptance_evidence": "",
+      "resolutions": [],
+      "title": "评分入口、独立依赖声明与固定输出路径",
+      "review_status": "pass",
+      "automatic_findings": []
+    },
+    {
+      "id": "F04",
+      "status": "pass",
+      "summary": "顶层artifacts覆盖/workspace/solution，与评分读取路径一致。",
+      "evidence": [
+        "workspace/harbor_task/task.toml",
+        "workspace/harbor_task/tests/test.sh"
+      ],
+      "remediation": "",
+      "acceptance_evidence": "",
+      "resolutions": [],
+      "title": "提交物 artifacts 移交契约",
+      "review_status": "pass",
+      "automatic_findings": []
+    },
+    {
+      "id": "F05",
+      "status": "pass",
+      "summary": "公开Dev/data随Agent，Hidden仅tests专用镜像；真实文件/manifest非占位；不反序列化数据。",
+      "evidence": [
+        "workspace/harbor_task/environment/Dockerfile",
+        "workspace/harbor_task/tests/Dockerfile",
+        "workspace/harbor_task/tests/hidden_assets/dataset/hidden_manifest.json"
+      ],
+      "remediation": "",
+      "acceptance_evidence": "",
+      "resolutions": [],
+      "title": "公开 Dev、私有 Hidden 供给与 Agent 隔离",
+      "review_status": "pass",
+      "automatic_findings": []
+    },
+    {
+      "id": "F06",
+      "status": "pass",
+      "summary": "separate、双方单容器、无正式Compose文件，目标H20/L20和CPU数合法；启动/训练调用不创建额外工作环境。",
+      "evidence": [
+        "workspace/harbor_task/task.toml",
+        "workspace/harbor_task/tests/evaluate_verify.py",
+        "workspace/harbor_task/environment/public_eval/eval_dev.py"
+      ],
+      "remediation": "",
+      "acceptance_evidence": "",
+      "resolutions": [],
+      "title": "separate、单容器、无 Compose 与当前目标资源配置",
+      "review_status": "pass",
+      "automatic_findings": []
+    },
+    {
+      "id": "F07",
+      "status": "fail",
+      "summary": "当前评分有两项确证静态故障：动作ndarray与TensorWrapper契约冲突，以及运行时docstring指纹误拒合规Starter/Reference。",
+      "evidence": [
+        "workspace/harbor_task/tests/evaluate_verify.py:590-599",
+        "workspace/harbor_task/tests/trusted_env/envs/__init__.py:80-83",
+        "workspace/harbor_task/tests/trusted_env/envs/wrappers/tensor.py:36-40",
+        "workspace/harbor_task/tests/evaluate_verify.py:720-740",
+        "workspace/harbor_task/tests/evaluate_verify.py:805-831",
+        "workspace/harbor_task/tests/evaluate_verify.py:927-945",
+        "workspace/harbor_task/tests/hard_gate.py:603-632",
+        "workspace/harbor_task/environment/starter/tdmpc2/tdmpc2.py:146-168",
+        "workspace/harbor_task/tests/trusted_env/trusted_tdmpc2.py"
+      ],
+      "remediation": "统一父进程动作与 TensorWrapper 接口，例如校验后转 CPU float32 Tensor 再 step；将评测器自身接口异常与候选违规分开归因。 统一静态与运行时冻结比较的语义范围，排除仅 docstring 差异；保留对可执行代码变化的拒绝。",
+      "acceptance_evidence": "提交修正后的真实源码；复验时用原样 Starter 和 Reference 各走正常动作的完整入口，确认冻结检查通过、环境至少完成一个完整回合并产出真实 reward；另确认实际改写冻结代码仍拒绝。本次不执行候选或 Verifier，也不要求重做历史两轨。",
+      "resolutions": [],
+      "title": "当前评分实现与冻结面无确证故障或作者泄漏造假",
+      "review_status": "fail",
+      "automatic_findings": []
+    }
+  ],
+  "current_findings": [],
+  "semantic_observations": [],
+  "platform_followup_pending": [
+    {
+      "id": "ICM_IMAGE_PREPARATION",
+      "summary": "字节内部准备、构建或导入镜像并配置实际 ICM tag；本轮不要求专家补内部镜像运行记录。",
+      "blocking": false
+    },
+    {
+      "id": "BUILD_AND_STARTUP",
+      "summary": "平台实际构建和启动，核对依赖、基础镜像 digest 及 bash/解释器；静态推断不能冒充运行结果。",
+      "blocking": false
+    },
+    {
+      "id": "SANDBOX_CONFIGURATION",
+      "summary": "平台核对 root、seccomp、网络及实际分配的沙盒权限设置。",
+      "blocking": false
+    },
+    {
+      "id": "CURRENT_TRIAL_NOP",
+      "summary": "平台后续执行当前版本 Harbor Trial/NOP、独立 Verifier 和 reward 收集；其缺口不作为本轮专家返修门槛。",
+      "blocking": false
+    },
+    {
+      "id": "RUNTIME_TRANSFER",
+      "summary": "平台实际核对提交物移交及目标 H20/L20（GPU 题）运行；本轮不重算历史资源或成绩。",
+      "blocking": false
+    },
+    {
+      "id": "NETWORK_POLICY_TRANSITION",
+      "summary": "移除不支持的禁网字段后，新的联网或外部查表防护尚未落实，列为平台迁移事项，不要求本批专家新增防护实现或补跑；当前确证 Hidden 暴露或假 reward 仍属当前核心缺陷。",
+      "blocking": false
+    }
+  ],
+  "platform_runtime_status": "not_executed",
+  "historical_rules_not_checked": [
+    {
+      "summary": "历史运行字段、资源差异和旧卡记录",
+      "blocking": false
+    },
+    {
+      "summary": "历史轨迹八字段、状态、时间及行为重审",
+      "blocking": false
+    },
+    {
+      "summary": "历史运行时长、方法轮次和最高推理档记录",
+      "blocking": false
+    },
+    {
+      "summary": "旧题包指纹、哈希和旧版本重新绑定",
+      "blocking": false
+    },
+    {
+      "summary": "历史 Baseline/Reference 成绩重跑与换卡复验",
+      "blocking": false
+    },
+    {
+      "summary": "旧版未要求的当前 Trial/NOP 记录",
+      "blocking": false
+    }
+  ],
+  "task_code_executed": false,
+  "review_diagnostics": [],
+  "input_and_review_errors": [],
+  "scope_note": "本批只审当前格式与核心交付语义；历史记录与平台实跑事项不作为本轮门槛。",
+  "task_root": "workspace/harbor_task",
+  "bundle_root": ".",
+  "platform_observations": [
+    {
+      "owner": "F03",
+      "code": "PLATFORM_RUNTIME_UNVERIFIED",
+      "summary": "基础镜像 nvidia/cuda:11.8.0-cudnn8-devel-ubuntu20.04 的 bash/解释器不可由当前声明确认；需补充镜像说明、依赖声明或已有运行证据。静态文件映射不能证明运行成功。",
+      "evidence": [
+        "workspace/harbor_task/tests/Dockerfile"
+      ],
+      "blocking": false
+    }
+  ],
+  "artifact_contract": {
+    "definite_sources": [
+      "/logs/artifacts",
+      "/workspace/solution"
+    ],
+    "uncertain_sources": [],
+    "submission_paths": []
+  },
+  "report_scope": "仅格式子报告，不代表整题质检结论；总审见 report.json / report.md / report.txt。"
+}

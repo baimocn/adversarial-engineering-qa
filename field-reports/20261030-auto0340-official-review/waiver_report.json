@@ -1,0 +1,202 @@
+{
+  "adapter_version": "0.3.10-standard-waiver.5",
+  "decision": "FAIL",
+  "accepted": [
+    {
+      "target": "QA15",
+      "causes": [
+        {
+          "summary": "历史B/R同4080，目标H20/L20的推断未实测；无证据表明本包当前申请超限。"
+        }
+      ]
+    },
+    {
+      "target": "QA16",
+      "causes": [
+        {
+          "summary": "36644/40158仅为轨迹时间跨度，净有效时长未知；不把工具可读数字当真实净时长。"
+        }
+      ]
+    },
+    {
+      "target": "QA18",
+      "causes": [
+        {
+          "summary": "两轨旧公开集含Hidden34条，受影响历史Dev分invalid；现行15k正式B/R未采用这些Agent分。"
+        }
+      ]
+    },
+    {
+      "target": "QA18",
+      "causes": [
+        {
+          "summary": "实际模型由artifact端点/轨迹支持；最高档与独立空输出的历史启动材料不完整，未确认非独立运行。"
+        }
+      ]
+    },
+    {
+      "target": "QA18",
+      "causes": [
+        {
+          "summary": "已实际对比现有两轨材料，旧版材料仍不足以证明所有历史条件一致；仅此记录缺口豁免，不声称已证实同条件。已逐维读两轨、方法、artifact协议、旧Dev切分、失败摘要、对照表和专家说明。两边记录同30000步/seed1/10回合与旧100条集，独立最佳方法及输出有支持；但没有各自原Prompt/反馈/IPC只读启动原件，当前Docker配置不能追溯证明当时权限相同。未发现已确认的实质差异，也不认定已证明完全同条件。"
+        }
+      ]
+    },
+    {
+      "target": "QA21",
+      "causes": [
+        {
+          "summary": "四项当前指纹匹配，但补记当前hash只表题目归属，不是历史运行字节；不伪造历史绑定。"
+        }
+      ]
+    },
+    {
+      "target": "QA21",
+      "causes": [
+        {
+          "summary": "两轨八字段均有；历史status=ok等与新版枚举有差异，保留原JSON。"
+        }
+      ]
+    },
+    {
+      "target": "H03",
+      "causes": [
+        {
+          "summary": "存在完整双Dockerfile源方案，内场ICM标签准备未完成。"
+        }
+      ]
+    },
+    {
+      "target": "H03",
+      "causes": [
+        {
+          "summary": "当前实际构建/解释器/root与sandbox传输验证未运行；仅此平台验证欠缺免补证。"
+        }
+      ]
+    },
+    {
+      "target": "H06",
+      "causes": [
+        {
+          "summary": "已审旧NOP的config/result/reward/log，成功记录属于41835e1a历史字节；现包已改评分冻结面，当前NOP未跑。"
+        }
+      ]
+    },
+    {
+      "target": "T01",
+      "causes": [
+        {
+          "summary": "旧公开100条包含Hidden34条，历史Dev分invalid，不能作当前正式科学证据。"
+        }
+      ]
+    },
+    {
+      "target": "T01",
+      "causes": [
+        {
+          "summary": "既有时间是分段跨度，非独立可核净时长。"
+        }
+      ]
+    },
+    {
+      "target": "T01",
+      "causes": [
+        {
+          "summary": "旧启动/最高推理档证明范围有限，未证实非独立或实质条件差异。"
+        }
+      ]
+    },
+    {
+      "target": "T02",
+      "causes": [
+        {
+          "summary": "旧公开100条包含Hidden34条，历史Dev分invalid，不能作当前正式科学证据。"
+        }
+      ]
+    },
+    {
+      "target": "T02",
+      "causes": [
+        {
+          "summary": "既有时间是分段跨度，非独立可核净时长。"
+        }
+      ]
+    },
+    {
+      "target": "T02",
+      "causes": [
+        {
+          "summary": "旧启动/最高推理档证明范围有限，未证实非独立或实质条件差异。"
+        }
+      ]
+    }
+  ],
+  "remaining_findings": [
+    {
+      "key": "QA05",
+      "status": "fail",
+      "summary": "静态 G6 剥离 docstring，但运行时 _code_fp 将 co_consts 中的 docstring 纳入指纹；当前 Starter 的 _estimate_value_iq 说明字符串与可信副本不同，实际方法体相同也会被 _guard 误判篡改。Reference 的说明字符串亦不同。",
+      "remediation": "统一静态与运行时冻结比较的语义范围，排除仅 docstring 差异；保留对可执行代码变化的拒绝。"
+    },
+    {
+      "key": "QA05",
+      "status": "fail",
+      "summary": "静态 G6 剥离 docstring，但运行时 _code_fp 将 co_consts 中的 docstring 纳入指纹；当前 Starter 的 _estimate_value_iq 说明字符串与可信副本不同，实际方法体相同也会被 _guard 误判篡改。Reference 的说明字符串亦不同。",
+      "remediation": ""
+    },
+    {
+      "key": "QA06",
+      "status": "fail",
+      "summary": "评分父进程将动作构造成 np.ndarray 后传入 TensorWrapper.step；该包装器调用 action.numpy()，ndarray 无此方法，正常动作在首步即抛 AttributeError，并被当作候选侧失败计 -1。",
+      "remediation": "统一父进程动作与 TensorWrapper 接口，例如校验后转 CPU float32 Tensor 再 step；将评测器自身接口异常与候选违规分开归因。"
+    },
+    {
+      "key": "QA06",
+      "status": "fail",
+      "summary": "评分父进程将动作构造成 np.ndarray 后传入 TensorWrapper.step；该包装器调用 action.numpy()，ndarray 无此方法，正常动作在首步即抛 AttributeError，并被当作候选侧失败计 -1。",
+      "remediation": ""
+    },
+    {
+      "key": "QA11",
+      "status": "fail",
+      "summary": "题面称超时是基础设施错误，评测器当前把eval_timeout_*归候选并出-1。",
+      "remediation": "修正超时/环境接口故障的责任归因，与题面明确区分候选违规。"
+    },
+    {
+      "key": "QA11",
+      "status": "fail",
+      "summary": "八项实质内容齐，但题面将超时列为基础设施错误；当前评测超时 eval_timeout_* 被默认归候选并计-1，实际错误归因与题面矛盾。",
+      "remediation": ""
+    },
+    {
+      "key": "QA17",
+      "status": "fail",
+      "summary": "H01–H06已审；H04当前评分接口故障阻断，H03镜像平台准备与H06当前NOP缺口按具体历史原因另处置，不能整行豁免。",
+      "remediation": ""
+    },
+    {
+      "key": "H04",
+      "status": "fail",
+      "summary": "评分父进程将动作构造成 np.ndarray 后传入 TensorWrapper.step；该包装器调用 action.numpy()，ndarray 无此方法，正常动作在首步即抛 AttributeError，并被当作候选侧失败计 -1。",
+      "remediation": "统一父进程动作与 TensorWrapper 接口，例如校验后转 CPU float32 Tensor 再 step；将评测器自身接口异常与候选违规分开归因。"
+    },
+    {
+      "key": "H04",
+      "status": "fail",
+      "summary": "静态 G6 剥离 docstring，但运行时 _code_fp 将 co_consts 中的 docstring 纳入指纹；当前 Starter 的 _estimate_value_iq 说明字符串与可信副本不同，实际方法体相同也会被 _guard 误判篡改。Reference 的说明字符串亦不同。",
+      "remediation": "统一静态与运行时冻结比较的语义范围，排除仅 docstring 差异；保留对可执行代码变化的拒绝。"
+    },
+    {
+      "key": "H04",
+      "status": "fail",
+      "summary": "入口和reward原子输出存在，但当前正常候选被docstring冻结指纹误拒；即使通过该关，动作ndarray与TensorWrapper接口冲突使首步失败，不能输出真实正常分数。",
+      "remediation": ""
+    }
+  ],
+  "rejected": [],
+  "integrity_issues": [],
+  "platform_followup_pending": [],
+  "review_sha256": "8d2b3de7131a9b6c0d3c21ef198669dd0f9b937ab0de362376e7a82483192155",
+  "legacy_review_sha256": "c734e6b15deff639b0e117456ec8fa8f32d5d450945e14cc432ceabdd523f785",
+  "final_report_sha256": "7e62943f25a99ec1cfba3c475894bab4c5280e15ac8a36835a1d501cd81ef5d8"
+}

@@ -1,0 +1,200 @@
+{
+  "schema_version": 1,
+  "version": "0.3.10-format-repair.3.1",
+  "stage": "format_repair",
+  "generated_at": "2026-10-29T05:21:53.512202+00:00",
+  "decision": "FAIL",
+  "code": "CURRENT_FORMAT_FAULTS",
+  "is_task_rejection": true,
+  "checks": [
+    {
+      "id": "F01",
+      "status": "pass",
+      "summary": "三目录、选定task根及TOML接口存在。",
+      "evidence": [
+        "workspace/harbor_task/instruction.md",
+        "workspace/harbor_task/task.toml"
+      ],
+      "remediation": "",
+      "acceptance_evidence": "",
+      "resolutions": [],
+      "title": "当前必需目录、文件与 TOML 接口",
+      "review_status": "pass",
+      "automatic_findings": []
+    },
+    {
+      "id": "F02",
+      "status": "pass",
+      "summary": "双Dockerfile按各自context，COPY来源完整；ICM镜像准备是平台事项。",
+      "evidence": [
+        "workspace/harbor_task/environment/Dockerfile",
+        "workspace/harbor_task/tests/Dockerfile"
+      ],
+      "remediation": "",
+      "acceptance_evidence": "",
+      "resolutions": [],
+      "title": "有效构建或镜像方案、构建上下文及 COPY 来源",
+      "review_status": "pass",
+      "automatic_findings": []
+    },
+    {
+      "id": "F03",
+      "status": "fail",
+      "summary": "当前评分器超时分支返回3项，调用接收2项，约定的失败reward处理有确定静态错误。",
+      "evidence": [
+        "workspace/harbor_task/tests/test.sh",
+        "workspace/harbor_task/tests/evaluate_verify.py"
+      ],
+      "remediation": "统一推理函数所有分支返回二元组，并由可信主进程处理超时与失败输出。",
+      "acceptance_evidence": "源码所有返回分支与调用方参数个数一致；平台后续验证超时能产生约定有限reward或明确约定的失败状态。",
+      "resolutions": [],
+      "title": "评分入口、独立依赖声明与固定输出路径",
+      "review_status": "fail",
+      "automatic_findings": []
+    },
+    {
+      "id": "F04",
+      "status": "pass",
+      "summary": "顶层artifacts含/workspace/solution，与Verifier消费目录一致。",
+      "evidence": [
+        "workspace/harbor_task/task.toml",
+        "workspace/harbor_task/tests/test.sh"
+      ],
+      "remediation": "",
+      "acceptance_evidence": "",
+      "resolutions": [],
+      "title": "提交物 artifacts 移交契约",
+      "review_status": "pass",
+      "automatic_findings": []
+    },
+    {
+      "id": "F05",
+      "status": "pass",
+      "summary": "公开Dev和训练/验证数据供Agent；Hidden仅tests注入契约并有历史日志调用，不COPY进Agent。",
+      "evidence": [
+        "workspace/harbor_task/environment/Dockerfile",
+        "workspace/harbor_task/tests/Dockerfile",
+        "workspace/harbor_task/tests/hidden_assets/inject_contract.json",
+        "workspace/harbor_task/tests/test.sh",
+        "expert_evidence/nop_trial_native/verifier/test-stdout.txt"
+      ],
+      "remediation": "",
+      "acceptance_evidence": "",
+      "resolutions": [],
+      "title": "公开 Dev、私有 Hidden 供给与 Agent 隔离",
+      "review_status": "pass",
+      "automatic_findings": []
+    },
+    {
+      "id": "F06",
+      "status": "pass",
+      "summary": "separate、无正式Compose；本沙盒本地进程；AgentH20/L20单卡、VerifierCPU0GPU。",
+      "evidence": [
+        "workspace/harbor_task/task.toml",
+        "workspace/harbor_task/environment/Dockerfile",
+        "workspace/harbor_task/tests/Dockerfile",
+        "workspace/harbor_task/tests/evaluate_verify.py"
+      ],
+      "remediation": "",
+      "acceptance_evidence": "",
+      "resolutions": [],
+      "title": "separate、单容器、无 Compose 与当前目标资源配置",
+      "review_status": "pass",
+      "automatic_findings": []
+    },
+    {
+      "id": "F07",
+      "status": "fail",
+      "summary": "评分器存在确定超时错误；题面公开Dev单命令路径与镜像实际布局不一致。",
+      "evidence": [
+        "workspace/harbor_task/tests/evaluate_verify.py",
+        "workspace/harbor_task/instruction.md",
+        "workspace/harbor_task/environment/Dockerfile",
+        "workspace/harbor_task/task.toml"
+      ],
+      "remediation": "将题面和submit命令统一为明确cwd与绝对solution/data路径，例如从/workspace调用solution/evaluate.py并指定/workspace/solution。",
+      "acceptance_evidence": "题面、配置和镜像布局形成同一有效路径链，公开Dev可通过所声明命令找到模型、权重和公开数据。",
+      "resolutions": [],
+      "title": "当前评分实现与冻结面无确证故障或作者泄漏造假",
+      "review_status": "fail",
+      "automatic_findings": []
+    }
+  ],
+  "current_findings": [],
+  "semantic_observations": [],
+  "platform_followup_pending": [
+    {
+      "id": "ICM_IMAGE_PREPARATION",
+      "summary": "字节内部准备、构建或导入镜像并配置实际 ICM tag；本轮不要求专家补内部镜像运行记录。",
+      "blocking": false
+    },
+    {
+      "id": "BUILD_AND_STARTUP",
+      "summary": "平台实际构建和启动，核对依赖、基础镜像 digest 及 bash/解释器；静态推断不能冒充运行结果。",
+      "blocking": false
+    },
+    {
+      "id": "SANDBOX_CONFIGURATION",
+      "summary": "平台核对 root、seccomp、网络及实际分配的沙盒权限设置。",
+      "blocking": false
+    },
+    {
+      "id": "CURRENT_TRIAL_NOP",
+      "summary": "平台后续执行当前版本 Harbor Trial/NOP、独立 Verifier 和 reward 收集；其缺口不作为本轮专家返修门槛。",
+      "blocking": false
+    },
+    {
+      "id": "RUNTIME_TRANSFER",
+      "summary": "平台实际核对提交物移交及目标 H20/L20（GPU 题）运行；本轮不重算历史资源或成绩。",
+      "blocking": false
+    },
+    {
+      "id": "NETWORK_POLICY_TRANSITION",
+      "summary": "移除不支持的禁网字段后，新的联网或外部查表防护尚未落实，列为平台迁移事项，不要求本批专家新增防护实现或补跑；当前确证 Hidden 暴露或假 reward 仍属当前核心缺陷。",
+      "blocking": false
+    }
+  ],
+  "platform_runtime_status": "not_executed",
+  "historical_rules_not_checked": [
+    {
+      "summary": "历史运行字段、资源差异和旧卡记录",
+      "blocking": false
+    },
+    {
+      "summary": "历史轨迹八字段、状态、时间及行为重审",
+      "blocking": false
+    },
+    {
+      "summary": "历史运行时长、方法轮次和最高推理档记录",
+      "blocking": false
+    },
+    {
+      "summary": "旧题包指纹、哈希和旧版本重新绑定",
+      "blocking": false
+    },
+    {
+      "summary": "历史 Baseline/Reference 成绩重跑与换卡复验",
+      "blocking": false
+    },
+    {
+      "summary": "旧版未要求的当前 Trial/NOP 记录",
+      "blocking": false
+    }
+  ],
+  "task_code_executed": false,
+  "review_diagnostics": [],
+  "input_and_review_errors": [],
+  "scope_note": "本批只审当前格式与核心交付语义；历史记录与平台实跑事项不作为本轮门槛。",
+  "task_root": "workspace/harbor_task",
+  "bundle_root": ".",
+  "platform_observations": [],
+  "artifact_contract": {
+    "definite_sources": [
+      "/logs/artifacts",
+      "/workspace/solution"
+    ],
+    "uncertain_sources": [],
+    "submission_paths": []
+  },
+  "report_scope": "仅格式子报告，不代表整题质检结论；总审见 report.json / report.md / report.txt。"
+}

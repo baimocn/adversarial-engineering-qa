@@ -1,0 +1,194 @@
+{
+  "adapter_version": "0.3.10-standard-waiver.5",
+  "decision": "FAIL",
+  "accepted": [
+    {
+      "target": "QA05",
+      "causes": [
+        {
+          "summary": "有效TOML已删除禁网字段；题面仍以交付审计核验禁外部资源，当前无网络约束执行点，保留原缺口但免本批新防护/补跑。"
+        }
+      ]
+    },
+    {
+      "target": "QA15",
+      "causes": [
+        {
+          "summary": "B/R原机卡型真实保留，目标H20/L20资源仅据完整日志估算，未把原卡成绩/时间改标新卡实测。"
+        }
+      ]
+    },
+    {
+      "target": "QA15",
+      "causes": [
+        {
+          "summary": "有6000s/1GPU/16CPU有据估算，缺新版目标资源验证免补证；当前配置不超限。"
+        }
+      ]
+    },
+    {
+      "target": "QA16",
+      "causes": [
+        {
+          "summary": "Seed11948s未分类，有效时长未知；训练任务不作7h例外，按获准历史时长/证明缺口免补跑。"
+        }
+      ]
+    },
+    {
+      "target": "QA18",
+      "causes": [
+        {
+          "summary": "两轨历史研究存在固定lr/提交窗口违约、单epoch峰值混作SWA及保留标记矛盾；受影响旧分invalid，免新增追责/重跑。正式作者六次B/R独立，未采用旧Agent分。"
+        }
+      ]
+    },
+    {
+      "target": "QA18",
+      "causes": [
+        {
+          "summary": "已有实际模型名、独立box和空OUTPUT_DIR说明；无原始启动Prompt/最高推理档/全工具会话，核实范围有限，免新启动证明。"
+        }
+      ]
+    },
+    {
+      "target": "QA18",
+      "causes": [
+        {
+          "summary": "Seed r44 no_result表示agent正常退出但无方法/评分产物，score=null、failure_reason非空、retained_best=false；旧自定义状态已据实审明，不是成功分数。"
+        }
+      ]
+    },
+    {
+      "target": "QA18",
+      "causes": [
+        {
+          "summary": "已实际对比现有两轨材料，旧版材料仍不足以证明所有历史条件一致；仅此记录缺口豁免，不声称已证实同条件。已对比现行10-25/26两轨，不混用已退役10-03/04共用输出/765→1413口径史。两轨均描述APAVA/公开Dev n1413、独立box1/box2和空输出、4070 SUPER；模型不同合法。无原始Prompt与完整启动/反馈快照，不能证实全部条件相同；未发现已确认给两轨不同任务权限/IPC/反馈的反证。Agent各自改lr/SWA属行为而非被分配条件变化。"
+        }
+      ]
+    },
+    {
+      "target": "QA21",
+      "causes": [
+        {
+          "summary": "当前c58b5e60…四项指纹一致；历史两轨发生于10-25/26，之后格式/评分器返修不能当成轨迹当时启动hash。保留迁移差异，不伪造旧绑定。"
+        }
+      ]
+    },
+    {
+      "target": "QA21",
+      "causes": [
+        {
+          "summary": "Seed r44 no_result的语义已读：正常退出但无方法/评分产物，score=null且有failure_reason、不保留best；旧自定义状态不等同成功。"
+        }
+      ]
+    },
+    {
+      "target": "H03",
+      "causes": [
+        {
+          "summary": "有效双Dockerfile/COPY方案已交；实际ICM预构建镜像选择由平台准备，不冒称已在内场构建成功。"
+        }
+      ]
+    },
+    {
+      "target": "H03",
+      "causes": [
+        {
+          "summary": "路径与本地执行调用链已审，当前目标平台启动/依赖/移交运行仍待验证；未发现任务部署额外工作环境。"
+        }
+      ]
+    },
+    {
+      "target": "H06",
+      "causes": [
+        {
+          "summary": "原生NOP只绑定10-08版本，reward=-1/n_test=0早退分支并非完整Hidden；旧本地等效记录已退役。当前版本缺NOP免补跑，已有坏记录仍保留。"
+        }
+      ]
+    },
+    {
+      "target": "T01",
+      "causes": [
+        {
+          "summary": "两轨历史研究存在固定lr/提交窗口违约、单epoch峰值混作SWA及保留标记矛盾；受影响旧分invalid，免新增追责/重跑。正式作者六次B/R独立，未采用旧Agent分。"
+        }
+      ]
+    },
+    {
+      "target": "T02",
+      "causes": [
+        {
+          "summary": "两轨历史研究存在固定lr/提交窗口违约、单epoch峰值混作SWA及保留标记矛盾；受影响旧分invalid，免新增追责/重跑。正式作者六次B/R独立，未采用旧Agent分。"
+        }
+      ]
+    }
+  ],
+  "remaining_findings": [
+    {
+      "key": "QA05",
+      "status": "fail",
+      "summary": "题面声称候选代码无法影响评分且不能接触标签；实际子进程仅python -I/start_new_session，仍在同一Verifier文件系统/身份执行，候选模型import前未建立/tests/hidden_assets与评分文件的访问边界。-I隔离Python搜索路径，不限制文件访问，故当前绝对安全声明与实现不符。",
+      "remediation": "将当前声明限定到实际已有的Python进程隔离与可信后处理；若保留不可读写Hidden/评分文件承诺，应把可执行的权限/文件访问边界接入候选执行调用链，平台验证其效果。"
+    },
+    {
+      "key": "QA05",
+      "status": "fail",
+      "summary": "有冻结面SHA、参数量前置门、1800s训练wrapper与1200s推理计时；但题面把Python子进程宣称为候选不可触及Hidden/评分文件的边界，与当前调用链不符。禁网迁移另按白名单。",
+      "remediation": ""
+    },
+    {
+      "key": "QA06",
+      "status": "fail",
+      "summary": "run_isolated_inference超时分支返回(status,None,None)，main以status,logits二元解包；该分支必然ValueError，无法进入约定的推理失败reward=-1处理。",
+      "remediation": "统一推理函数所有分支返回二元组，并由可信主进程处理超时与失败输出。"
+    },
+    {
+      "key": "QA06",
+      "status": "fail",
+      "summary": "test.sh与可信主进程有正式reward及无权重/超参数处理；超时分支返回3项而调用接收2项，导致约定的失败reward路径失效。",
+      "remediation": ""
+    },
+    {
+      "key": "QA11",
+      "status": "fail",
+      "summary": "题面/submit.dev_score_command为python evaluate.py --solution_dir ./solution；镜像只将evaluate.py放入/workspace/solution与starter，/workspace没有evaluate.py；在solution内执行又会寻找solution/solution/models，所给单命令与实际布局不一致。",
+      "remediation": "将题面和submit命令统一为明确cwd与绝对solution/data路径，例如从/workspace调用solution/evaluate.py并指定/workspace/solution。"
+    },
+    {
+      "key": "QA11",
+      "status": "fail",
+      "summary": "题面声称候选代码无法影响评分且不能接触标签；实际子进程仅python -I/start_new_session，仍在同一Verifier文件系统/身份执行，候选模型import前未建立/tests/hidden_assets与评分文件的访问边界。-I隔离Python搜索路径，不限制文件访问，故当前绝对安全声明与实现不符。",
+      "remediation": "将当前声明限定到实际已有的Python进程隔离与可信后处理；若保留不可读写Hidden/评分文件承诺，应把可执行的权限/文件访问边界接入候选执行调用链，平台验证其效果。"
+    },
+    {
+      "key": "QA11",
+      "status": "fail",
+      "summary": "八部分实质内容齐全；公开Dev命令与镜像路径不一致，且不可触及评分/Hidden文件的绝对声明超出-I子进程实际边界。",
+      "remediation": ""
+    },
+    {
+      "key": "QA17",
+      "status": "fail",
+      "summary": "由H01-H06汇总：当前评分超时处理静态错误、内场镜像/运行待平台验证、历史NOP非当前版本；仅后两类可按具体原因豁免。",
+      "remediation": ""
+    },
+    {
+      "key": "H04",
+      "status": "fail",
+      "summary": "run_isolated_inference超时分支返回(status,None,None)，main以status,logits二元解包；该分支必然ValueError，无法进入约定的推理失败reward=-1处理。",
+      "remediation": "统一推理函数所有分支返回二元组，并由可信主进程处理超时与失败输出。"
+    },
+    {
+      "key": "H04",
+      "status": "fail",
+      "summary": "test.sh输出reward.json与reward.txt，优先JSON；正常分支数值有限，JSON附加指标合法。推理超时返回值个数错误导致失败处理无法写出约定reward。",
+      "remediation": ""
+    }
+  ],
+  "rejected": [],
+  "integrity_issues": [],
+  "platform_followup_pending": [],
+  "review_sha256": "ed12e0244bd39f13c5d08af723c4547a9190832d683b8a6cdc1e1741a9c11c7b",
+  "legacy_review_sha256": "0df44a24527c66809eaa23b89d689c735be7efc184a5b99c3251e857c7c019c7",
+  "final_report_sha256": "620b19ef475784a76f7d1121672a4373af78eb8e524f025c8063665c8654f6eb"
+}

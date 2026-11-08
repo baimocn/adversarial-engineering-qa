@@ -1,0 +1,418 @@
+{
+  "adapter_version": "0.3.10-standard-waiver.5",
+  "decision": "FAIL",
+  "accepted": [
+    {
+      "target": "QA03",
+      "causes": [
+        {
+          "summary": "当次run_one在训练后调用eval_agent加载并评测，六模型哈希一致；另行独立复评标NOT_RUN是新环境验证缺口，不当成源码或结果作假。"
+        }
+      ]
+    },
+    {
+      "target": "QA15",
+      "causes": [
+        {
+          "summary": "历史vGPU/4080S/4090与目标H20/L20不同，保留真实测量；只免换卡证明缺口，不免39600s及0GPU配置错误。"
+        }
+      ]
+    },
+    {
+      "target": "QA15",
+      "causes": [
+        {
+          "summary": "未做H20/L20当前资源实测；有据估算与旧实测已审，不要求新增目标卡认证。"
+        }
+      ]
+    },
+    {
+      "target": "QA16",
+      "causes": [
+        {
+          "summary": "两轨历史有效时长无法从混墙钟/跨度严格恢复，Seed跨度去重为40158s仍非有效秒数；不把旧声明改成达标。"
+        }
+      ]
+    },
+    {
+      "target": "QA18",
+      "causes": [
+        {
+          "summary": "模型实际身份可由best artifact交叉核对（Sol effort=max，Seed effort=high）；缺完整启动/独立空输出证明，不能确认全部历史条件相同。"
+        }
+      ]
+    },
+    {
+      "target": "QA18",
+      "causes": [
+        {
+          "summary": "旧公开数据含Hidden的事实及原分数invalid保留；新正式B/R为重切后采集，不采用历史Agent分数。"
+        }
+      ]
+    },
+    {
+      "target": "QA18",
+      "causes": [
+        {
+          "summary": "已实际对比现有两轨材料，旧版材料仍不足以证明所有历史条件一致；仅此记录缺口豁免，不声称已证实同条件。逐读两轨全部方法/失败/best、原过程说明和当前代码：两轨独立身份有不同模型/候选来源；未提供原Prompt或IPC/只读权限快照，也无已确认的A/B实质条件差异记录，不能声称条件完全相同。两轨均属旧100条公开数据阶段，与本轮修复不同是历史到当前迁移，不据此虚构两轨之间差异。"
+        }
+      ]
+    },
+    {
+      "target": "QA21",
+      "causes": [
+        {
+          "summary": "当前四项指纹实算一致，但loss修复/数据重切/锚点/权限变化发生在历史轨迹之后；当前hash不是历史绑定证明。"
+        }
+      ]
+    },
+    {
+      "target": "QA21",
+      "causes": [
+        {
+          "summary": "run_summary.runs仍写不存在的.jsonl；两条实际.json八字段载体可完整映射，不据旧命名要求重造轨迹。"
+        }
+      ]
+    },
+    {
+      "target": "H03",
+      "causes": [
+        {
+          "summary": "基础镜像bash/解释器静态未仿真，内部tag及当前启动交平台；有效构建方案已存在。当前0GPU及权限问题另外保留FAIL。"
+        }
+      ]
+    },
+    {
+      "target": "H05",
+      "causes": [
+        {
+          "summary": "已有专家侧Docker顺序链路不能代替平台原生Job当前启动；原配置路径与separate已审，不要求为缺平台运行记录返修。"
+        }
+      ]
+    },
+    {
+      "target": "H06",
+      "causes": [
+        {
+          "summary": "已有10-08 NOP确有3397步训练和2回合评测，但早于损失/权限/锚点整改；当前版本未重跑。reward.txt与result一致，reward_full只是诊断，未伪称当前成功。"
+        }
+      ]
+    },
+    {
+      "target": "T01",
+      "causes": [
+        {
+          "summary": "旧公开数据含Hidden的事实及原分数invalid保留；新正式B/R为重切后采集，不采用历史Agent分数。"
+        }
+      ]
+    },
+    {
+      "target": "T01",
+      "causes": [
+        {
+          "summary": "模型实际身份可由best artifact交叉核对（Sol effort=max，Seed effort=high）；缺完整启动/独立空输出证明，不能确认全部历史条件相同。"
+        }
+      ]
+    },
+    {
+      "target": "T02",
+      "causes": [
+        {
+          "summary": "旧公开数据含Hidden的事实及原分数invalid保留；新正式B/R为重切后采集，不采用历史Agent分数。"
+        }
+      ]
+    },
+    {
+      "target": "T02",
+      "causes": [
+        {
+          "summary": "模型实际身份可由best artifact交叉核对（Sol effort=max，Seed effort=high）；缺完整启动/独立空输出证明，不能确认全部历史条件相同。"
+        }
+      ]
+    }
+  ],
+  "remaining_findings": [
+    {
+      "key": "G02",
+      "status": "fail",
+      "summary": "Q头末层权重和偏置均为0；soft_ce_scalar对预测值应用sign×log(1+abs)，零点计算图梯度为0，Q无法启动学习。真实Ensemble消融fixed仍q_grad=0；随机线性头控制不能排除此故障。",
+      "remediation": "修复标量价值回归在真实零初始化Q头的梯度通路（例如直接对Q回归变换后的目标，或使用零点梯度正确的实现），保留健康朴素Starter及共同预算；撤回故障Baseline支持的改善主张。"
+    },
+    {
+      "key": "G02",
+      "status": "fail",
+      "summary": "Q头末层权重和偏置均为0；soft_ce_scalar对预测值应用sign×log(1+abs)，零点计算图梯度为0，Q无法启动学习。真实Ensemble消融fixed仍q_grad=0；随机线性头控制不能排除此故障。",
+      "remediation": ""
+    },
+    {
+      "key": "G03",
+      "status": "fail",
+      "summary": "全部成对数值算术达标，但正式Baseline存在Q零梯度静态故障，三组B均不能作健康对照；大幅提升不能消除此质量门失败。",
+      "remediation": "修复标量价值回归在真实零初始化Q头的梯度通路（例如直接对Q回归变换后的目标，或使用零点梯度正确的实现），保留健康朴素Starter及共同预算；撤回故障Baseline支持的改善主张。"
+    },
+    {
+      "key": "G03",
+      "status": "fail",
+      "summary": "质量门有效性未满足；seed 1 的 baseline_valid 为 false；seed 2 的 baseline_valid 为 false；seed 3 的 baseline_valid 为 false",
+      "remediation": "核对已有正式 B/R 与评分定义，纠正实质数值、协议或质量有效性问题；迁移记录豁免不能证明科学门达标。"
+    },
+    {
+      "key": "G03",
+      "status": "fail",
+      "summary": "全部成对数值算术达标，但正式Baseline存在Q零梯度静态故障，三组B均不能作健康对照；大幅提升不能消除此质量门失败。；重算核验：质量门有效性未满足；seed 1 的 baseline_valid 为 false；seed 2 的 baseline_valid 为 false；seed 3 的 baseline_valid 为 false",
+      "remediation": ""
+    },
+    {
+      "key": "QA05",
+      "status": "fail",
+      "summary": "环境文件有hash门禁，但题面固定的plan/_estimate_value_iq与config分支未恢复或校验；build_eval_cfg直接读取候选config并导入候选TDMPC2，固定评测边界可被改动。",
+      "remediation": "将固定planner/分支配置从可信副本调用或做实际校验，开放方法接口仅用于允许研究面。"
+    },
+    {
+      "key": "QA05",
+      "status": "fail",
+      "summary": "环境文件有hash门禁，但题面固定的plan/_estimate_value_iq与config分支未恢复或校验；build_eval_cfg直接读取候选config并导入候选TDMPC2，固定评测边界可被改动。",
+      "remediation": ""
+    },
+    {
+      "key": "QA10",
+      "status": "fail",
+      "summary": "训练子进程虽降权，eval_agent在test.sh的root评分父进程中import候选tdmpc2/common并调用构造、load和act；候选代码因此取得可信文件属主权限，a-w不能保护冻结面。",
+      "remediation": "将候选模型加载/推理也放入受限进程，可信环境、锚点和reward写入进程独立；拒绝降权失败时回退root。"
+    },
+    {
+      "key": "QA10",
+      "status": "fail",
+      "summary": "训练子进程虽降权，eval_agent在test.sh的root评分父进程中import候选tdmpc2/common并调用构造、load和act；候选代码因此取得可信文件属主权限，a-w不能保护冻结面。",
+      "remediation": ""
+    },
+    {
+      "key": "QA11",
+      "status": "fail",
+      "summary": "题面称评测固定30回合，默认Dev入口实际10回合/30000步并自称与Hidden同协议；正式run_one的eval seed_offset=1000，而正式评分1000+seed，协议说明应区分。",
+      "remediation": "明确Dev与正式评分各自步数/回合/seed协议；统一需要一致的评测种子与正式锚点口径。"
+    },
+    {
+      "key": "QA11",
+      "status": "fail",
+      "summary": "题面称评测固定30回合，默认Dev入口实际10回合/30000步并自称与Hidden同协议；正式run_one的eval seed_offset=1000，而正式评分1000+seed，协议说明应区分。",
+      "remediation": ""
+    },
+    {
+      "key": "QA13",
+      "status": "fail",
+      "summary": "六组正式Hidden原值、训练及模型均存在，但Baseline仍有零梯度故障；不能用当前B证明健康方法差异，旧被作废数字不参与。",
+      "remediation": "修复标量价值回归在真实零初始化Q头的梯度通路（例如直接对Q回归变换后的目标，或使用零点梯度正确的实现），保留健康朴素Starter及共同预算；撤回故障Baseline支持的改善主张。"
+    },
+    {
+      "key": "QA13",
+      "status": "fail",
+      "summary": "六组正式Hidden原值、训练及模型均存在，但Baseline仍有零梯度故障；不能用当前B证明健康方法差异，旧被作废数字不参与。",
+      "remediation": ""
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "完整单seed实测16639.7–25337.7s，task声明39600s，均超7200；Verifier gpus=0却assert CUDA。历史非H20实测如实保留，不冒称目标卡结果。",
+      "remediation": "优化实现或重新设计满足2h的可比协议并同步全部正式锚点；Verifier按实际GPU需求声明H20/L20，不能只改时限数字。"
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "reference_hidden_seed1 完整单次评分 25334.899999999998s 超过7200s",
+      "remediation": "保持原实测，优化完整单轮或重新设计公平且≤7200s的协议；不能以自报豁免代替硬上限。"
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "reference_hidden_seed2 完整单次评分 25309.4s 超过7200s",
+      "remediation": "保持原实测，优化完整单轮或重新设计公平且≤7200s的协议；不能以自报豁免代替硬上限。"
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "reference_hidden_seed3 完整单次评分 25337.7s 超过7200s",
+      "remediation": "保持原实测，优化完整单轮或重新设计公平且≤7200s的协议；不能以自报豁免代替硬上限。"
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "reference_public_seed1 完整单次评分 24776.100000000002s 超过7200s",
+      "remediation": "保持原实测，优化完整单轮或重新设计公平且≤7200s的协议；不能以自报豁免代替硬上限。"
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "reference_public_seed2 完整单次评分 24811.5s 超过7200s",
+      "remediation": "保持原实测，优化完整单轮或重新设计公平且≤7200s的协议；不能以自报豁免代替硬上限。"
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "reference_public_seed3 完整单次评分 24760.600000000002s 超过7200s",
+      "remediation": "保持原实测，优化完整单轮或重新设计公平且≤7200s的协议；不能以自报豁免代替硬上限。"
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "starter_hidden_seed1 完整单次评分 16839.7s 超过7200s",
+      "remediation": "保持原实测，优化完整单轮或重新设计公平且≤7200s的协议；不能以自报豁免代替硬上限。"
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "starter_hidden_seed2 完整单次评分 16948.9s 超过7200s",
+      "remediation": "保持原实测，优化完整单轮或重新设计公平且≤7200s的协议；不能以自报豁免代替硬上限。"
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "starter_hidden_seed3 完整单次评分 16934.5s 超过7200s",
+      "remediation": "保持原实测，优化完整单轮或重新设计公平且≤7200s的协议；不能以自报豁免代替硬上限。"
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "starter_public_seed1 完整单次评分 16647.2s 超过7200s",
+      "remediation": "保持原实测，优化完整单轮或重新设计公平且≤7200s的协议；不能以自报豁免代替硬上限。"
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "starter_public_seed2 完整单次评分 16639.7s 超过7200s",
+      "remediation": "保持原实测，优化完整单轮或重新设计公平且≤7200s的协议；不能以自报豁免代替硬上限。"
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "starter_public_seed3 完整单次评分 16757.2s 超过7200s",
+      "remediation": "保持原实测，优化完整单轮或重新设计公平且≤7200s的协议；不能以自报豁免代替硬上限。"
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "估算完整一轮评分耗时 39600 超过上限7200",
+      "remediation": "保持原实测，优化完整单轮或重新设计公平且≤7200s的协议；不能以自报豁免代替硬上限。"
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "reference_hidden_seed1 完整单次评分 25334.899999999998s 超过7200s；reference_hidden_seed2 完整单次评分 25309.4s 超过7200s；reference_hidden_seed3 完整单次评分 25337.7s 超过7200s；reference_public_seed1 完整单次评分 24776.100000000002s 超过7200s；reference_",
+      "remediation": ""
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "reference_hidden_seed1 完整单次评分 25334.899999999998s 超过7200s",
+      "remediation": ""
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "reference_hidden_seed2 完整单次评分 25309.4s 超过7200s",
+      "remediation": ""
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "reference_hidden_seed3 完整单次评分 25337.7s 超过7200s",
+      "remediation": ""
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "reference_public_seed1 完整单次评分 24776.100000000002s 超过7200s",
+      "remediation": ""
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "reference_public_seed2 完整单次评分 24811.5s 超过7200s",
+      "remediation": ""
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "reference_public_seed3 完整单次评分 24760.600000000002s 超过7200s",
+      "remediation": ""
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "starter_hidden_seed1 完整单次评分 16839.7s 超过7200s",
+      "remediation": ""
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "starter_hidden_seed2 完整单次评分 16948.9s 超过7200s",
+      "remediation": ""
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "starter_hidden_seed3 完整单次评分 16934.5s 超过7200s",
+      "remediation": ""
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "starter_public_seed1 完整单次评分 16647.2s 超过7200s",
+      "remediation": ""
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "starter_public_seed2 完整单次评分 16639.7s 超过7200s",
+      "remediation": ""
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "starter_public_seed3 完整单次评分 16757.2s 超过7200s",
+      "remediation": ""
+    },
+    {
+      "key": "QA15",
+      "status": "fail",
+      "summary": "估算完整一轮评分耗时 39600 超过上限7200",
+      "remediation": ""
+    },
+    {
+      "key": "QA17",
+      "status": "fail",
+      "summary": "由H01–H06汇总：专用Verifier构建与artifacts路径可定位，但0GPU与CUDA冲突且高权限导入候选破坏可信边界；历史NOP迁移缺口单列。",
+      "remediation": ""
+    },
+    {
+      "key": "H02",
+      "status": "fail",
+      "summary": "TOML可解析，artifacts在顶层、显式separate；未发现有效storage_mb、禁网/白名单或正式目录Compose。MASO配置静态对照，未加载Harbor schema。",
+      "remediation": ""
+    },
+    {
+      "key": "H03",
+      "status": "fail",
+      "summary": "Agent/Verifier各自单容器调用本地程序，无任务部署额外工作环境；专用tests构建预置入口。但Verifier申请0GPU而代码强制CUDA，且root父进程导入候选模型破坏可信冻结面。",
+      "remediation": "修正Verifier为实际需要的H20/L20 GPU；所有候选训练和推理以受限权限执行，可信评分单独保留。"
+    },
+    {
+      "key": "H03",
+      "status": "fail",
+      "summary": "Agent/Verifier各自单容器调用本地程序，无任务部署额外工作环境；专用tests构建预置入口。但Verifier申请0GPU而代码强制CUDA，且root父进程导入候选模型破坏可信冻结面。",
+      "remediation": ""
+    },
+    {
+      "key": "H04",
+      "status": "fail",
+      "summary": "/tests/test.sh到evaluate_verify的参数和路径一致；成功reward.json仅有限数值，JSON优先语义明确；reward.txt主数值同步。",
+      "remediation": ""
+    }
+  ],
+  "rejected": [],
+  "integrity_issues": [],
+  "platform_followup_pending": [],
+  "review_sha256": "5f5d043356bac02e18f049683c43d4123692e03ca1c029062056f887399a6751",
+  "legacy_review_sha256": "9d10b932eb5f6e6f1fdae80ee872917c2571795a519bf6e46f3946792f247bc6",
+  "final_report_sha256": "fdd2bee52fcdcbfac22d77423c5f569dca004871e64f2bab757945dbcc02ac30"
+}

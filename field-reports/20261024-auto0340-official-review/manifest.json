@@ -1,0 +1,161 @@
+{
+  "task_number": "auto0340",
+  "record_id": "recvwAHDHqUKJ0",
+  "table_id": "tblHNtQNFPVwuKiP",
+  "run_id": "2ae7fc3bb12a49f5802e8e53d6ab3f1f",
+  "source_file_token": "Xa2NbUf2vo0KpSxf0hncM3mOnAb",
+  "files": {
+    "report.json": {
+      "bytes": 914390,
+      "sha256": "fdd2bee52fcdcbfac22d77423c5f569dca004871e64f2bab757945dbcc02ac30"
+    },
+    "report.md": {
+      "bytes": 99054,
+      "sha256": "7be3395baaf17f1ca2fcf1117e3ea69739934e119cc911c46f244d53a193e28b"
+    },
+    "report.txt": {
+      "bytes": 99054,
+      "sha256": "7be3395baaf17f1ca2fcf1117e3ea69739934e119cc911c46f244d53a193e28b"
+    },
+    "return_to_expert.txt": {
+      "bytes": 99054,
+      "sha256": "7be3395baaf17f1ca2fcf1117e3ea69739934e119cc911c46f244d53a193e28b"
+    },
+    "review.json": {
+      "bytes": 53227,
+      "sha256": "5f5d043356bac02e18f049683c43d4123692e03ca1c029062056f887399a6751"
+    },
+    "baseline-review.md": {
+      "bytes": 5777,
+      "sha256": "dd14ace6fe66c5aae117f50904c2aaba6ef373bedb2b691e2364ecdfb2d52910"
+    },
+    "pipeline-status.json": {
+      "bytes": 542,
+      "sha256": "640cf7b7dcc6f0849de18ca2d32e2d3e0c5771c979c1f61276ef90656c6a8fa2"
+    },
+    "skills-revision.json": {
+      "bytes": 8491,
+      "sha256": "c6c560200b1ca4b6f96a50a0b6aad3332595d65390785c321f4080a1772c9fda"
+    },
+    "waiver_report.json": {
+      "bytes": 18268,
+      "sha256": "5a4dd342a37a6617ab01d41442a708a937a7b10c4b80cfaa2d4530e01de71d88"
+    },
+    "waiver_report.md": {
+      "bytes": 99054,
+      "sha256": "7be3395baaf17f1ca2fcf1117e3ea69739934e119cc911c46f244d53a193e28b"
+    },
+    "waiver_report.txt": {
+      "bytes": 99054,
+      "sha256": "7be3395baaf17f1ca2fcf1117e3ea69739934e119cc911c46f244d53a193e28b"
+    },
+    "waiver_return_to_expert.txt": {
+      "bytes": 99054,
+      "sha256": "7be3395baaf17f1ca2fcf1117e3ea69739934e119cc911c46f244d53a193e28b"
+    },
+    "legacy_review.json": {
+      "bytes": 171045,
+      "sha256": "9d10b932eb5f6e6f1fdae80ee872917c2571795a519bf6e46f3946792f247bc6"
+    },
+    "standard-waiver/_standard_review_input.json": {
+      "bytes": 53227,
+      "sha256": "5f5d043356bac02e18f049683c43d4123692e03ca1c029062056f887399a6751"
+    },
+    "standard-waiver/format_precheck.json": {
+      "bytes": 9999,
+      "sha256": "8ef6662bd0ab3a458b162181c53f3a70844eca9da03e87f20d45ecfb4a9a8e5e"
+    },
+    "standard-waiver/format_report.json": {
+      "bytes": 8364,
+      "sha256": "ce527082de8a88e8788632170ce2e9197425e6fd869e026e16b8b7c1916567d7"
+    },
+    "standard-waiver/format_report.md": {
+      "bytes": 4727,
+      "sha256": "35ae1ed760493b05336b990146c967939630589898a75b0d9cec798d2826a415"
+    },
+    "standard-waiver/format_report.txt": {
+      "bytes": 4727,
+      "sha256": "35ae1ed760493b05336b990146c967939630589898a75b0d9cec798d2826a415"
+    },
+    "standard-waiver/legacy_review_report.json": {
+      "bytes": 914390,
+      "sha256": "fdd2bee52fcdcbfac22d77423c5f569dca004871e64f2bab757945dbcc02ac30"
+    },
+    "standard-waiver/legacy_review_report.md": {
+      "bytes": 99054,
+      "sha256": "7be3395baaf17f1ca2fcf1117e3ea69739934e119cc911c46f244d53a193e28b"
+    },
+    "standard-waiver/legacy_review_report.txt": {
+      "bytes": 99054,
+      "sha256": "7be3395baaf17f1ca2fcf1117e3ea69739934e119cc911c46f244d53a193e28b"
+    },
+    "standard-waiver/report.json": {
+      "bytes": 914390,
+      "sha256": "fdd2bee52fcdcbfac22d77423c5f569dca004871e64f2bab757945dbcc02ac30"
+    },
+    "standard-waiver/report.md": {
+      "bytes": 99054,
+      "sha256": "7be3395baaf17f1ca2fcf1117e3ea69739934e119cc911c46f244d53a193e28b"
+    },
+    "standard-waiver/report.txt": {
+      "bytes": 99054,
+      "sha256": "7be3395baaf17f1ca2fcf1117e3ea69739934e119cc911c46f244d53a193e28b"
+    },
+    "standard-waiver/return_to_expert.txt": {
+      "bytes": 99054,
+      "sha256": "7be3395baaf17f1ca2fcf1117e3ea69739934e119cc911c46f244d53a193e28b"
+    },
+    "standard-waiver/review_template.json": {
+      "bytes": 9566,
+      "sha256": "12b892ae21248ab16c7c75b517e08a907fab9d33f6a16553b9c2234404321add"
+    },
+    "standard-waiver/standard/inventory.json": {
+      "bytes": 54857,
+      "sha256": "54dbd2e8f005a9bbf9a5db6df423c088d2712a5abf13e731c522b8c365e196bf"
+    },
+    "standard-waiver/standard/report.json": {
+      "bytes": 149833,
+      "sha256": "fc95e158258ba1ef54069603d5d349bfcc0b7b004ee1464a3f15a6325fba1407"
+    },
+    "standard-waiver/standard/report.md": {
+      "bytes": 31279,
+      "sha256": "9fe7da1e0613806ad28e9908857bfaa23fd24f6a7c8328a4cf5d642e0d599505"
+    },
+    "standard-waiver/standard/report.txt": {
+      "bytes": 31279,
+      "sha256": "9fe7da1e0613806ad28e9908857bfaa23fd24f6a7c8328a4cf5d642e0d599505"
+    },
+    "standard-waiver/standard/return_to_expert.txt": {
+      "bytes": 14190,
+      "sha256": "963b490bcc7e2265229ce47fc169bd87fa6abb22c40b935de74a65263b413cd7"
+    },
+    "standard-waiver/standard_first_attempt/inventory.json": {
+      "bytes": 54857,
+      "sha256": "54dbd2e8f005a9bbf9a5db6df423c088d2712a5abf13e731c522b8c365e196bf"
+    },
+    "standard-waiver/standard_first_attempt/report.json": {
+      "bytes": 124896,
+      "sha256": "f3703c019f4f60aa5b50e3f2a73624cc944e82c304e84036504a2ee500e3f30c"
+    },
+    "standard-waiver/standard_first_attempt/report.md": {
+      "bytes": 15356,
+      "sha256": "00071e819ab2f88713a6c80b38e52d4149ea3677b557730c9bfed71ffb1732e8"
+    },
+    "standard-waiver/standard_first_attempt/report.txt": {
+      "bytes": 15356,
+      "sha256": "00071e819ab2f88713a6c80b38e52d4149ea3677b557730c9bfed71ffb1732e8"
+    },
+    "standard-waiver/standard_first_attempt/return_to_expert.txt": {
+      "bytes": 270,
+      "sha256": "dfc86045f5f433ac0e8557d44570571efd511645edcac333c1e43809b0df32b3"
+    },
+    "standard-waiver/standard_resolution_template.json": {
+      "bytes": 6120,
+      "sha256": "f13fa93f165b8c32634689e2fb7dcc17ddeb8e4df5018b54c292da8a8386345f"
+    },
+    "standard-waiver/standard_review_template.json": {
+      "bytes": 8788,
+      "sha256": "7095f62c47d3e9bc1d519c334db9c6ae689407b65a27b95b7efe6922e3bd582f"
+    }
+  }
+}

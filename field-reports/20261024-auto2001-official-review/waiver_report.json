@@ -1,0 +1,286 @@
+{
+  "adapter_version": "0.3.10-standard-waiver.5",
+  "decision": "FAIL",
+  "accepted": [
+    {
+      "target": "QA05",
+      "causes": [
+        {
+          "summary": "模型20M门及训练脚本1800s timeout有实现；当前仍禁止外网但移除no-network后没有等价执行防护，仅该网络迁移缺口适用授权豁免。"
+        }
+      ]
+    },
+    {
+      "target": "QA15",
+      "causes": [
+        {
+          "summary": "历史完整三seed训练/SWA/reload约2905s，估算目标≤5400s、1张H20/L20、16CPU（Verifier8CPU/0GPU）；历史5090/4090并非目标卡实测，迁移时效证明不足，单列豁免；24GB成绩违例不在此豁免。"
+        }
+      ]
+    },
+    {
+      "target": "QA15",
+      "causes": [
+        {
+          "summary": "目标H20/L20与CPU评分时效未实测，完整单轮保守估算5400s，未冒充已运行。"
+        }
+      ]
+    },
+    {
+      "target": "QA16",
+      "causes": [
+        {
+          "summary": "两轨声明有效13.96h/10.58h且称扣除中转故障约2h，材料无完整起止/扣除台账；不从时间戳跨度或轮数推算有效秒数。涉及训练，不适用7h例外。"
+        }
+      ]
+    },
+    {
+      "target": "QA18",
+      "causes": [
+        {
+          "summary": "旧加载器造成公开验证受试者泄漏，污染旧765分数保持invalid；未将这些Agent分数当作者正式B/R；不新增追责补跑义务。"
+        }
+      ]
+    },
+    {
+      "target": "QA18",
+      "causes": [
+        {
+          "summary": "实际模型runtime有run_summary/专家说明交叉支持，但最高推理档位与空输出启动证明未留存。"
+        }
+      ]
+    },
+    {
+      "target": "QA18",
+      "causes": [
+        {
+          "summary": "已实际对比现有两轨材料，旧版材料仍不足以证明所有历史条件一致；仅此记录缺口豁免，不声称已证实同条件。逐维审两轨与专家§6。两组同属APAVA方法研究；模型不同允许。两组历史均历经765→1413修复，现有材料没有确认作者给两组不同Prompt/反馈/IPC权限的事实，不能把各Agent实际不同代码/成绩误判为出题条件差异。原始启动Prompt/最高档和完整历史任务快照未提供，故同条件只能记unverified；早期共享OUTPUT_DIR是已证实独立性问题，另在QA18保留失败，不能被该证明缺口豁免。"
+        }
+      ]
+    },
+    {
+      "target": "QA21",
+      "causes": [
+        {
+          "summary": "run_summary四项hash与当前包一致，但实际为2026-10-21/22/23迁移后指纹，不能追溯认证历史运行所用版本。"
+        }
+      ]
+    },
+    {
+      "target": "H02",
+      "causes": [
+        {
+          "summary": "TOML语法可解析、显式separate、资源表H20/L20与CPU侧0GPU；禁网字段已删但题面仍禁止外网，缺等价执行策略，仅该迁移缺口待平台落实。"
+        }
+      ]
+    },
+    {
+      "target": "H03",
+      "causes": [
+        {
+          "summary": "Agent context=environment、Verifier=tests，COPY/入口/依赖/artifacts可定位，运行只本沙盒本地训练/评分，无题目另部署环境；内场镜像准备及启动/权限实际验证待平台。"
+        }
+      ]
+    },
+    {
+      "target": "H03",
+      "causes": [
+        {
+          "summary": "实际镜像启动/权限/GPU/移交未在当前平台运行验证。"
+        }
+      ]
+    },
+    {
+      "target": "H05",
+      "causes": [
+        {
+          "summary": "已有Harbor0.24.0本地docker NOP Job/Trial/config已审；运行任务harbor_task映射本题，separate与artifacts记录一致；当前MASO镜像tag、权限及覆盖配置尚由平台验证。"
+        }
+      ]
+    },
+    {
+      "target": "H06",
+      "causes": [
+        {
+          "summary": "已有原生及退役本地NOP均agent=nop、separate、正常结束、reward.json优先且与result一致(-1,-1,0)、日志非空；只覆盖缺权重分支。其旧TOML版本与当前迁移包不同，当前Trial未跑。"
+        }
+      ]
+    },
+    {
+      "target": "T01",
+      "causes": [
+        {
+          "summary": "早期共享工作区的错误加载器导致Dev污染，旧分数invalid保留；正式B/R未采用Agent污染分数。"
+        }
+      ]
+    },
+    {
+      "target": "T01",
+      "causes": [
+        {
+          "summary": "声明13.96/10.58h，有效时间台账未随包留存；不补造秒数。"
+        }
+      ]
+    },
+    {
+      "target": "T01",
+      "causes": [
+        {
+          "summary": "最高推理档/独立空输出启动旧证明不足；仅豁免证明欠缺，实际共享历史另在QA18保留。"
+        }
+      ]
+    },
+    {
+      "target": "T02",
+      "causes": [
+        {
+          "summary": "早期共享工作区的错误加载器导致Dev污染，旧分数invalid保留；正式B/R未采用Agent污染分数。"
+        }
+      ]
+    },
+    {
+      "target": "T02",
+      "causes": [
+        {
+          "summary": "声明13.96/10.58h，有效时间台账未随包留存；不补造秒数。"
+        }
+      ]
+    },
+    {
+      "target": "T02",
+      "causes": [
+        {
+          "summary": "最高推理档/独立空输出启动旧证明不足；仅豁免证明欠缺，实际共享历史另在QA18保留。"
+        }
+      ]
+    }
+  ],
+  "remaining_findings": [
+    {
+      "key": "G02",
+      "status": "fail",
+      "summary": "Baseline实现/12轮训练本身健康、合理朴素；但最新正式Reference上限44GB、峰值28.456GB超共同24GB任务预算，不能以该对照主张公平改善。",
+      "remediation": "保留当前开放Starter与历史结果；正式主张只使用符合题面24GB和共同冻结协议的成对结果，撤回44GB对照已闭合原协议的声明。已有同batch16结果须如实保留2.7334σ未达标；不得将当前无效R标为有效。"
+    },
+    {
+      "key": "G02",
+      "status": "fail",
+      "summary": "Baseline实现/12轮训练本身健康、合理朴素；但最新正式Reference上限44GB、峰值28.456GB超共同24GB任务预算，不能以该对照主张公平改善。",
+      "remediation": ""
+    },
+    {
+      "key": "G03",
+      "status": "fail",
+      "summary": "最新成对数值3.148724σ、归一化.373972算术达标，但三R超题面24GB而无效；预算内同batch16对照2.733399σ未达3σ，原非对称batch不能代替。",
+      "remediation": "保留当前开放Starter与历史结果；正式主张只使用符合题面24GB和共同冻结协议的成对结果，撤回44GB对照已闭合原协议的声明。已有同batch16结果须如实保留2.7334σ未达标；不得将当前无效R标为有效。"
+    },
+    {
+      "key": "G03",
+      "status": "fail",
+      "summary": "质量门有效性未满足；seed 41 的 reference_valid 为 false；seed 42 的 reference_valid 为 false；seed 43 的 reference_valid 为 false",
+      "remediation": "核对已有正式 B/R 与评分定义，纠正实质数值、协议或质量有效性问题；迁移记录豁免不能证明科学门达标。"
+    },
+    {
+      "key": "G03",
+      "status": "fail",
+      "summary": "最新成对数值3.148724σ、归一化.373972算术达标，但三R超题面24GB而无效；预算内同batch16对照2.733399σ未达3σ，原非对称batch不能代替。；重算核验：质量门有效性未满足；seed 41 的 reference_valid 为 false；seed 42 的 reference_valid 为 false；seed 43 的 reference_valid 为 false",
+      "remediation": ""
+    },
+    {
+      "key": "QA02",
+      "status": "fail",
+      "summary": "公式线性单调且未裁剪，U=1有效；但评分器B_ANCHOR=.644488仍是旧均值，新正式B=.644707676857代入reward=.000617918而非0，锚点映射未统一。",
+      "remediation": "先确定合法正式B/R版本，统一评分器B_ANCHOR、comparison_summary与expert_annotation的锚点及成绩映射，不能混用旧B和新统计量。"
+    },
+    {
+      "key": "QA02",
+      "status": "fail",
+      "summary": "公式线性单调且未裁剪，U=1有效；但评分器B_ANCHOR=.644488仍是旧均值，新正式B=.644707676857代入reward=.000617918而非0，锚点映射未统一。",
+      "remediation": ""
+    },
+    {
+      "key": "QA03",
+      "status": "fail",
+      "summary": "参考实现、原三seed日志/模型/reload齐全；最新batch32正式三R退出0但峰值28.456GB且上限44GB，超过题面24GB，不能作为有效正式参考成绩。",
+      "remediation": "保留当前开放Starter与历史结果；正式主张只使用符合题面24GB和共同冻结协议的成对结果，撤回44GB对照已闭合原协议的声明。已有同batch16结果须如实保留2.7334σ未达标；不得将当前无效R标为有效。"
+    },
+    {
+      "key": "QA03",
+      "status": "fail",
+      "summary": "参考实现、原三seed日志/模型/reload齐全；最新batch32正式三R退出0但峰值28.456GB且上限44GB，超过题面24GB，不能作为有效正式参考成绩。",
+      "remediation": ""
+    },
+    {
+      "key": "QA04",
+      "status": "fail",
+      "summary": "seeds41/42/43实际传入RNG，固定方法各seed独立训练；最新3.148724σ算术达标但R超预算无效；预算内同batch16为2.733399σ未达门槛。",
+      "remediation": "保留当前开放Starter与历史结果；正式主张只使用符合题面24GB和共同冻结协议的成对结果，撤回44GB对照已闭合原协议的声明。已有同batch16结果须如实保留2.7334σ未达标；不得将当前无效R标为有效。"
+    },
+    {
+      "key": "QA04",
+      "status": "fail",
+      "summary": "seeds41/42/43实际传入RNG，固定方法各seed独立训练；最新3.148724σ算术达标但R超预算无效；预算内同batch16为2.733399σ未达门槛。",
+      "remediation": ""
+    },
+    {
+      "key": "QA13",
+      "status": "fail",
+      "summary": "全seed原始训练与模型证据可读，但最新正式batch32 R放宽显存并实测超24GB；旧非对称batch成绩已降敏感性，合法batch16对照不足3σ。",
+      "remediation": "保留当前开放Starter与历史结果；正式主张只使用符合题面24GB和共同冻结协议的成对结果，撤回44GB对照已闭合原协议的声明。已有同batch16结果须如实保留2.7334σ未达标；不得将当前无效R标为有效。"
+    },
+    {
+      "key": "QA13",
+      "status": "fail",
+      "summary": "全seed原始训练与模型证据可读，但最新正式batch32 R放宽显存并实测超24GB；旧非对称batch成绩已降敏感性，合法batch16对照不足3σ。",
+      "remediation": ""
+    },
+    {
+      "key": "QA17",
+      "status": "fail",
+      "summary": "按H01-H06逐项派生：当前路径/Dev/Hidden注入/reward/artifacts已审；网络迁移、目标镜像与当前Trial运行证明缺口分别在H02/H03/H05/H06处理，非整项豁免。",
+      "remediation": ""
+    },
+    {
+      "key": "QA18",
+      "status": "fail",
+      "summary": "已读216+104全部轮次；早期共享输出且互用候选，三元组无交集不足证全程独立；旧765口径污染分数无效，GPT215末态.765665；Seed1.0仅有摘要复验，不能把各口径混用作同条件比较。",
+      "remediation": "纠正将共享OUTPUT_DIR和互用候选的完整历史记作两条全程独立研究的声明，按既有证据限定可独立归属的修复后片段；不能凭三元组零交集证明独立起跑或消除既有串用。"
+    },
+    {
+      "key": "QA18",
+      "status": "fail",
+      "summary": "已读216+104全部轮次；早期共享输出且互用候选，三元组无交集不足证全程独立；旧765口径污染分数无效，GPT215末态.765665；Seed1.0仅有摘要复验，不能把各口径混用作同条件比较。",
+      "remediation": ""
+    },
+    {
+      "key": "QA21",
+      "status": "fail",
+      "summary": "八字段JSON可解析，当前四项指纹e7eec996…匹配；历史绑定为迁移说明而非实跑认证。best_method缺冻结根文件preprocess_apava.py，且TTA/bias/权重与solution不同，需明确最终候选映射。",
+      "remediation": "在现有记录中明确唯一最终方法及两轨各自候选；补回best_method缺失的冻结preprocess_apava.py并保持可信哈希，解释solution与best_method的模型/TTA/bias/权重映射，纠正无法定位的同一性声明。"
+    },
+    {
+      "key": "QA21",
+      "status": "fail",
+      "summary": "八字段JSON可解析，当前四项指纹e7eec996…匹配；历史绑定为迁移说明而非实跑认证。best_method缺冻结根文件preprocess_apava.py，且TTA/bias/权重与solution不同，需明确最终候选映射。",
+      "remediation": ""
+    },
+    {
+      "key": "H04",
+      "status": "fail",
+      "summary": "独立/tests/test.sh读取/workspace/solution，test隐藏资产缺失fail-closed，写/logs/verifier/reward.json并提取reward.txt；使用自身requirements与可信加载器。",
+      "remediation": ""
+    },
+    {
+      "key": "T02",
+      "status": "fail",
+      "summary": "Seed best_method缺当前冻结根文件preprocess_apava.py，且与solution推理/TTA/bias/权重不同，不能以旧Dev摘要宣称当前完整提交复验通过。",
+      "remediation": "在现有记录中明确唯一最终方法及两轨各自候选；补回best_method缺失的冻结preprocess_apava.py并保持可信哈希，解释solution与best_method的模型/TTA/bias/权重映射，纠正无法定位的同一性声明。"
+    }
+  ],
+  "rejected": [],
+  "integrity_issues": [],
+  "platform_followup_pending": [],
+  "review_sha256": "16e3deac22f7bf0889e291743bb9bec4928bc3f6501ec1061a76dcc1a4ade339",
+  "legacy_review_sha256": "4f0a0a7405b49717cddd92f4b66f6aa43e1cd9061a0e6a69740f6cc05c972cb6",
+  "final_report_sha256": "95df271a4dc9fd910f2a1b4bbb4b1d1f84370117b1c6f9cd07cceaa0e3b112f7"
+}
