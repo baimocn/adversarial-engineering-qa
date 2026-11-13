@@ -1,0 +1,19 @@
+{
+  "schema": "model-roles/1",
+  "note": "示例。编排模型启动时用 ListModels 让人选，真实选择写入 run-config.json；本文件只展示角色结构。",
+  "decomposer": [
+    "new-provider-4/deepseek-v4.1-flash$max"
+  ],
+  "judges": [
+    [
+      "new-provider-4/deepseek-v4.1-flash$max",
+      "new-provider-4/glm-5.3-flash$max"
+    ]
+  ],
+  "adjudicator": [
+    "new-provider-4/mimo-v2.6-pro"
+  ],
+  "executor": [
+    "new-provider-4/glm-5.3-flash$high"
+  ]
+}

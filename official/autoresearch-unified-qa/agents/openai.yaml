@@ -1,0 +1,4 @@
+interface:
+  display_name: "AutoResearch 当前标准完整质检"
+  short_description: "统一当前标准，完整审阅90项和全部已交证据，自动输出通过或不通过"
+  default_prompt: "使用 $autoresearch-unified-qa 的 scripts/audit_current.py 完整只读审阅90项、全部已交轨迹和评分证据，统一执行当前新标准并延续项目科学、资源与平台要求，无版本选择或历史豁免；四项交付协议对所有题生效，最终自动输出通过或不通过及具体责任，provider未知不单独阻断静态，不运行题包或Harbor。"

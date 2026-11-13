@@ -6,7 +6,26 @@
 
 > **征集平台/官方质检报告**。仓库开了 [field-reports/](field-reports/) 目录，专门收**平台侧（官方 skill / 官方质检链路）对题包出的质检报告**，我们自己的复核报告不入库，自己人写的报告证明不了判据，平台出的 FAIL 和豁免才可以。已有样本是 auto2768 的三轮官方质检实录（FAIL 到 FAIL 到 PASS_WITH_WAIVERS）。你手里的平台报告就是下一个判据样本，脱敏后交到该目录，方式见其 README。
 
-**当前版本 v2.5.1（2026-11-07）**
+**当前版本 v2.6.0（2026-11-13，strict-qa）**
+
+## v2.6 低幻觉协议（strict-qa）
+
+v2.6 解决的是「不同模型跑同一份 skill，结论不一样」：**模型只当书记员，结论由代码算。**
+
+- **2+1 主观评审**：两个不同家族的模型在隔离上下文各答一次，证据必须带 `文件:行 + 原文`；一致 → `judged_agree`；不一致 → 裁决模型选边并引用；裁决也拿不出证据 → `human_required`。
+- **拆题也由模型做**：编排模型用 `ListModels` 问人选择拆题/评审/裁决模型；拆题产物必须通过四条硬规则（有限答案、可执行验证、需求溯源、覆盖率），否则退回重拆；拆好的缓存到 `criteria/decompositions/`。
+- **CPU 真跑**：`run_decomposition_checks.py` 执行 command / file / JSON / regex / hash 检查；命令白名单、`shell=False`、超时。
+- **官方层**：`strict_verify.py --package-zip` 同时跑 0.3.10 与 0.5.0；只吃官方聚合 decision，旧版本地预填的布局误报不算官方 fail。
+- **确定性总判**：`verdict.py` 五档 `verified / judged_agree / judged_adjudicated / human_required / unknown`；strict 下 open 即 INCOMPLETE，缺证据不 PASS。
+
+单题入口：
+
+```bash
+python scripts/strict_verify.py --repo-root . \
+  --task-root <harbor_task> --work-dir <ws> --package-zip <提交包.zip>
+```
+
+多题与模型选择契约见 `workflows/README.md`；协议与提示词见 `references/strict-panel.md`、`references/strict-panel-prompts.md`。
 
 ## 它解决什么问题
 
@@ -70,6 +89,7 @@ python -m unittest discover -s tests   # 94 用例
 
 | 版本 | 日期 | 实质改动 |
 |---|---|---|
+| v2.6.0 | 2026-11-13 | 2+1 低幻觉评审（两评审 + 裁决 + 证据先验）；模型拆题 + 四条硬规则校验；CPU 检查器（命令白名单/shell=False/超时）；`strict_verify.py` 单入口；官方 0.3.10/0.5.0 聚合 decision；`verdict.py` 五档（verified/judged_agree/judged_adjudicated/human_required/unknown）；多题 workflow |
 | v2.5.1 | 2026-11-07 | D-C03 三轮校准，变量赋值 + for-in 循环镜像的间接双写从行级扫描升级为强特征（成对赋值 / 双扩展循环 → needs_manual）；注释行与 re.compile 模式行不计入字面量；B-C03 范围分级（expert_evidence/ 证据侧非官方源 → needs_manual，environment//tests/ 下仍 blocking）。六修复版全量重跑无误报 |
 | v2.5 | 2026-11-07 | unified-qa v0.5.0 接入，B-C01/B-C02 第三次反转降为旧规则建议；D-C03（正式 reward 二选一）、D-C04（Oracle 规范入口）机械化；对应 2604 reward 双写实测缺口 |
 | v2.4.1 | 2026-11-06 | 1074 复盘副本接入，B-C04 bnpm 规则被平台划掉 → 降 needs_manual；新增 D-C01（reward_file 写入链，72 题 RewardFileNotFoundError 来源）、D-C02（清单哈希全量复算） |
@@ -90,11 +110,14 @@ scripts/            确定性脚本：qa.py 状态机、证据索引、Gate C、
 references/         规则契约：review 契约、判据反推（含平台规则反转记录）、
                     分派提示词模板、报告 schema
 official/           内嵌只读官方副本（task-qa / baseline-quality /
-                    supplement-platform-audit，SHA256 锁定）
+                    supplement-platform-audit / unified-qa 0.5.0，SHA256 锁定）
+workflows/          单题/多题严格质检 workflow 与模型选择契约
+config/             模型角色示例（拆题/评审/裁决/执行者）
+criteria/           拆题缓存（按题族）
 field-reports/      他人质检失败/存疑报告收集处（脱敏后一报告一文件，
                     可复现的误报会转成回归用例）
 assets/             review.json 模板
-tests/              unittest 自测（94 用例，含各检查器的误报回归）
+tests/              unittest 自测（124 用例，含各检查器的误报回归）
 ```
 
 ## 欢迎提 PR
