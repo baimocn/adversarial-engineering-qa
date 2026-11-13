@@ -6,7 +6,7 @@ agent_created: true
 
 # Adversarial Engineering QA
 
-**版本**：v2.5（2026-11-07）
+**版本**：v2.6（2026-11-13）
 **v2 相对 v1 的实质改动**：新增 Gate C（执行层门禁）——`scripts/check_execution_path.py`
 四条静态规则 + `scripts/check_honest_candidate.py` 诚实候选冒烟；判定纪律加入
 「Gate C blocking 不可豁免、不得静默降级 manual」；合并规则加入 `remaining_findings` 阻断。

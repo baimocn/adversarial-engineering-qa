@@ -23,8 +23,9 @@ import subprocess
 import sys
 from pathlib import Path
 
-ALLOWED_COMMANDS = {"python", "python3", "pytest", "bash", "sh", "node"}
+ALLOWED_COMMANDS = {"python", "python3", "pytest"}
 DEFAULT_TIMEOUT = 600
+MAX_TEXT_BYTES = 8_000_000
 
 
 def load(path: Path):
@@ -39,6 +40,33 @@ def safe_path(root: Path, rel: str) -> Path | None:
     if candidate != root_resolved and root_resolved not in candidate.parents:
         return None
     return candidate
+
+
+def command_args_problem(root: Path, exe: str, argv_args: list[str]) -> str | None:
+    """Reject commands that can execute arbitrary code outside the task root.
+
+    python/python3: the first arg must be a .py file under the root; no -c/-m/stdin.
+    pytest: non-flag args must stay under the root.
+    Anything else is rejected.
+    """
+    if exe in ("python", "python3"):
+        if not argv_args:
+            return "python command needs a script path under the task root"
+        first = argv_args[0]
+        if first.startswith("-"):
+            return "python -c/-m/stdin is not allowed; pass a script under the task root"
+        script = safe_path(root, first)
+        if script is None or not script.is_file() or script.suffix != ".py":
+            return f"python script must be a .py file under the task root: {first}"
+        return None
+    if exe == "pytest":
+        for arg in argv_args:
+            if arg.startswith("-"):
+                continue
+            if safe_path(root, arg) is None:
+                return f"pytest arg escapes the task root: {arg}"
+        return None
+    return f"command not allowed: {exe}"
 
 
 def resolve_pointer(data, pointer: str):
@@ -85,7 +113,12 @@ def run_mechanical(check: dict, root: Path, timeout: int) -> dict:
         if exe not in ALLOWED_COMMANDS:
             return {"check_id": cid, "category": "verified", "verdict": "fail",
                     "evidence": {"kind": "command", "error": f"command not allowed: {exe}"}}
-        argv = [command] + [str(x) for x in (verifier.get("args") or [])]
+        raw_args = [str(x) for x in (verifier.get("args") or [])]
+        problem = command_args_problem(root, exe, raw_args)
+        if problem:
+            return {"check_id": cid, "category": "verified", "verdict": "fail",
+                    "evidence": {"kind": "command", "error": problem}}
+        argv = [command] + raw_args
         try:
             proc = subprocess.run(
                 argv, cwd=root, shell=False, capture_output=True, text=True,
@@ -116,6 +149,10 @@ def run_mechanical(check: dict, root: Path, timeout: int) -> dict:
     if path is None or not path.is_file():
         return {"check_id": cid, "category": "verified", "verdict": "fail",
                 "evidence": {"kind": kind, "error": "path missing or escapes root"}}
+    if kind in ("file_contains", "json_value", "regex") and path.stat().st_size > MAX_TEXT_BYTES:
+        return {"check_id": cid, "category": "verified", "verdict": "fail",
+                "evidence": {"kind": kind,
+                             "error": f"file too large for static check (> {MAX_TEXT_BYTES} bytes)"}}
 
     if kind == "file_contains":
         needle = verifier.get("needle")
