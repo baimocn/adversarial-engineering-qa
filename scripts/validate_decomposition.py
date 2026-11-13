@@ -23,6 +23,41 @@ from pathlib import Path
 
 SUPPORTED = {"command", "file_contains", "json_value", "regex", "hash_equal", "manual"}
 SHELL_CHARS = set("|&;<>`$")
+ALLOWED_COMMANDS = {"python", "python3", "pytest"}
+MAX_TEXT_BYTES = 8_000_000
+
+
+def safe_path(root: Path, rel: str) -> Path | None:
+    if not isinstance(rel, str) or not rel.strip():
+        return None
+    candidate = (root / rel).resolve()
+    root_resolved = root.resolve()
+    if candidate != root_resolved and root_resolved not in candidate.parents:
+        return None
+    return candidate
+
+
+def command_args_problem(root: Path, exe: str, argv_args: list[str]) -> str | None:
+    if exe not in ALLOWED_COMMANDS:
+        return f"command not allowed: {exe}"
+    if exe in ("python", "python3"):
+        if not argv_args:
+            return "python command needs a script path under the task root"
+        first = argv_args[0]
+        if first.startswith("-"):
+            return "python -c/-m/stdin is not allowed; pass a script under the task root"
+        script = safe_path(root, first)
+        if script is None or not script.is_file() or script.suffix != ".py":
+            return f"python script must be a .py file under the task root: {first}"
+        return None
+    if exe == "pytest":
+        for arg in argv_args:
+            if arg.startswith("-"):
+                continue
+            if safe_path(root, arg) is None:
+                return f"pytest arg escapes the task root: {arg}"
+        return None
+    return None
 
 
 def load(path: Path):
@@ -134,6 +169,11 @@ def main() -> int:
                 warnings.append(f"{label} ({cid}): command contains shell metacharacters; use argv")
             if not isinstance(argv, list) or any(not isinstance(x, str) for x in argv):
                 errors.append(f"{label} ({cid}): command verifier args must be a string list")
+                argv = []
+            if isinstance(command, str) and command:
+                problem = command_args_problem(root, Path(command).name, argv)
+                if problem:
+                    errors.append(f"{label} ({cid}): {problem}")
             if not isinstance(assertion, dict) or not any(
                     key in assertion for key in ("exit_code", "stdout_contains", "stderr_contains")):
                 errors.append(f"{label} ({cid}): command verifier assert needs exit_code/stdout_contains/stderr_contains")
@@ -146,11 +186,21 @@ def main() -> int:
                     errors.append(f"{label} ({cid}): path escapes task root")
                 elif not p.is_file():
                     errors.append(f"{label} ({cid}): file not found: {verifier['path']}")
+                elif p.stat().st_size > MAX_TEXT_BYTES:
+                    errors.append(f"{label} ({cid}): file too large for static check (> {MAX_TEXT_BYTES} bytes)")
         elif kind == "json_value":
             if not all(isinstance(verifier.get(k), str) for k in ("path", "pointer")):
                 errors.append(f"{label} ({cid}): json_value needs path and pointer")
             elif "equals" not in verifier:
                 errors.append(f"{label} ({cid}): json_value needs equals")
+            else:
+                p = safe_path(root, verifier["path"])
+                if p is None:
+                    errors.append(f"{label} ({cid}): path escapes task root")
+                elif not p.is_file():
+                    errors.append(f"{label} ({cid}): file not found: {verifier['path']}")
+                elif p.stat().st_size > MAX_TEXT_BYTES:
+                    errors.append(f"{label} ({cid}): file too large for static check (> {MAX_TEXT_BYTES} bytes)")
         elif kind == "regex":
             if not isinstance(verifier.get("path"), str) or not isinstance(verifier.get("pattern"), str):
                 errors.append(f"{label} ({cid}): regex needs path and pattern")
@@ -159,6 +209,13 @@ def main() -> int:
                     re.compile(verifier["pattern"])
                 except re.error as exc:
                     errors.append(f"{label} ({cid}): invalid regex ({exc})")
+                p = safe_path(root, verifier["path"])
+                if p is None:
+                    errors.append(f"{label} ({cid}): path escapes task root")
+                elif not p.is_file():
+                    errors.append(f"{label} ({cid}): file not found: {verifier['path']}")
+                elif p.stat().st_size > MAX_TEXT_BYTES:
+                    errors.append(f"{label} ({cid}): file too large for static check (> {MAX_TEXT_BYTES} bytes)")
         elif kind == "hash_equal":
             digest = verifier.get("sha256")
             if not isinstance(verifier.get("path"), str):

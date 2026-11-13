@@ -29,7 +29,7 @@ def base_spec() -> dict:
                 "verifier": {
                     "kind": "command",
                     "command": "python",
-                    "args": ["-I", "probes/npz_candidate/probe.py"],
+                    "args": ["scripts/strict_verify.py"],
                     "assert": {"exit_code": 0},
                 },
             }
@@ -85,6 +85,23 @@ class DecompositionTests(unittest.TestCase):
         rc, payload = run(spec)
         self.assertEqual(rc, 1)
         self.assertTrue(any("unknown" in e for e in payload["errors"]))
+
+    def test_python_dash_c_is_invalid(self):
+        spec = base_spec()
+        spec["checks"][0]["verifier"]["args"] = ["-c", "print(1)"]
+        rc, payload = run(spec)
+        self.assertEqual(rc, 1)
+        self.assertTrue(any("python -c" in e for e in payload["errors"]))
+
+    def test_bash_is_invalid(self):
+        spec = base_spec()
+        spec["checks"][0]["verifier"] = {
+            "kind": "command", "command": "bash", "args": ["-c", "echo hi"],
+            "assert": {"exit_code": 0},
+        }
+        rc, payload = run(spec)
+        self.assertEqual(rc, 1)
+        self.assertTrue(any("command not allowed" in e for e in payload["errors"]))
 
 
 if __name__ == "__main__":

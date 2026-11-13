@@ -11,6 +11,7 @@ import re
 from pathlib import Path
 
 VALID_VERDICTS = {"pass", "fail", "unknown"}
+MAX_EVIDENCE_BYTES = 8_000_000
 
 
 def load_json(path: Path):
@@ -69,6 +70,9 @@ def validate_evidence(root: Path, evidence: list) -> list[str]:
             continue
         if not path.is_file():
             errors.append(f"{label}: file not found: {item.get('path')}")
+            continue
+        if path.stat().st_size > MAX_EVIDENCE_BYTES:
+            errors.append(f"{label}: file too large for evidence (> {MAX_EVIDENCE_BYTES} bytes)")
             continue
 
         if "line" in item:

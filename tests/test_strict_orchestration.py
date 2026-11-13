@@ -86,6 +86,36 @@ class DecompositionRunnerTests(unittest.TestCase):
         self.assertEqual(rc, 1)
         self.assertIn("not allowed", payload["items"][0]["evidence"]["error"])
 
+    def test_python_dash_c_rejected(self):
+        spec = self.spec([
+            {"id": "C1", "requirement_id": "R1", "answer_space": ["pass", "fail", "unknown"],
+             "verifier": {"kind": "command", "command": "python",
+                          "args": ["-c", "print(1)"], "assert": {"exit_code": 0}}},
+        ])
+        rc, payload = run(RUNNER, ["--spec", spec, "--root", str(self.root)])
+        self.assertEqual(rc, 1)
+        self.assertIn("python -c", payload["items"][0]["evidence"]["error"])
+
+    def test_bash_rejected(self):
+        spec = self.spec([
+            {"id": "C1", "requirement_id": "R1", "answer_space": ["pass", "fail", "unknown"],
+             "verifier": {"kind": "command", "command": "bash",
+                          "args": ["-c", "echo hi"], "assert": {"exit_code": 0}}},
+        ])
+        rc, payload = run(RUNNER, ["--spec", spec, "--root", str(self.root)])
+        self.assertEqual(rc, 1)
+        self.assertIn("not allowed", payload["items"][0]["evidence"]["error"])
+
+    def test_large_file_rejected(self):
+        (self.root / "big.txt").write_bytes(b"x" * (8_000_000 + 1))
+        spec = self.spec([
+            {"id": "C1", "requirement_id": "R1", "answer_space": ["pass", "fail", "unknown"],
+             "verifier": {"kind": "file_contains", "path": "big.txt", "needle": "x"}},
+        ])
+        rc, payload = run(RUNNER, ["--spec", spec, "--root", str(self.root)])
+        self.assertEqual(rc, 1)
+        self.assertIn("too large", payload["items"][0]["evidence"]["error"])
+
 
 class RunConfigTests(unittest.TestCase):
     def test_valid_roles(self):
