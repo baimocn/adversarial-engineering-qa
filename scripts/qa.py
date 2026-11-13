@@ -55,7 +55,7 @@ PY = sys.executable
 ENV_NO_PYC = {"PYTHONDONTWRITEBYTECODE": "1"}
 
 STAGES = ["evidence", "plan", "worklist", "scripts", "platform", "check", "merge",
-          "official", "review", "integrate"]
+          "panel", "official", "review", "verdict", "integrate"]
 NEEDS = {
     "evidence": [],
     "plan": ["evidence"],
@@ -64,9 +64,12 @@ NEEDS = {
     "platform": [],
     "check": ["worklist"],
     "merge": ["plan"],
-    # 官方标准层：run → review → integrate
+    # 2+1 主观评审：两评审 + 裁决；没有 judgments/ 时本阶段跳过
+    "panel": [],
+    # 官方标准层：run → review → verdict → integrate
     "official": [],
     "review": ["official"],
+    "verdict": [],
     "integrate": ["review"],
 }
 
@@ -372,6 +375,93 @@ def _stage_review(ws: Path, st: dict):
     return rc, out
 
 
+def _stage_panel(ws: Path, st: dict):
+    """2+1 主观评审：两评审一致即 judged_agree；不一致交裁决；裁决也无效则 human_required。
+
+    没有 judgments/ 目录时跳过（不算失败）；human_required 也不阻断后续官方层，
+    只在最终 verdict 里作为 open 项计入。
+    """
+    task = st["identity"]["task_dir"]
+    jdir = ws / "judgments"
+    gates = ws / "gates"
+    gates.mkdir(parents=True, exist_ok=True)
+    out = gates / "panel.json"
+    has_items = jdir.is_dir() and any(p.is_dir() for p in jdir.iterdir())
+    if not has_items:
+        mark(st, "panel", "done", "no judgments/; no subjective items")
+        return 0, "skipped"
+    rc, txt = run_script("compare_judgments.py",
+                         ["--root", task, "--dir", jdir, "--out", out])
+    rep = json.loads(out.read_text(encoding="utf-8")) if out.is_file() else {}
+    counts = rep.get("counts") or {}
+    st["artifacts"]["panel"] = str(out)
+    if rc == 0:
+        mark(st, "panel", "done", "counts=%s" % counts, rc)
+        return 0, txt
+    if rc == 2:
+        mark(st, "panel", "human_required", "counts=%s" % counts, rc)
+        return 0, txt
+    mark(st, "panel", "failed", txt, rc)
+    return 1, txt
+
+
+def _stage_verdict(ws: Path, st: dict):
+    """把 panel / 对抗层 / 官方层的结果收成 check-results，再由 verdict.py 算总判。
+
+    verdict.py 是纯函数：模型不参与；human_required/unknown 在 strict 下即 INCOMPLETE。
+    """
+    gates = ws / "gates"
+    gates.mkdir(parents=True, exist_ok=True)
+    items = []
+
+    panel = gates / "panel.json"
+    if panel.is_file():
+        for item in json.loads(panel.read_text(encoding="utf-8")).get("items") or []:
+            items.append({
+                "check_id": "panel:%s" % item.get("item_id"),
+                "category": item.get("category", "human_required"),
+                "verdict": item.get("verdict", "unknown"),
+            })
+
+    report = ws / "report.json"
+    if report.is_file():
+        data = json.loads(report.read_text(encoding="utf-8"))
+        for gate, info in (data.get("gates") or {}).items():
+            status = (info or {}).get("status")
+            items.append({
+                "check_id": "gate:%s" % gate,
+                "category": "verified",
+                "verdict": {"PASS": "pass", "FAIL": "fail"}.get(status, "unknown"),
+            })
+
+    official = ws / "official" / "review.json"
+    if official.is_file():
+        for row in json.loads(official.read_text(encoding="utf-8")).get("checks") or []:
+            status = row.get("status")
+            if status == "fail":
+                category, verdict = "verified", "fail"
+            elif status == "pass":
+                category, verdict = "verified", "pass"
+            else:
+                category, verdict = "human_required", "unknown"
+            items.append({"check_id": "official:%s" % row.get("id"),
+                          "category": category, "verdict": verdict})
+
+    results = gates / "check-results.json"
+    results.write_text(json.dumps({"schema": "check-results/1", "items": items},
+                                  ensure_ascii=False, indent=2), encoding="utf-8")
+    out = ws / "verdict.json"
+    rc, txt = run_script("verdict.py", ["--results", results, "--out", out])
+    decision = ""
+    if out.is_file():
+        decision = json.loads(out.read_text(encoding="utf-8")).get("decision", "")
+        st["artifacts"]["verdict"] = str(out)
+    status = {"PASS": "done", "PASS_WITH_OPEN": "done",
+              "FAIL": "fail", "INCOMPLETE": "incomplete"}.get(decision, "failed")
+    mark(st, "verdict", status, "decision=%s items=%d" % (decision, len(items)), rc)
+    return (0 if status == "done" else (1 if status == "fail" else 2)), txt
+
+
 def _stage_integrate(ws: Path, st: dict):
     rc, out = run_script("qa_official.py", ["integrate", "--workspace", ws])
     up = ws / "unified.json"
@@ -394,8 +484,10 @@ STAGE_FN = {
     "platform": _stage_platform,
     "check": _stage_check,
     "merge": _stage_merge,
+    "panel": _stage_panel,
     "official": _stage_official,
     "review": _stage_review,
+    "verdict": _stage_verdict,
     "integrate": _stage_integrate,
 }
 

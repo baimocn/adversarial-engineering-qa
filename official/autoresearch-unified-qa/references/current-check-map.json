@@ -1,0 +1,546 @@
+{
+  "version": "0.5.0-current.1",
+  "note": "统一当前路由，不按整ID豁免。L0及延续项目method_space/reference_calibration、平台third_party_source具证据缺陷阻断；算法等级标签不改写，其余L1/L2/scope建议。QA17/H04只聚合当前必需事实。",
+  "checks": [
+    {
+      "id": "G01",
+      "current_scope": "真实可执行的方法研究空间",
+      "default_route": "project_required",
+      "nonblocking_scope": "延续项目method_space必需（算法L1）；数值编码程序/策略或HPO方法本身不按关键词拒收"
+    },
+    {
+      "id": "G02",
+      "current_scope": "五维合理Baseline/Starter及真实公平对照",
+      "default_route": "mixed",
+      "nonblocking_scope": "确证明显不合理/过弱、故障或不公平仍fail；不要求SOTA，不凭少epochs或印象判错"
+    },
+    {
+      "id": "G03",
+      "current_scope": "真实可解可提升及项目全seed/3sigma/Reference校准",
+      "default_route": "project_required",
+      "nonblocking_scope": "reference_calibration延续必需（算法L2）；5sigma/headroom仅建议，确定性统一5%不恢复"
+    },
+    {
+      "id": "QA01",
+      "current_scope": "题面目标/接口与无方法泄漏",
+      "default_route": "mixed",
+      "nonblocking_scope": "固定八标题/句数建议"
+    },
+    {
+      "id": "QA02",
+      "current_scope": "实际评分方向/Starter0/上界1/B-U",
+      "default_route": "mixed",
+      "nonblocking_scope": "未统一clip取舍不自设门"
+    },
+    {
+      "id": "QA03",
+      "current_scope": "Oracle/Reference真实性与项目归一化区间",
+      "default_route": "mixed",
+      "nonblocking_scope": "Reference[.15,.8]按延续G03必需；固定结果目录不作门"
+    },
+    {
+      "id": "QA04",
+      "current_scope": "正式同候选同协议全seed及项目随机校准",
+      "default_route": "mixed",
+      "nonblocking_scope": "随机>=3次/声明更多全查、Baseline样本3sigma保留；不另加固定5次或冒称独立训练"
+    },
+    {
+      "id": "QA05",
+      "current_scope": "公开核心约束与合法提交一致",
+      "default_route": "mixed",
+      "nonblocking_scope": "全部文字禁令完全执行属L1；unknown不失败"
+    },
+    {
+      "id": "QA06",
+      "current_scope": "评分入口/主分/错误状态/消费链",
+      "default_route": "mixed",
+      "nonblocking_scope": "单独负分或假想异常不足判错"
+    },
+    {
+      "id": "QA07",
+      "current_scope": "题面Hidden泄漏",
+      "default_route": "mixed",
+      "nonblocking_scope": "目录名或禁止词不是泄漏"
+    },
+    {
+      "id": "QA08",
+      "current_scope": "题面Reference方法泄漏",
+      "default_route": "mixed",
+      "nonblocking_scope": "通用背景非泄漏"
+    },
+    {
+      "id": "QA09",
+      "current_scope": "正式输出生命周期/旧占位消费",
+      "default_route": "mixed",
+      "nonblocking_scope": "纯理论可能性不否定全部历史"
+    },
+    {
+      "id": "QA10",
+      "current_scope": "冻结资产可信恢复/只读边界",
+      "default_route": "mixed",
+      "nonblocking_scope": "固定trusted目录/digest探针非必交"
+    },
+    {
+      "id": "QA11",
+      "current_scope": "实际guard限制反查公开合同",
+      "default_route": "mixed",
+      "nonblocking_scope": "非影响合法方案的内部细节非必公开"
+    },
+    {
+      "id": "QA12",
+      "current_scope": "公开版本库/构建层私有信息",
+      "default_route": "mixed",
+      "nonblocking_scope": "仅.git存在或未清全部历史非自动失败"
+    },
+    {
+      "id": "QA13",
+      "current_scope": "合法Starter、真实可解可提升及项目校准",
+      "default_route": "mixed",
+      "nonblocking_scope": "G03全seed/样本3sigma/Reference区间保留；固定B-R目录不作门"
+    },
+    {
+      "id": "QA14",
+      "current_scope": "延续项目真实方法空间与持续空间分析",
+      "default_route": "mixed",
+      "nonblocking_scope": "G01方法空间必需；快速满分/headroom等其余高级不足建议，无独立饱和阈值"
+    },
+    {
+      "id": "QA15",
+      "current_scope": "资源上限/正式单seed2h多seed8h及Dev整链2h",
+      "default_route": "mixed",
+      "nonblocking_scope": "真实并发/共享deadline核算；未知到卡/无实际size不猜FAIL，不机械相加timeout"
+    },
+    {
+      "id": "QA16",
+      "current_scope": "已有实际有效时长事实",
+      "default_route": "advisory",
+      "nonblocking_scope": "旧两轨10h/7h无当前来源"
+    },
+    {
+      "id": "QA17",
+      "current_scope": "Harbor当前必需事实汇总",
+      "default_route": "mixed",
+      "nonblocking_scope": "只聚合H01-H05当前必需事实；不传播未核验旧child或其余高级建议"
+    },
+    {
+      "id": "QA18",
+      "current_scope": "全部已交会话行为/候选/成绩",
+      "default_route": "mixed",
+      "nonblocking_scope": "固定两模型/最高档/八字段建议"
+    },
+    {
+      "id": "QA19",
+      "current_scope": "实际随机性/提升协议与项目校准一致",
+      "default_route": "mixed",
+      "nonblocking_scope": "既有G03校准保留；不强制题面复写全部统计细节，不另加固定5次"
+    },
+    {
+      "id": "QA20",
+      "current_scope": "可改/网络工具及私有边界",
+      "default_route": "mixed",
+      "nonblocking_scope": "L1所有文字禁令；unknown本身非失败"
+    },
+    {
+      "id": "QA21",
+      "current_scope": "本题/候选/评分真实身份",
+      "default_route": "mixed",
+      "nonblocking_scope": "四hash/新receipt/八字段必交建议"
+    },
+    {
+      "id": "H01",
+      "current_scope": "Harbor任务/Oracle可调用",
+      "default_route": "mixed",
+      "nonblocking_scope": "固定包根/实现名非默认门"
+    },
+    {
+      "id": "H02",
+      "current_scope": "有效配置/提交物移交",
+      "default_route": "mixed",
+      "nonblocking_scope": "unknown版本本身非门"
+    },
+    {
+      "id": "H03",
+      "current_scope": "独立环境/依赖与真实能力",
+      "default_route": "mixed",
+      "nonblocking_scope": "unknown/未跑仅scope；Compose/Docker关键词不独自定错，实际额外计算工作环境依赖按当前H03阻断"
+    },
+    {
+      "id": "H04",
+      "current_scope": "当前四分支评分及本次候选真实有效",
+      "default_route": "mixed",
+      "nonblocking_scope": "QA06/H04职责保留；单纯1h无分暂停，不能汇入其余高级新门"
+    },
+    {
+      "id": "H05",
+      "current_scope": "实际镜像分支和tests供给",
+      "default_route": "mixed",
+      "nonblocking_scope": "第二份Dockerfile/内部tag新证明非必交"
+    },
+    {
+      "id": "T01",
+      "current_scope": "全部已交主要轨迹的真实方法/候选/分数",
+      "default_route": "mixed",
+      "nonblocking_scope": "不要求固定两轨/模型/10h；L2实质多方法默认建议"
+    },
+    {
+      "id": "T02",
+      "current_scope": "全部已交其余轨迹/恢复重试及真实比较",
+      "default_route": "mixed",
+      "nonblocking_scope": "无第二轨不等于缺L0；声称独立却造假仍L0"
+    },
+    {
+      "id": "F01",
+      "current_scope": "任务核心文件/有效接口",
+      "default_route": "mixed",
+      "nonblocking_scope": "固定workspace/harbor_task布局建议"
+    },
+    {
+      "id": "F02",
+      "current_scope": "实际构建/镜像与COPY可见性",
+      "default_route": "mixed",
+      "nonblocking_scope": "固定构建路径/必须Dockerfile非独立门"
+    },
+    {
+      "id": "F03",
+      "current_scope": "评分入口/独立依赖/输出",
+      "default_route": "mixed",
+      "nonblocking_scope": "第二评分Dockerfile非必交"
+    },
+    {
+      "id": "F04",
+      "current_scope": "artifacts真实移交",
+      "default_route": "mixed",
+      "nonblocking_scope": "固定receipt/全工作区移交非必交"
+    },
+    {
+      "id": "F05",
+      "current_scope": "公开Dev与私有边界",
+      "default_route": "mixed",
+      "nonblocking_scope": "不按目录名认定隔离"
+    },
+    {
+      "id": "F06",
+      "current_scope": "separate及实际目标资源",
+      "default_route": "mixed",
+      "nonblocking_scope": "仅旧Compose文件/关键词不自动门；已确认任务另起或使用额外计算工作环境仍按当前平台边界"
+    },
+    {
+      "id": "F07",
+      "current_scope": "当前实现与数据完整性",
+      "default_route": "mixed",
+      "nonblocking_scope": "未用理论漏洞高级建议，当前错分/泄漏仍L0"
+    },
+    {
+      "id": "CS03",
+      "current_scope": "唯一正式reward文件",
+      "default_route": "mixed",
+      "nonblocking_scope": "所有题统一，无旧双文件例外"
+    },
+    {
+      "id": "CS04",
+      "current_scope": "JSON主reward/有限数值/读取链",
+      "default_route": "mixed",
+      "nonblocking_scope": "历史坏记录不能误作当前"
+    },
+    {
+      "id": "CS05",
+      "current_scope": "指定退出主Agent≥51responses",
+      "default_route": "mixed",
+      "nonblocking_scope": "主动完成不套，工具/实验/子Agent不计"
+    },
+    {
+      "id": "A01",
+      "current_scope": "运行与候选成绩对应",
+      "default_route": "mixed",
+      "nonblocking_scope": "只按原A报告条件，不能抹去其他L0"
+    },
+    {
+      "id": "A02",
+      "current_scope": "实际越界行为",
+      "default_route": "mixed",
+      "nonblocking_scope": "请求/理论攻击不等于成功；静态L0缺陷另查"
+    },
+    {
+      "id": "A03",
+      "current_scope": "承诺与实际执行冲突",
+      "default_route": "mixed",
+      "nonblocking_scope": "保留原A排除，不取消QA11 L0"
+    },
+    {
+      "id": "A04",
+      "current_scope": "优化对象参与评分",
+      "default_route": "mixed",
+      "nonblocking_scope": "具体完全未用，不按权重小推定"
+    },
+    {
+      "id": "A05",
+      "current_scope": "承诺工具/数据/目录可用",
+      "default_route": "mixed",
+      "nonblocking_scope": "真实失败/源码必然，unknown不假定失败"
+    },
+    {
+      "id": "A06",
+      "current_scope": "私有内容可见/重建与用途",
+      "default_route": "mixed",
+      "nonblocking_scope": "具体内容/路径/正式目标用途，原A独立复读"
+    },
+    {
+      "id": "B-C01",
+      "current_scope": "实际Runner可定位有效任务",
+      "default_route": "mixed",
+      "nonblocking_scope": "固定workspace路径/全包仅一TOML旧规则建议"
+    },
+    {
+      "id": "B-C02",
+      "current_scope": "真实镜像/构建和资产",
+      "default_route": "mixed",
+      "nonblocking_scope": "禁止源包docker_image/必须Dockerfile旧规则建议"
+    },
+    {
+      "id": "B-C03",
+      "current_scope": "非npm依赖实际使用生态官方源",
+      "default_route": "project_required",
+      "nonblocking_scope": "延续平台third_party_source必需（算法scope）；已有批准替代接受，模型资产/内部镜像不误当包源"
+    },
+    {
+      "id": "B-C04",
+      "current_scope": "实际npm生效registry为指定bnpm",
+      "default_route": "project_required",
+      "nonblocking_scope": "延续平台third_party_source必需（算法scope）；批准替代/等效配置接受，无npm不适用"
+    },
+    {
+      "id": "B-P01",
+      "current_scope": "镜像仓库不可达",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明"
+    },
+    {
+      "id": "B-P02",
+      "current_scope": "APT下载403/连带签名",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明"
+    },
+    {
+      "id": "B-P03",
+      "current_scope": "Python分发/环境兼容",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明"
+    },
+    {
+      "id": "B-P04",
+      "current_scope": "镜像引用/授权",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明"
+    },
+    {
+      "id": "B-P05",
+      "current_scope": "Git访问/锁/推送",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明"
+    },
+    {
+      "id": "B-P06",
+      "current_scope": "发布包结构/归档损坏",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明"
+    },
+    {
+      "id": "B-P07",
+      "current_scope": "wheel下载/代理",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明"
+    },
+    {
+      "id": "B-P08",
+      "current_scope": "镜像层上传会话",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明"
+    },
+    {
+      "id": "B-P09",
+      "current_scope": "模型/公开资产下载",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明"
+    },
+    {
+      "id": "B-P10",
+      "current_scope": "npm代理407",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明"
+    },
+    {
+      "id": "B-P11",
+      "current_scope": "manifest/digest/代理",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明"
+    },
+    {
+      "id": "B-P12",
+      "current_scope": "context/COPY/ignore缺资产",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明"
+    },
+    {
+      "id": "B-P13",
+      "current_scope": "APT100无首因",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明"
+    },
+    {
+      "id": "B-P14",
+      "current_scope": "APT锁版本不可用",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明"
+    },
+    {
+      "id": "B-P15",
+      "current_scope": "Python依赖冲突",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明"
+    },
+    {
+      "id": "B-P16",
+      "current_scope": "准备脚本/校验失败",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明"
+    },
+    {
+      "id": "B-P17",
+      "current_scope": "证书临时目录",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明"
+    },
+    {
+      "id": "B-P18",
+      "current_scope": "评分资产/锚点装配",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明"
+    },
+    {
+      "id": "B-P19",
+      "current_scope": "源包读取权限",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明"
+    },
+    {
+      "id": "B-P20",
+      "current_scope": "bootstrap解释器",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明"
+    },
+    {
+      "id": "B-P21",
+      "current_scope": "sudoers语法",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明"
+    },
+    {
+      "id": "B-P22",
+      "current_scope": "Hub429",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明"
+    },
+    {
+      "id": "B-P23",
+      "current_scope": "用户UID冲突",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明"
+    },
+    {
+      "id": "B-P24",
+      "current_scope": "sudo下载无首因",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明"
+    },
+    {
+      "id": "B-P25",
+      "current_scope": "依赖哈希不匹配",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明"
+    },
+    {
+      "id": "B-E01",
+      "current_scope": "工作目录可写",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "正常预算截止/模型拒绝/缺摘要不是作者代码失败；1h无分暂缓；确证当前环境故障按控制方处理"
+    },
+    {
+      "id": "B-E02",
+      "current_scope": "HOME/临时/日志/PID权限",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "正常预算截止/模型拒绝/缺摘要不是作者代码失败；1h无分暂缓；确证当前环境故障按控制方处理"
+    },
+    {
+      "id": "B-E03",
+      "current_scope": "Agent超时终态",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "正常预算截止/模型拒绝/缺摘要不是作者代码失败；1h无分暂缓；确证当前环境故障按控制方处理"
+    },
+    {
+      "id": "B-E04",
+      "current_scope": "其他非零Agent退出",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "正常预算截止/模型拒绝/缺摘要不是作者代码失败；1h无分暂缓；确证当前环境故障按控制方处理"
+    },
+    {
+      "id": "B-E05",
+      "current_scope": "模型安全拒绝",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "正常预算截止/模型拒绝/缺摘要不是作者代码失败；1h无分暂缓；确证当前环境故障按控制方处理"
+    },
+    {
+      "id": "B-E06",
+      "current_scope": "终态与原生摘要",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "正常预算截止/模型拒绝/缺摘要不是作者代码失败；1h无分暂缓；确证当前环境故障按控制方处理"
+    },
+    {
+      "id": "B-E07",
+      "current_scope": "健康检查",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "正常预算截止/模型拒绝/缺摘要不是作者代码失败；1h无分暂缓；确证当前环境故障按控制方处理"
+    },
+    {
+      "id": "B-E08",
+      "current_scope": "环境/cgroup创建",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "正常预算截止/模型拒绝/缺摘要不是作者代码失败；1h无分暂缓；确证当前环境故障按控制方处理"
+    },
+    {
+      "id": "B-E09",
+      "current_scope": "sandbox生命周期",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "正常预算截止/模型拒绝/缺摘要不是作者代码失败；1h无分暂缓；确证当前环境故障按控制方处理"
+    },
+    {
+      "id": "B-GPU",
+      "current_scope": "实际GPU初始化/路由",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "未知到卡无新证明；已有实际不相容故障仍查"
+    },
+    {
+      "id": "B-ENV",
+      "current_scope": "必要平台变量注入",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "仅记名称/存在/环节不读值，平台责任不转专家"
+    },
+    {
+      "id": "B-S01",
+      "current_scope": "正式评分产物/读取路径",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "已确认当前错误按L0；单纯1h无分/未交日志不新增门，历史scope不冒充当前"
+    },
+    {
+      "id": "B-S02",
+      "current_scope": "Verifier下载/归档/回传",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "已确认当前错误按L0；单纯1h无分/未交日志不新增门，历史scope不冒充当前"
+    },
+    {
+      "id": "B-S03",
+      "current_scope": "权威主分有限数值",
+      "default_route": "diagnostic",
+      "nonblocking_scope": "已确认当前错误按L0；单纯1h无分/未交日志不新增门，历史scope不冒充当前"
+    }
+  ]
+}

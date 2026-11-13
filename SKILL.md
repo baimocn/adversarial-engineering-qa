@@ -66,6 +66,21 @@ sha256/size 全量复算（评分合同清单失配=blocking，专家证据清�
 修复，v0.5.0 四项协议缺口（D-C03 双写 ×4、D-C04 缺入口 ×3、1841 指纹未刷 ×9）
 属**新标准下的第二波整改项**，不是修复失败。
 
+**v2.6 相对 v2.5 的实质改动（2026-11-13，strict-qa 分支，低幻觉协议）**：
+把主观项（方法创新性、轨迹真实性、题面是否讲清楚）从“一个模型拍”改成
+**2+1 协议**：两个不同家族的评审在隔离上下文各答一次，证据必须带
+`文件:行 + 原文引用`；一致且证据可核 → `judged_agree`；不一致或证据无效 →
+交裁决模型；裁决也必须选边并引用，仍无效则 `human_required`。新增
+`scripts/judge_panel.py`、`scripts/compare_judgments.py`、`scripts/panel_lib.py`
+（证据先验 + 固定规则），以及 `scripts/validate_decomposition.py`（拆题四条硬
+规则：有限答案/可执行验证/需求溯源/覆盖率）和 `scripts/verdict.py`
+（`verified / judged_agree / judged_adjudicated / human_required / unknown`
+五档总判；模型不参与裁决）。拆题由编排模型在启动时用 `ListModels` 问人选
+最强模型，拆题缓存到 `criteria/decompositions/<题族>.json`，校验后复用。
+单题确定性入口：`scripts/strict_verify.py`；多题与模型选择契约见
+`workflows/README.md`。`--package-zip` 时同时跑 0.3.10 与 0.5.0 官方层，
+两层的聚合 decision 进 strict verdict；官方底稿未填时记 human_required。
+
 ## 目标
 
 证明当前产物在声明的接口、正常路径、失败路径和对抗路径上是否成立，而不只证明文件存在、格式正确或本轮没有改坏。把“变更面回归”和“当前实现正确性”作为两个独立门禁；任一未通过，都不得给出无限定 PASS。

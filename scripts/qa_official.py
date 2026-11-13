@@ -421,6 +421,10 @@ def cmd_run(a):
         return 2
     cmd = [PY, "-B", str(AUDITOR), str(Path(a.zip).resolve()),
            "--out-dir", str(official)]
+    if getattr(a, "standard_review", None):
+        cmd += ["--standard-review", str(Path(a.standard_review).resolve())]
+    if getattr(a, "review", None):
+        cmd += ["--review", str(Path(a.review).resolve())]
     env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1")
     r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8",
                        errors="replace", env=env)
@@ -561,6 +565,10 @@ def main():
     p = sub.add_parser("run")
     p.add_argument("--workspace", required=True)
     p.add_argument("--zip", required=True)
+    p.add_argument("--standard-review", default=None,
+                   help="filled 0.3.10 review.json (official --standard-review input)")
+    p.add_argument("--review", default=None,
+                   help="filled waiver review with standard_resolutions")
     p.set_defaults(fn=cmd_run)
 
     p = sub.add_parser("review")
