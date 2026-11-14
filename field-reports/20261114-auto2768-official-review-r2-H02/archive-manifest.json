@@ -1,0 +1,26 @@
+{
+  "schema": "auto2768-official-feedback-raw-archive/1",
+  "source": "Feishu Base attachment fldRpEE4VF, record recvxeP2AYB9GI, table tblHNtQNFPVwuKiP",
+  "report_key": "18dfe9fcbff6c29ff75c9d0532f161f8d1422603378051b36a46dac5d134a156",
+  "attachment_file_token": "A42WbuE9LotIp6xOK1acTObbnTd",
+  "original_attachment_name": "auto2768-1107-final-a3aa8f703b0b83fa.zip",
+  "original_zip_sha256": "78db926cb771775045fc347cbb80fcf3c9ed63ee39420f9fbc4f692b5599b545",
+  "original_zip_size": 228266,
+  "platform_decision": "FAIL",
+  "platform_version": "0.5.6-current.1",
+  "implementation_patch": "read-recovery-fix-20261113-v1",
+  "reviewed_package": "v30",
+  "checks_summary": "H04",
+  "raw_files": [
+    "decision.txt",
+    "identity.json",
+    "last-message.txt",
+    "previous-feedback.txt",
+    "report.json",
+    "report.md",
+    "report.txt",
+    "return_to_expert.txt",
+    "review.json"
+  ],
+  "note": "Raw platform feedback files are copied byte-for-byte; monitor-generated findings.json/fix_report.md are deliberately excluded."
+}

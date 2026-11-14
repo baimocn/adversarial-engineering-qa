@@ -1,0 +1,28 @@
+【1107:8c2ee184abdbe06ad09c7fed98afcaecb6bf7316517e6dced332aae6a4b6c1f5:final】
+本轮结论：不通过
+标准：当前题目规范及L0必需要求，延续原项目科学、资源及平台要求；记录兼容及三类证明缺口按具体证据自动处理，不改评分口径，不需人工版本选择。
+范围：只读静态审阅及已交证据复核；本次未运行Docker或Harbor。
+
+专家返修：
+- H04 / QA06 / QA17 / F07：候选提交的 test_pred.npy 若实际是可读取的 NPZ 容器，np.load 返回 NpzFile 而非 ndarray；代码在私有资产读取后直接访问 pred.shape，抛出的 AttributeError 被 guarded_main 归为 GRADER_ERROR，结果 NOT_READY/无分而非候选格式拒绝 −10。前提是源检查、模型门及可信私有资产正常；正常 ndarray 分支的成绩不因此否定。
+  修改：在候选预测加载后先验证返回值为 ndarray，并把非 ndarray 的候选文件归入 FORMAT_ERROR、写 −10；保留可信资产故障无分的独立路径。
+  证据：workspace/harbor_task/tests/grader.py#L123-L149；workspace/harbor_task/tests/grader.py#L200-L225；workspace/harbor_task/tests/grader.py#L243-L249；workspace/harbor_task/tests/contract_guard.py#L944-L981
+- QA05 / QA11：公开题面允许在 solution 内增加方法代码，但未披露实际源码检查上限：递归扫描的 .py/.yaml/.yml 最多 256 个、单文件不超过 2,000,000 字节、总计不超过 8,000,000 字节（artifacts、.git、__pycache__ 排除）；超过即被 guard 拒绝并记候选失败。公开题面、protocol 和 starter README 均未说明该限制，影响公开范围内的合法方案。
+  修改：在公开合同中准确披露检查对象、排除目录、文件数量与大小上限，或移除不必要的拒绝限制，使公开允许范围与实际 guard 一致。
+  证据：workspace/harbor_task/instruction.md#L38-L47；workspace/harbor_task/instruction.md#L79-L85；workspace/harbor_task/tests/contract_guard.py#L22-L33；workspace/harbor_task/tests/contract_guard.py#L944-L981；workspace/harbor_task/tests/grader.py#L155-L164；workspace/harbor_task/environment/public_eval/protocol.json#L110-L142；workspace/harbor_task/environment/starter/README.md#L55-L64
+
+记录兼容处理（原始发现与不利记录保留，分数和原值不改）：
+- G03 / historical_calibration_source_gap：已接受记录兼容
+  依据：仅接受历史完整配对数值及来源缺口的限定作用，不认证旧源码、新旧语义等价或当前全seed重跑。
+  证据：optimization_evidence/EVIDENCE_PROVENANCE.md#L3-L22；optimization_evidence/baseline_runs/seed_3000/result.json#/method；workspace/reference/data.py#L20-L32；workspace/harbor_task/solution/data.py#L20-L32
+  保留缺口：仅接受所定位旧版本完整有效校准的历史作用；旧源码未取得，旧revision/SHA只保留为历史身份，不与现源SHA比较。
+  保留缺口：旧源码及新旧正常协议执行语义等价均未认证；历史完整数学有效不证明现版已完成全声明seed校准重跑。
+  保留缺口：缺旧源按本次获准的证明缺口处理，不独自产生全seed补跑义务；已确认训练、数据、split、指标、质量门变化及其他当前缺陷仍保留。
+  原发现：历史正式B/R运行树及原始br_results.json未在固定题包索引中定位，派生全seed记录不能独自证明旧源码及与现源码的正常训练语义等价。
+- QA21 / documentation_manifest_metadata：已接受记录兼容
+  依据：仅对未被已审运行入口消费的README旧SHA作文档元数据兼容；现代码按索引绑定，旧回执和平台分发未知保留。
+  证据：expert_evidence/best_method_selection.json#/method_sha256；expert_evidence/best_method/README.md#L1-L6；expert_evidence/repair/current_source_revalidation/input_manifest.json#L1-L27
+  保留缺口：所选清单仅按文档记录处理；陈旧SHA/大小仍需修正，本次不独自阻断，原manifest及历史回执不改写。
+  保留缺口：当前源码身份来自可信索引，未要求陈旧清单与现源相等；已审消费者未直接提及清单仅为正向防错，不能证明全平台无消费。
+  保留缺口：未认证平台分发或分发运行；未知外部分发列为未认证范围。当前错源码、候选、分数、已确认分发失败及真实运行清单校验错误不免除。
+  原发现：候选选择说明中README.md的记录SHA与固定索引中的当前说明文件不同；其余所列代码和配置与索引相符，旧回执保存旧说明SHA。

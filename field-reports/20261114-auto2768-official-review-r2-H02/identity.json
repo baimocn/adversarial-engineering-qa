@@ -1,0 +1,47 @@
+{
+  "job": {
+    "table_id": "tblHNtQNFPVwuKiP",
+    "record_id": "recvxeP2AYB9GI",
+    "task_number": "auto2768",
+    "table_name": "\u4e09\u671f\u9886\u9898\u8868",
+    "period": "\u4e09\u671f",
+    "repair_event": {
+      "rev": 143487,
+      "time": 1794611580
+    },
+    "source": {
+      "kind": "attachment",
+      "file_token": "CsEAbfLF3omRTTxSXVZc8DSWnjf",
+      "size": 69973896,
+      "source_revision": 143486
+    },
+    "skill_sha256": "6f1a63d2c24d5a9bf1c10a49e692f59fb37bae35a5a07750def9a8f219ab2d13",
+    "key": "a3aa8f703b0b83fa135b47a0430e32c28f89531cba95d954fca70ba1d0fddfca",
+    "review_claim": {
+      "token": "4c34bfaea79d4ab1a7185840f4a4e2b7",
+      "previous_status": [
+        "\u5f85\u8fd4\u4fee"
+      ],
+      "claim_epoch": 1
+    },
+    "wrapper_epoch": "merlin-qa61-20261112",
+    "model_resource": "ark61"
+  },
+  "attempt": {},
+  "input": {
+    "sha256": "af8415a4dbe9691b86387cb20130bc56ddb4cd11acb26a49c1a33f3070330849",
+    "size": 69973896,
+    "source": {
+      "kind": "attachment",
+      "file_token": "CsEAbfLF3omRTTxSXVZc8DSWnjf",
+      "size": 69973896,
+      "source_revision": 143486
+    },
+    "key": "a3aa8f703b0b83fa135b47a0430e32c28f89531cba95d954fca70ba1d0fddfca",
+    "cache_identity": "d0d132bc3cef55abc8af9f97fda724e7d3a4acd4b8c38bb39752af790acf25e8",
+    "cache_reused": true,
+    "crc64": 4953427290422988384
+  },
+  "mode": "final",
+  "skill_sha256": "6f1a63d2c24d5a9bf1c10a49e692f59fb37bae35a5a07750def9a8f219ab2d13"
+}

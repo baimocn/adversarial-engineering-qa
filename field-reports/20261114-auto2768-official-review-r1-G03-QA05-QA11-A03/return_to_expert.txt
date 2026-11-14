@@ -1,0 +1,24 @@
+本轮结论：不通过
+标准：当前题目规范及L0必需要求，延续原项目科学、资源及平台要求；记录兼容及三类证明缺口按具体证据自动处理，不改评分口径，不需人工版本选择。
+范围：只读静态审阅及已交证据复核；本次未运行Docker或Harbor。
+
+专家返修：
+- G03：正式B/R运行来源说明称同一train.py与当前Starter和solution均逐字节一致，但两份当前源码实际不同；所核B/R种子工件的method_source_sha256又为空，不能确定历史成绩所用源码与声明候选的身份对应。原值和checkpoint绑定不消除该矛盾，历史源码缺口兼容的候选身份条件未获确认。
+  修改：澄清并提供能将原B/R运行候选、实际源码身份与既有成绩对应起来的真实证据；不得改写原值或将未认证等价表述为已证。
+  证据：optimization_evidence/EVIDENCE_PROVENANCE.md:8-16；workspace/harbor_task/environment/starter/train.py:30-62；workspace/harbor_task/solution/train.py:30-60；optimization_evidence/baseline_runs/seed_3000/model/artifact.json:10-40；optimization_evidence/reference_runs/seed_3000/model/artifact.json:10-40；expert_evidence/repair/v23b_pre_registration.json:46-65
+- QA05：公开训练方法支持范围未披露守卫对nonlocal的无条件拒绝；例如在局部嵌套数值辅助函数中更新外围局部计数或累加值，不触及模块全局、保护状态或标签，也会被判UNSUPPORTED并计−10。
+  修改：使公开合同明确披露该影响合法方法的限制，或调整守卫使相应合法方案可提交。
+  证据：workspace/harbor_task/instruction.md:38-49；workspace/harbor_task/instruction.md:81-87；workspace/harbor_task/tests/contract_guard.py:549-565；workspace/harbor_task/tests/contract_guard.py:796-810；workspace/harbor_task/tests/contract_guard.py:930-941；workspace/harbor_task/tests/grader.py:152-164
+- QA11：题面开放staged数值辅助函数，却未列实际导入白名单；守卫只批准特定torch/math/numeric_api导入，普通numpy数值实现也无条件UNSUPPORTED、−10，限制影响公开合法方法。
+  修改：公开与实际守卫一致的staged数值模块导入限制，或调整守卫以支持题面允许的数值实现。
+  证据：workspace/harbor_task/instruction.md:91-95；workspace/harbor_task/tests/contract_guard.py:796-810；workspace/harbor_task/tests/contract_guard.py:930-941；workspace/harbor_task/tests/grader.py:152-164；workspace/harbor_task/tests/contract_guard.py:666-675
+- A03：公开方法边界未列nonlocal与staged数值导入白名单，而守卫会拒绝这些静态数值写法并由评分器计−10。
+  修改：使公开方法合同与实际影响合法方案的AST及导入限制一致。
+  证据：workspace/harbor_task/instruction.md:38-49；workspace/harbor_task/instruction.md:81-87；workspace/harbor_task/instruction.md:91-95；workspace/harbor_task/tests/contract_guard.py:549-565；workspace/harbor_task/tests/contract_guard.py:796-810；workspace/harbor_task/tests/contract_guard.py:930-941；workspace/harbor_task/tests/grader.py:152-164
+
+记录兼容处理（原始发现与不利记录保留，分数和原值不改）：
+- G03 / historical_calibration_source_gap：条件不满足，保留原问题
+  依据：仅检查旧源码证明缺口兼容；实际来源声明矛盾且候选身份未确认，不能接受兼容或认定成绩伪造。
+  保留原因：compatibility prerequisites not confirmed: historical_full_results_valid, declared_protocol_consistent, candidate_identity_preserved, historical_scope_and_gap_disclosed
+  证据：optimization_evidence/EVIDENCE_PROVENANCE.md:8-16；workspace/harbor_task/environment/starter/train.py:30-62；workspace/harbor_task/solution/train.py:30-60；optimization_evidence/baseline_runs/seed_3000/model/artifact.json:10-40；optimization_evidence/reference_runs/seed_3000/model/artifact.json:10-40；expert_evidence/repair/v23b_pre_registration.json:46-65
+  原发现：正式B/R运行来源说明称同一train.py与当前Starter和solution均逐字节一致，但两份当前源码实际不同；所核B/R种子工件的method_source_sha256又为空，不能确定历史成绩所用源码与声明候选的身份对应。原值和checkpoint绑定不消除该矛盾，历史源码缺口兼容的候选身份条件未获确认。
