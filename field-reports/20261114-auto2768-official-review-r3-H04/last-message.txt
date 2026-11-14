@@ -1,0 +1,7 @@
+auto2768 正式终审：**不通过 / FAIL**。
+
+- **唯一失败根因：H04，作者责任。** 当前保留的 `best_method/data.py:29` 使用 `weights_only=False`，其 AST 不匹配生效冻结合同；提交该候选树会被现行 guard 以 `FIXED_CONTRACT` 拒绝，评分为 `−10`。公开 Dev **71.2** 不能证明正式门通过。
+- **必需返修：** 恢复生效 Starter 的冻结 adapter（`weights_only=True`），同步真实源码绑定与验证范围，不放宽可信 policy。
+- 全声明 seed 校准数学门满足；预检内部问题已清零，四份正式产物均已回读。未执行题包、训练或 Docker/Harbor，技术恢复未计为作者失败。
+
+正式报告：`/mnt/bn/wangsiyu/autoresearch-qa61-merlin-20261112/reports/18dfe9fcbff6c29ff75c9d0532f161f8d1422603378051b36a46dac5d134a156/qa-work-056/final-056/report.json:1`

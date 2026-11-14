@@ -1,0 +1,41 @@
+{
+  "job": {
+    "table_id": "tblHNtQNFPVwuKiP",
+    "record_id": "recvxeP2AYB9GI",
+    "task_number": "auto2768",
+    "table_name": "\u4e09\u671f\u9886\u9898\u8868",
+    "period": "\u4e09\u671f",
+    "repair_event": {
+      "rev": 140096,
+      "time": 1794569491
+    },
+    "source": {
+      "kind": "attachment",
+      "file_token": "Uqnob0Ov4otLOMxYeqvcfY2wnec",
+      "size": 69964757
+    },
+    "skill_sha256": "6f1a63d2c24d5a9bf1c10a49e692f59fb37bae35a5a07750def9a8f219ab2d13",
+    "key": "cafe7056db84f6cf9e7d9ec98cac230d43fee47ecb77f7fae17bd2bad1f2bf8f",
+    "review_claim": {
+      "token": "3eb3d539b5e94161841dfca63dd123da",
+      "previous_status": [
+        "\u5f85\u8fd4\u4fee"
+      ]
+    },
+    "wrapper_epoch": "wrapper-v3-20261111",
+    "model_resource": "ark61t"
+  },
+  "attempt": {},
+  "input": {
+    "sha256": "74444e6f179f36e08437b7958c8be522ecf8b201e32c6f44f1cecda0dfb403e3",
+    "size": 69964757,
+    "source": {
+      "kind": "attachment",
+      "file_token": "Uqnob0Ov4otLOMxYeqvcfY2wnec",
+      "size": 69964757
+    },
+    "key": "cafe7056db84f6cf9e7d9ec98cac230d43fee47ecb77f7fae17bd2bad1f2bf8f"
+  },
+  "mode": "final",
+  "skill_sha256": "6f1a63d2c24d5a9bf1c10a49e692f59fb37bae35a5a07750def9a8f219ab2d13"
+}
