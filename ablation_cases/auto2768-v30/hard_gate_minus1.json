@@ -1,0 +1,6 @@
+{
+  "schema": "ablation-case-ref/1",
+  "case_id": "hard_gate_minus1",
+  "rule": "hard_gate_minus_10",
+  "catalog": "config/ablation_cases.json"
+}

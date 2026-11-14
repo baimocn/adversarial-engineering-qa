@@ -1,14 +1,9 @@
 #!/usr/bin/env python3
-"""Current-standard deterministic gate for the effective 2026-11-14 profile.
+"""Generic current-standard deterministic gate.
 
-This gate implements the latest versioned platform rules without model review.
-It takes a package tree root, loads config/rule_versions.json, and emits a
-binary external verdict: PASS or FAIL. Internal orchestration may still use
-INCOMPLETE/QA_NOT_FINISHED, but that is not an author-facing PASS.
-
-The checks are deliberately small and mechanical. Semantic, dynamic and
-platform-runtime questions are recorded as `platform_scope`, never auto-passed
-as proof of execution.
+The effective 2026-11-14 profile is binary: external PASS/FAIL. Package-specific
+values live in config/profiles/*.json and config/rule_catalog.json, not in this
+executor. Static PASS is not Docker/Harbor/Hidden runtime approval.
 """
 from __future__ import annotations
 
@@ -21,10 +16,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
-
 CURRENT_PROFILE = "current-20261114"
-BAD_BEST_METHOD_DATA_SHA = "0c40b9e73c5e59fdd41b389d818d1e38c7dde95beddb5db62570f35c5bf3a2b8"
-ALLOWED_DATA_AST = "9d3b0a20364a29671a7d34997a9487096b21be488643758f0188c7e126a4b7df"
 
 
 def jload(path: Path):
@@ -33,6 +25,26 @@ def jload(path: Path):
 
 def jwrite(path: Path, obj) -> None:
     path.write_text(json.dumps(obj, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def deep_merge(base: dict, override: dict) -> dict:
+    out = dict(base)
+    for key, value in override.items():
+        if isinstance(value, dict) and isinstance(out.get(key), dict):
+            out[key] = deep_merge(out[key], value)
+        else:
+            out[key] = value
+    return out
+
+
+def load_profile(name: str) -> dict:
+    profiles = REPO / "config" / "profiles"
+    data = jload(profiles / f"{name}.json")
+    parent = data.get("extends")
+    if parent:
+        data = deep_merge(load_profile(parent), data)
+    data["profile"] = name
+    return data
 
 
 def sha256_file(path: Path) -> str:
@@ -47,10 +59,19 @@ def text(path: Path) -> str:
     return path.read_text(encoding="utf-8", errors="replace") if path.is_file() else ""
 
 
-def add(findings: list[dict], rule: str, ok: bool, reason: str, evidence: str, blocking: bool = True) -> None:
+def p(root: Path, rel: str) -> Path:
+    return root / rel
+
+
+def add(findings: list[dict], rule: str, ok: bool, reason: str, evidence: str,
+        blocking: bool = True) -> None:
+    if not blocking:
+        status = "platform_scope"
+    else:
+        status = "pass" if ok else "fail"
     findings.append({
         "rule": rule,
-        "status": "pass" if ok else ("fail" if blocking else "platform_scope"),
+        "status": status,
         "blocking": blocking and not ok,
         "reason": reason,
         "evidence": evidence,
@@ -58,7 +79,6 @@ def add(findings: list[dict], rule: str, ok: bool, reason: str, evidence: str, b
 
 
 def parse_toml_shallow(raw: str) -> dict:
-    """Read only current table / top-level key facts; no third-party TOML needed."""
     out: dict = {"tables": set(), "top": {}, "lines": []}
     table = ""
     for i, line in enumerate(raw.splitlines(), 1):
@@ -80,7 +100,7 @@ def parse_toml_shallow(raw: str) -> dict:
 
 
 def ast_digest_like_guard(tree: ast.AST) -> str:
-    """Mirror contract_guard.ast_digest canonicalization, without importing task code."""
+    """Mirror contract_guard.ast_digest canonicalization without importing task code."""
     tree = ast.parse(ast.unparse(tree))
     for node in ast.walk(tree):
         body = getattr(node, "body", None)
@@ -101,67 +121,71 @@ def ast_digest_like_guard(tree: ast.AST) -> str:
     return hashlib.sha256(encoded.encode()).hexdigest()
 
 
-def reward_protocol(task: Path, findings: list[dict]) -> None:
+def task_config(task: Path, findings: list[dict], cfg: dict) -> None:
+    raw = text(task / "task.toml")
+    parsed = parse_toml_shallow(raw)
+    active_lines = [x for x in parsed["lines"] if not x[4].lstrip().startswith("#")]
+    docker_image_lines = [x for x in active_lines if x[2].strip() == "docker_image"]
+    tcfg = cfg["task_config"]
+    add(findings, "canonical_task_toml", (task / "task.toml").is_file(),
+        "effective profile resolves current task from configured task.toml",
+        str(task / "task.toml"))
+    add(findings, "no_expert_docker_image", not docker_image_lines,
+        "expert source task.toml has no active docker_image; platform selects/builds image",
+        "task.toml lines " + ",".join(str(x[0]) for x in docker_image_lines))
+    add(findings, "separate_verifier", tcfg["separate_marker"] in raw and "separate" in raw,
+        "independent Verifier sandbox remains required", "task.toml:[verifier]")
+    add(findings, "artifacts_solution", tcfg["artifacts_value"] in raw,
+        "candidate handoff path must match the current contract", "task.toml:artifacts")
+
+
+def reward_protocol(task: Path, findings: list[dict], cfg: dict) -> None:
+    rcfg = cfg["reward"]
     tests = task / "tests"
     grader = text(tests / "grader.py")
     test_sh = text(tests / "test.sh")
     source = grader + "\n" + test_sh
-    json_write = bool(re.search(r"reward\.json", grader, re.I) and re.search(r"_atomic_write|open\(|write_reward|json\.dumps", grader, re.I))
-    # A reward.txt mention is a historical cleanup target only if it appears in
-    # rm/cleanup context. Publishing/writing it as a formal reward is forbidden.
+    formal = rcfg["formal_file"]
+    historical = rcfg["historical_file"]
+    json_write = bool(re.search(re.escape(formal), grader, re.I) and
+                      re.search(r"_atomic_write|open\(|write_reward|json\.dumps", grader, re.I))
     txt_publish_lines = []
     for i, line in enumerate(grader.splitlines(), 1):
         low = line.lower()
-        if "reward.txt" not in low:
+        if historical.lower() not in low:
             continue
         cleanup = re.search(r"\brm\s+-f|clean_stale|cleanup|清理|废弃", line, re.I)
         write = re.search(r"_atomic_write|open\(|write_reward|json\.dumps|\bcp\b|\becho\b|>\s*\S", line, re.I)
         if write and not cleanup:
             txt_publish_lines.append((i, line.strip()))
     txt_write = bool(txt_publish_lines)
-    stale_cleanup = "clean_stale_rewards" in grader or bool(re.search(r"rm\s+-f[^\n]*reward\.txt[^\n]*reward\.json", test_sh, re.I))
+    stale_cleanup = "clean_stale_rewards" in grader or bool(
+        re.search(r"rm\s+-f[^\n]*" + re.escape(historical) + r"[^\n]*" + re.escape(formal), test_sh, re.I))
     add(findings, "single_formal_reward", bool(json_write) and not txt_write and stale_cleanup,
-        "0.5.0/0.5.6: one formal reward file; stale reward cleanup is explicit",
-        "workspace/harbor_task/tests/grader.py; tests/test.sh")
+        "one formal reward file; stale reward cleanup is explicit",
+        "tests/grader.py; tests/test.sh")
     add(findings, "no_reward_txt_publish", not txt_write,
-        "reward.txt must not be published as a second formal reward",
-        "workspace/harbor_task/tests/grader.py")
+        "historical reward file must not be published as a second formal reward",
+        "tests/grader.py")
 
-    hard_gate = bool(re.search(r"^HARD_GATE\s*=\s*-10(?:\.0+)?\b", grader, re.M) and "CANDIDATE_REJECT_CODES" in grader)
-    trusted_fault = ("TRUSTED_FAULT_CODES" in grader and "GRADER_ERROR" in grader and "NOT_READY" in grader)
-    no_zero_on_failure = ("reward\": None" in grader or "reward: None" in grader) and "不写任何 reward" in grader
+    hard_value = str(rcfg["hard_gate_value"])
+    hard_gate = bool(re.search(r"^HARD_GATE\s*=\s*" + re.escape(hard_value) + r"(?:\.0+)?\b", grader, re.M)
+                     and "CANDIDATE_REJECT_CODES" in grader)
+    trusted_fault = all(token in grader for token in rcfg["trusted_fault_tokens"])
+    no_zero_on_failure = any(marker in grader for marker in rcfg["no_score_markers"])
     add(findings, "hard_gate_minus_10", hard_gate,
-        "current standard supersedes -1 with candidate hard gate -10",
-        "workspace/harbor_task/tests/grader.py:HARD_GATE/CANDIDATE_REJECT_CODES")
+        "current standard uses candidate hard gate " + hard_value,
+        "tests/grader.py:HARD_GATE/CANDIDATE_REJECT_CODES")
     add(findings, "trusted_fault_no_score", trusted_fault and no_zero_on_failure,
-        "credible grader/environment faults must be error/no-score, not ordinary 0 or -10",
-        "workspace/harbor_task/tests/grader.py:TRUSTED_FAULT_CODES/NOT_READY")
+        "credible grader/environment faults must be error/no-score, not ordinary 0 or hard gate",
+        "tests/grader.py:TRUSTED_FAULT_CODES/NOT_READY")
     add(findings, "no_ordinary_zero_failure", "write_reward(0" not in source.replace(" ", ""),
         "failure paths must not publish ordinary 0.0 as a normal score",
-        "workspace/harbor_task/tests/grader.py; tests/test.sh")
+        "tests/grader.py; tests/test.sh")
 
 
-def task_config(task: Path, findings: list[dict]) -> None:
-    task_toml = task / "task.toml"
-    raw = text(task_toml)
-    parsed = parse_toml_shallow(raw)
-    active_lines = [x for x in parsed["lines"] if not x[4].lstrip().startswith("#")]
-    docker_image_lines = [x for x in active_lines if x[2].strip() == "docker_image"]
-    add(findings, "canonical_task_toml", task_toml.is_file(),
-        "effective profile resolves current task from workspace/harbor_task/task.toml",
-        "workspace/harbor_task/task.toml")
-    add(findings, "no_expert_docker_image", not docker_image_lines,
-        "0.5.6 repair overlay: expert source task.toml has no active docker_image; platform selects/builds image",
-        "workspace/harbor_task/task.toml lines " + ",".join(str(x[0]) for x in docker_image_lines))
-    add(findings, "separate_verifier", "environment_mode" in raw and "separate" in raw,
-        "independent Verifier sandbox remains required",
-        "workspace/harbor_task/task.toml:[verifier]")
-    add(findings, "artifacts_solution", '"/workspace/solution"' in raw,
-        "candidate handoff path must match the current contract",
-        "workspace/harbor_task/task.toml:artifacts")
-
-
-def public_contract(task: Path, findings: list[dict]) -> None:
+def public_contract(task: Path, findings: list[dict], cfg: dict) -> None:
+    ccfg = cfg["public_contract"]
     instr = text(task / "instruction.md")
     protocol_path = task / "environment/public_eval/protocol.json"
     protocol = jload(protocol_path) if protocol_path.is_file() else {}
@@ -171,138 +195,180 @@ def public_contract(task: Path, findings: list[dict]) -> None:
     guard = text(task / "tests/contract_guard.py")
     readmes = [text(task / "environment/starter/README.md"), text(task / "solution/README.md")]
     disclosures = [instr, *readmes]
+    required = ccfg["required_rejected_constructs"]
+    needles = ccfg["construct_needles"]
+    rejected = syntax.get("rejected_constructs", [])
+    nonlocal_ok = (
+        all(item in rejected for item in required)
+        and all(all(needles.get(item, item) in doc for item in required) for doc in disclosures)
+    )
+    expected_modules = ["torch", "torch.nn.functional", "math"]
+    expected_from = ["numeric_api", "torch.nn"]
     staged_ok = (
-        imports.get("allowed_import_modules") == ["torch", "torch.nn.functional", "math"]
-        and any(item.get("module") == "numeric_api" for item in imports.get("allowed_import_from", []))
+        imports.get("allowed_import_modules") == expected_modules
+        and all(any(entry.get("module") == module for entry in imports.get("allowed_import_from", []))
+                for module in expected_from)
         and "import numpy" in " ".join(imports.get("rejected_examples", []))
     )
-    guard_ok = "ast.Nonlocal" in guard and 'MODULES = {"torch", "torch.nn.functional", "math"}' in guard
-    nonlocal_disclosures = [x for x in disclosures if "nonlocal" in x]
-    # The platform requires disclosure in every public surface. Counting a
-    # single renamed/deleted surface through a generic "nonlocal" search is not
-    # enough; the test mutates instruction.md to remove the first disclosure.
-    nonlocal_ok = len(nonlocal_disclosures) == len(disclosures) and "nonlocal" in syntax.get("rejected_constructs", [])
+    stage_markers = ccfg["staged_markers"]
+    marker_ok = stage_markers["instruction"] in instr and all(stage_markers["readme"] in doc for doc in readmes)
+    expected_set = "{" + ", ".join('"%s"' % module for module in expected_modules) + "}"
+    guard_ok = "ast.Nonlocal" in guard and expected_set in guard
     add(findings, "public_contract_nonlocal", nonlocal_ok,
-        "QA05/A03: nonlocal rejection disclosed in instruction, protocol and READMEs",
-        "workspace/harbor_task/instruction.md; environment/public_eval/protocol.json; starter/solution README")
-    add(findings, "public_contract_staged_import", staged_ok,
-        "QA11/A03: exact staged import whitelist disclosed",
-        "workspace/harbor_task/environment/public_eval/protocol.json:/implementation_boundary/staged_import_whitelist")
+        "configured rejected constructs are disclosed in instruction, protocol and READMEs",
+        "instruction.md; environment/public_eval/protocol.json; starter/solution README")
+    add(findings, "public_contract_staged_import", staged_ok and marker_ok,
+        "exact staged import whitelist disclosed and public contract mentions staged restrictions",
+        "environment/public_eval/protocol.json:/implementation_boundary/staged_import_whitelist")
     add(findings, "guard_unchanged_contract", guard_ok,
         "public contract must match the actual AST/import guard",
-        "workspace/harbor_task/tests/contract_guard.py")
+        "tests/contract_guard.py")
     add(findings, "task_contract_live_execution", bool(guard.strip()),
         "text-only limits are insufficient; a guard implementation must exist",
-        "workspace/harbor_task/tests/contract_guard.py")
+        "tests/contract_guard.py")
 
 
-def oracle_handoff(task: Path, findings: list[dict]) -> None:
-    solve = task / "solution/solve.sh"
-    assemble = task / "solution/assemble_dream_solution.sh"
-    docker = task / "environment/Dockerfile"
-    solve_text, assemble_text, docker_text = text(solve), text(assemble), text(docker)
-    stages = "assemble_dream_solution.sh" in solve_text and solve_text.index("assemble_dream_solution.sh") < solve_text.index("exec bash")
-    submitted = 'exec bash "${SOLUTION_DIR}/run.sh"' in solve_text
-    copy_ok = all(token in assemble_text for token in ("cp -a", "predictor/__init__.py", "config", "train.py", "run.sh"))
-    private = "COPY solution/" not in docker_text and "COPY reference/" not in docker_text
+def oracle_handoff(task: Path, findings: list[dict], cfg: dict) -> None:
+    ocfg = cfg["oracle"]
+    solution = task / "solution"
+    solve = solution / "solve.sh"
+    solve_text = text(solve)
+    assembler = ocfg.get("assembler")
+    if not assembler:
+        m = re.search(ocfg["assembler_pattern"], solve_text)
+        assembler = m.group(1) if m else ""
+    assemble = solution / assembler if assembler else None
+    assemble_text = text(assemble) if assemble else ""
+    docker_text = text(task / "environment/Dockerfile")
+    stage_token = assembler or "assembler"
+    stages = bool(assembler) and stage_token in solve_text and "exec bash" in solve_text \
+        and solve_text.index(stage_token) < solve_text.index("exec bash")
+    submitted_marker = 'exec bash "${SOLUTION_DIR}/' + ocfg["submitted_entry"] + '"'
+    submitted = submitted_marker in solve_text
+    copy_ok = ocfg["copy_marker"] in assemble_text and all(token in assemble_text for token in ocfg["required_components"])
+    private = not any(marker in docker_text for marker in ocfg["private_copy_markers"])
     add(findings, "oracle_handoff_source_before_training", stages and copy_ok and submitted,
-        "0.5.6 H02: DREAM source, registry and config are staged into SOLUTION_DIR before training; run.sh executes from submitted dir",
-        "workspace/harbor_task/solution/solve.sh; assemble_dream_solution.sh")
+        "Oracle stages source, registry and config into SOLUTION_DIR before training; run.sh executes from submitted dir",
+        "solution/solve.sh; " + (assembler or "<missing assembler>"))
     add(findings, "oracle_private_reference_not_in_work", private,
         "private Oracle/Reference is not COPY'd into Agent Work image",
-        "workspace/harbor_task/environment/Dockerfile")
+        "environment/Dockerfile")
 
 
-def best_method_adapter(root: Path, task: Path, findings: list[dict]) -> None:
-    best = root / "expert_evidence/best_method"
+def best_method_adapter(root: Path, task: Path, findings: list[dict], cfg: dict) -> None:
+    bcfg = cfg["best_method"]
+    paths = cfg["paths"]
+    best = p(root, paths["best_method"])
     data = best / "data.py"
-    selection = root / "expert_evidence/best_method_selection.json"
-    qa16 = root / "expert_evidence/qa16_best_method_revalidation.json"
+    selection = p(root, paths["selection"])
+    qa16 = p(root, paths["revalidation"])
     starter = task / "environment/starter/data.py"
-    data_raw = text(data)
-    starter_raw = text(starter)
+    policy = p(root, bcfg["frozen_policy_path"])
+    data_raw, starter_raw, policy_raw = text(data), text(starter), text(policy)
     data_sha = sha256_file(data) if data.is_file() else ""
-    starter_sha = sha256_file(starter) if starter.is_file() else ""
+    bad_sha = bcfg.get("bad_data_sha256")
     ast_digest = ast_digest_like_guard(ast.parse(data_raw)) if data_raw else ""
-    add(findings, "best_method_restored_starter_adapter", bool(data_raw) and data_raw == starter_raw and data_sha != BAD_BEST_METHOD_DATA_SHA,
-        "0.5.6 H04: current best_method/data.py is byte-identical to active Starter frozen adapter",
-        "expert_evidence/best_method/data.py; workspace/harbor_task/environment/starter/data.py")
-    add(findings, "best_method_allowed_frozen_ast", ast_digest == ALLOWED_DATA_AST,
+    policy_data = jload(policy) if policy.is_file() else {}
+    allowed_ast = policy_data.get("frozen_ast", {}).get("data.py", [])
+    if isinstance(allowed_ast, str):
+        allowed_ast = [allowed_ast]
+    restored = bool(data_raw) and data_raw == starter_raw and (not bad_sha or data_sha != bad_sha)
+    add(findings, "best_method_restored_starter_adapter", restored,
+        "current best_method/data.py matches the active Starter frozen adapter",
+        f"{paths['best_method']}/data.py; environment/starter/data.py")
+    add(findings, "best_method_allowed_frozen_ast", ast_digest in allowed_ast,
         "frozen adapter AST matches trusted contract_policy allowed digest",
-        "expert_evidence/best_method/data.py")
+        f"{paths['best_method']}/data.py; {bcfg['frozen_policy_path']}")
     sel = jload(selection) if selection.is_file() else {}
     qa = jload(qa16) if qa16.is_file() else {}
-    hashes_synced = sel.get("method_sha256", {}).get("data.py") == data_sha and qa.get("best_method_tree", {}).get("data.py") == data_sha
-    scope_ok = sel.get("current_revalidation", {}).get("proves_current_frozen_gate") is False and qa.get("proves_current_frozen_gate") is False
-    add(findings, "best_method_source_binding_synced", hashes_synced and scope_ok,
-        "selection/revalidation hashes synchronized; old PUBLIC_DEV_ONLY 71.2 cannot prove current frozen gate",
-        "expert_evidence/best_method_selection.json; qa16_best_method_revalidation.json")
-    policy = task / "tests/contract_policy.json"
-    policy_raw = text(policy)
+    synced = (sel.get("method_sha256", {}).get("data.py") == data_sha
+              and qa.get("best_method_tree", {}).get("data.py") == data_sha)
+    if bcfg.get("require_scope_flags"):
+        synced = synced and (sel.get("current_revalidation", {}).get("proves_current_frozen_gate") is False
+                             and qa.get("proves_current_frozen_gate") is False)
+    add(findings, "best_method_source_binding_synced", bool(sel) and bool(qa) and synced,
+        "selection/revalidation hashes synchronized; old PUBLIC_DEV_ONLY evidence cannot prove current frozen gate",
+        f"{paths['selection']}; {paths['revalidation']}")
     add(findings, "trusted_policy_not_loosened", bool(policy_raw) and '"frozen_ast"' in policy_raw,
         "trusted frozen policy remains present; repair must not widen it for bad adapter",
-        "workspace/harbor_task/tests/contract_policy.json")
+        bcfg["frozen_policy_path"])
 
 
-def provenance(root: Path, findings: list[dict]) -> None:
-    prov = root / "optimization_evidence/EVIDENCE_PROVENANCE.md"
-    binding = root / "optimization_evidence/formal_run_source_binding.json"
-    br = root / "optimization_evidence/formal_test_scoring/br_results.json"
+def provenance(root: Path, findings: list[dict], cfg: dict) -> None:
+    pcfg = cfg["provenance"]
+    paths = cfg["paths"]
+    prov = p(root, paths["provenance"])
+    binding = p(root, paths["source_binding"])
+    br = p(root, paths["br_results"])
     raw = text(prov)
-    ok = (
-        prov.is_file() and binding.is_file() and br.is_file()
-        and "bfe9f7fe73ad47365a504576804a5e86244eb74c2afbc547c30c640020325e29" in raw
-        and "5c57129bddeb2ef8ff628b60ff42f780f350099cd8978dcf7cb010eff8382f63" in raw
-        and "逐字节一致；`data.py`" not in raw
-    )
-    add(findings, "g03_role_source_binding", ok,
-        "0.5.6 G03: role-specific source identity, raw B/R evidence, and withdrawn blanket claim",
-        "optimization_evidence/EVIDENCE_PROVENANCE.md; formal_run_source_binding.json; br_results.json")
+    required_shas = pcfg.get("required_role_sha256", [])
+    files_ok = prov.is_file() and binding.is_file() and br.is_file()
+    role_ok = all(sha in raw for sha in required_shas)
+    binding_ok = True
+    if binding.is_file():
+        expected = jload(binding).get("br_results_sha256")
+        if expected and br.is_file():
+            binding_ok = expected == sha256_file(br)
+    no_blanket = pcfg["forbidden_claim"] not in raw
+    add(findings, "g03_role_source_binding", files_ok and role_ok and binding_ok and no_blanket,
+        "G03 role-specific source identity and raw B/R evidence are present; blanket claim absent",
+        f"{paths['provenance']}; {paths['source_binding']}; {paths['br_results']}")
 
 
-def legacy_conflicts(root: Path, findings: list[dict]) -> None:
+def legacy_conflicts(findings: list[dict], cfg: dict) -> None:
     catalog = jload(REPO / "config/rule_versions.json")
     profile = catalog["profiles"][CURRENT_PROFILE]
-    blockers = []
-    if not any(x["topic"] == "hard_gate" and x["winner"] == "-10" for x in profile["conflict_resolution"]):
-        blockers.append("hard_gate")
-    if not any(x["topic"] == "NOP" and x["winner"] == "not restored" for x in profile["conflict_resolution"]):
-        blockers.append("NOP")
-    if not any(x["topic"] == "final_decision" and x["winner"] == "PASS/FAIL" for x in profile["conflict_resolution"]):
-        blockers.append("final_decision")
+    winners = {x["topic"]: x["winner"] for x in profile["conflict_resolution"]}
+    expected = cfg["required_conflict_winners"]
+    blockers = [topic for topic, winner in expected.items() if winners.get(topic) != winner]
     add(findings, "version_conflict_resolution", not blockers,
         "effective profile resolves -1/-10, docker_image, NOP, final decision and count conflicts",
-        "config/rule_versions.json:" + CURRENT_PROFILE,
-        blocking=True)
+        "config/rule_versions.json:" + CURRENT_PROFILE)
     add(findings, "platform_runtime_scope", True,
         "Docker/Harbor/Hidden execution and actual GPU/image size are platform_scope; static gate does not claim runtime proof",
         "config/rule_versions.json:platform-0.5.6-current.1-report.verification_scope",
         blocking=False)
 
 
+def catalog_integrity(findings: list[dict], rule_catalog: Path) -> None:
+    data = jload(rule_catalog)
+    required = [r["id"] for r in data["rules"]
+                if r.get("class") in ("current_mechanical", "current_ablation_only")]
+    observed = {f["rule"] for f in findings if f["status"] in ("pass", "fail")}
+    missing = [rid for rid in required if rid not in observed]
+    add(findings, "catalog_integrity", not missing,
+        "all current rule-catalog entries have an executable gate finding",
+        "config/rule_catalog.json; missing=" + ",".join(missing))
+
+
 def main() -> int:
-    ap = argparse.ArgumentParser(description="Current-standard binary gate")
+    ap = argparse.ArgumentParser(description="Generic current-standard binary gate")
     ap.add_argument("--root", required=True, help="submission package tree root")
     ap.add_argument("--out", required=True)
+    ap.add_argument("--profile", default="default", help="profile name in config/profiles/")
+    ap.add_argument("--rule-catalog", default=str(REPO / "config" / "rule_catalog.json"))
     args = ap.parse_args()
 
     root = Path(args.root).resolve()
-    task = root / "workspace/harbor_task"
+    cfg = load_profile(args.profile)
+    task = p(root, cfg["paths"]["task"])
     findings: list[dict] = []
-    task_config(task, findings)
-    reward_protocol(task, findings)
-    public_contract(task, findings)
-    oracle_handoff(task, findings)
-    best_method_adapter(root, task, findings)
-    provenance(root, findings)
-    legacy_conflicts(root, findings)
+    task_config(task, findings, cfg)
+    reward_protocol(task, findings, cfg)
+    public_contract(task, findings, cfg)
+    oracle_handoff(task, findings, cfg)
+    best_method_adapter(root, task, findings, cfg)
+    provenance(root, findings, cfg)
+    legacy_conflicts(findings, cfg)
+    catalog_integrity(findings, Path(args.rule_catalog))
 
     blocking = [f for f in findings if f["status"] == "fail"]
     scope = [f for f in findings if f["status"] == "platform_scope"]
     decision = "FAIL" if blocking else "PASS"
     report = {
-        "schema": "current-standard-gate/1",
-        "profile": CURRENT_PROFILE,
+        "schema": "current-standard-gate/2",
+        "profile": args.profile,
+        "effective_profile": CURRENT_PROFILE,
         "root": str(root),
         "decision": decision,
         "final_decision_is_binary": True,

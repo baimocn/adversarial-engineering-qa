@@ -1,0 +1,30 @@
+{
+  "schema": "current-standard-profile/1",
+  "profile": "auto2768-v30",
+  "extends": "default",
+  "paths": {
+    "task": "workspace/harbor_task",
+    "best_method": "expert_evidence/best_method",
+    "selection": "expert_evidence/best_method_selection.json",
+    "revalidation": "expert_evidence/qa16_best_method_revalidation.json",
+    "provenance": "optimization_evidence/EVIDENCE_PROVENANCE.md",
+    "source_binding": "optimization_evidence/formal_run_source_binding.json",
+    "br_results": "optimization_evidence/formal_test_scoring/br_results.json"
+  },
+  "oracle": {
+    "assembler": "assemble_dream_solution.sh",
+    "required_components": ["train.py", "config", "predictor", "run.sh", "predictor/__init__.py", "config/dream/dream_cora.yaml"],
+    "submitted_entry": "run.sh"
+  },
+  "best_method": {
+    "bad_data_sha256": "0c40b9e73c5e59fdd41b389d818d1e38c7dde95beddb5db62570f35c5bf3a2b8",
+    "frozen_policy_path": "workspace/harbor_task/tests/contract_policy.json"
+  },
+  "provenance": {
+    "required_role_sha256": [
+      "bfe9f7fe73ad47365a504576804a5e86244eb74c2afbc547c30c640020325e29",
+      "5c57129bddeb2ef8ff628b60ff42f780f350099cd8978dcf7cb010eff8382f63"
+    ],
+    "forbidden_claim": "逐字节一致；`data.py`"
+  }
+}

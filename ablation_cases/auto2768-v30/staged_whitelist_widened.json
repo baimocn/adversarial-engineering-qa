@@ -1,0 +1,6 @@
+{
+  "schema": "ablation-case-ref/1",
+  "case_id": "staged_whitelist_widened",
+  "rule": "public_contract_staged_import",
+  "catalog": "config/ablation_cases.json"
+}

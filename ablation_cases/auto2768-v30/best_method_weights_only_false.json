@@ -1,0 +1,6 @@
+{
+  "schema": "ablation-case-ref/1",
+  "case_id": "best_method_weights_only_false",
+  "rule": "best_method_restored_starter_adapter",
+  "catalog": "config/ablation_cases.json"
+}

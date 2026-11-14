@@ -1,0 +1,6 @@
+{
+  "schema": "ablation-case-ref/1",
+  "case_id": "reward_txt_publish",
+  "rule": "no_reward_txt_publish",
+  "catalog": "config/ablation_cases.json"
+}

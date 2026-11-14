@@ -1,0 +1,6 @@
+{
+  "schema": "ablation-case-ref/1",
+  "case_id": "nonlocal_removed",
+  "rule": "public_contract_nonlocal",
+  "catalog": "config/ablation_cases.json"
+}

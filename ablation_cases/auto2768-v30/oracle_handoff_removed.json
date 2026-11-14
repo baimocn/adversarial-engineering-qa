@@ -1,0 +1,6 @@
+{
+  "schema": "ablation-case-ref/1",
+  "case_id": "oracle_handoff_removed",
+  "rule": "oracle_handoff_source_before_training",
+  "catalog": "config/ablation_cases.json"
+}

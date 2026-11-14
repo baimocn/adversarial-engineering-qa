@@ -1,0 +1,6 @@
+{
+  "schema": "ablation-case-ref/1",
+  "case_id": "docker_image",
+  "rule": "no_expert_docker_image",
+  "catalog": "config/ablation_cases.json"
+}
