@@ -1,0 +1,38 @@
+{
+  "schema": "platform-evidence-manifest/1",
+  "generated_at": "2026-11-14",
+  "source": {
+    "groups": [
+      {"chat_id": "oc_ac73f8678cb6c1b334eb3932741a4440", "messages": 272, "has_more": false},
+      {"chat_id": "oc_e378eed4ffdf95faa1f10439f191c70e", "messages": 403, "has_more": false}
+    ],
+    "time_range": "2026-10-01..2026-11-15",
+    "inventory": "group_shared_docs_full_inventory.json"
+  },
+  "documents": [
+    {"slug": "01_zhongjian_wenti_huizong_20261113", "title": "AutoResearch 专家终检问题汇总（2026-11-13）", "type": "docx", "token": "QZJQdgZlyoDNPFxaPemcEYcPnjg", "share_time": "2026-11-14 00:19", "message_id": "om_x100b6047c7ab24a0dfca4a07dd1f08f", "status": "platform_scope_advisory_catalog"},
+    {"slug": "02_harbor_1074_failure_review_20261026", "title": "Harbor 1074题执行复盘：失败原因、解决办法与验收清单（2026-10-26） 副本", "type": "docx", "token": "L7zhd09fMoxdNqxzUegc6gFinzx", "wiki_node": "Gto2wtQ4yiSU5dkC3Hmc5NK7n1c", "share_time": "2026-11-06 20:02", "status": "current_mechanical_partial"},
+    {"slug": "03_package_runtime_fix_examples_19", "title": "题包运行问题修复说明：错误 / 正确样例（19题） 副本", "type": "docx", "token": "CYFhdxajhoXnjAxHXnucjVj0n6b", "wiki_node": "Rts6wCkhkiTwy3kMIJDc42XIndc", "share_time": "2026-10-22 14:15", "status": "current_mechanical_partial"},
+    {"slug": "04_repair_guide_algorithm_platform_errors", "title": "AutoResearch 题包返修指南：算法要求与平台常见报错", "type": "docx", "token": "M8eDdvbHMo9JGAxdvGUcVzUUn8M", "share_time": "2026-11-03 19:55", "status": "current_mechanical_partial"},
+    {"slug": "05_skill_modification_list_format_notes", "title": "Skill修改清单与格式说明", "type": "docx", "token": "ZK2ddy4YRozlWxxd6QUcx8KPnGe", "share_time": "2026-11-07 13:51", "status": "current_mechanical_base"},
+    {"slug": "06_acceptance_triage_20261107", "title": "AutoResearch 交付验收与专家返修分流｜20261107", "type": "sheet", "token": "DkE5sSPIWhwgT6tGaKgc1u6vnIf", "share_time": "2026-11-07 13:51", "status": "advisory_catalog"},
+    {"slug": "07_waiver_list_qa_scope", "title": "返修记录豁免清单与质检口径", "type": "docx", "token": "NkNrdZmmQowbPZxpVbdcFjzhnKe", "share_time": "2026-10-22 16:37", "status": "legacy_archived"},
+    {"slug": "08_format_self_check_delivery_spec_20261020", "title": "AutoResearch 返修格式自检与完整包交付规范（2026-10-20）", "type": "docx", "token": "QRGqd3E4xoKsSTxk8X3ckVsanDf", "share_time": "2026-10-24 15:28", "status": "legacy_archived"},
+    {"slug": "09_expert_annotation_tutorial_v4", "title": "AutoResearch 专家线下标注教程V4 副本", "type": "docx", "token": "Tjk8dXrItoOZV0xeSL7ct3Dunmf", "wiki_node": "B6Jgw94Z2inUUKkwIcfcERKtnNe", "share_time": "2026-10-24 15:28", "status": "legacy_archived"}
+  ],
+  "sanitization": {
+    "removed_patterns": [
+      "disposable login query",
+      "internal build log URLs",
+      "Feishu attachment keys",
+      "source URLs with sensitive query strings"
+    ],
+    "replacements": {
+      "internal Lark document URL": "<lark-doc>",
+      "internal build log URL": "<internal-log>",
+      "Feishu attachment key": "<attachment-token>",
+      "inline attachment token attribute": "token=\"<attachment-token>\""
+    },
+    "preserved": ["document titles", "rule text", "check numbers", "message IDs for source trace", "doc tokens for canonical source"]
+  }
+}

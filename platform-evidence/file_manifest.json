@@ -1,0 +1,71 @@
+{
+  "schema": "platform-evidence-files/1",
+  "files": [
+    {
+      "name": "01_zhongjian_wenti_huizong_20261113.md",
+      "sha256": "53a6f50d7436a8fd30337f676a49fb8fe9408589e43a9161a052ff32c2a3c519",
+      "bytes": 2520,
+      "sanitized": false
+    },
+    {
+      "name": "02_harbor_1074_failure_review_20261026.md",
+      "sha256": "7f5937ca8e84e553fc9ae6773aa0134ac54dabf7108e6b4f86c64f294330f056",
+      "bytes": 34301,
+      "sanitized": true
+    },
+    {
+      "name": "03_package_runtime_fix_examples_19.md",
+      "sha256": "2b4d844da6f5a62c8ef1ab72bd94d02946040c5eddac9d663d68fce370bb5a66",
+      "bytes": 16412,
+      "sanitized": false
+    },
+    {
+      "name": "04_repair_guide_algorithm_platform_errors.md",
+      "sha256": "90c9a082614685300631b7900fd676be117f5f143389d50371f0849e3fcb8d66",
+      "bytes": 24185,
+      "sanitized": true
+    },
+    {
+      "name": "05_skill_modification_list_format_notes.md",
+      "sha256": "9c838769d1c4df5210be4f593a998bea6e54f4ccdc192eb76bf56dac9d769fad",
+      "bytes": 8721,
+      "sanitized": true
+    },
+    {
+      "name": "07_waiver_list_qa_scope.md",
+      "sha256": "73ef0918a62de42c1ec58b7b5f6f0e2c24fcdb0fde2f400c6eeb653743176c40",
+      "bytes": 18295,
+      "sanitized": true
+    },
+    {
+      "name": "08_format_self_check_delivery_spec_20261020.md",
+      "sha256": "b1844a35f63bdd395f2b6596964fdbe26a85c549b86b1cf50939e6b029dd310c",
+      "bytes": 11785,
+      "sanitized": true
+    },
+    {
+      "name": "09_expert_annotation_tutorial_v4.md",
+      "sha256": "1790c67b75be9515095bad4ad605fc7ef9a15b74ee07b4c76eb2793da68ae846",
+      "bytes": 95455,
+      "sanitized": true
+    },
+    {
+      "name": "PLATFORM_EXPERIENCE_DEEP_READ.md",
+      "sha256": "9a4803f4cecd9ba9e4db162eb32d04cbb75d6073246e96e4afab38a0cf9f0e7b",
+      "bytes": 30837,
+      "sanitized": false
+    },
+    {
+      "name": "coverage_matrix.json",
+      "sha256": "d897544d95683f203866508a3e5873cd76c2c4fb4be7342acdc3c1f5695b2a99",
+      "bytes": 7632,
+      "sanitized": false
+    },
+    {
+      "name": "group_shared_docs_full_inventory.json",
+      "sha256": "b552917d11558ecf11ca4db202b2ab1c9a4c16da8c0eb6c8b75a665e6a61b295",
+      "bytes": 16743,
+      "sanitized": true
+    }
+  ]
+}
