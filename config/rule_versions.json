@@ -1,0 +1,101 @@
+{
+  "schema": "rule-version-catalog/1",
+  "effective_profile": "current-20261114",
+  "profiles": {
+    "legacy-0.3.10-v4": {
+      "status": "archived",
+      "skill_version": "0.3.10-standard-waiver.5/V4",
+      "gate": false,
+      "supersedes": [],
+      "sources": [
+        "V4 expert annotation tutorial",
+        "0.3.10-standard-waiver.5 waiver policy",
+        "2026-10-20 package precheck v1.2.1"
+      ],
+      "not_current": [
+        "hard gate -1",
+        "NOP must be resubmitted for every repair",
+        "PASS_WITH_WAIVERS as final platform decision",
+        "two fixed 10h trajectories and eight-field trajectory as restored mandatory gate",
+        "docker_image example in task.toml as authoritative",
+        "21-item standard as final current standard"
+      ]
+    },
+    "official-0.5.0-current.1": {
+      "status": "base",
+      "skill_version": "autoresearch-unified-qa v0.5.0-current.1",
+      "gate": true,
+      "supersedes": ["legacy-0.3.10-v4"],
+      "source_package": "autoresearch-unified-qa-v0.5.0-current.1_20261107.zip",
+      "source_package_sha256": "5359339439dba1d62211e7ff1be125f0ee505c26c3059b2378a4bbcb92cb6698",
+      "source_message_id": "om_x100b61df8b04fca8c4789cf0ce43750",
+      "authoritative_references": [
+        "official/autoresearch-unified-qa/references/current-standard-policy.md",
+        "official/autoresearch-unified-qa/references/current-standard-checks.md",
+        "official/autoresearch-unified-qa/references/standard-coverage.md",
+        "official/autoresearch-unified-qa/references/current-check-map.json"
+      ],
+      "current_rules": [
+        "binary final decision PASS/FAIL only",
+        "provider unknown does not block static source review",
+        "NOP not restored",
+        "one formal reward file: reward.json or reward.txt",
+        "candidate hard gate -10",
+        "credible environment/grader faults must be error/no-score, not normal 0 or -10",
+        "public contract must disclose actual guard restrictions including nonlocal and staged import whitelist",
+        "current candidate source -> verifier input -> metric -> reward must bind",
+        "Work/Judge independent sandbox; private tests/Hidden/Reference not in Work",
+        "best_method/frozen adapter must not loosen trusted contract policy"
+      ]
+    },
+    "platform-0.5.6-current.1-report": {
+      "status": "overlay",
+      "decision_boundary_version": "0.5.6-current.1",
+      "implementation_patch": "read-recovery-fix-20261113-v1",
+      "gate": true,
+      "extends": "official-0.5.0-current.1",
+      "source_reports": [
+        "auto2768 cafe7056 / a3aa8f70 / 18dfe9fc / 358adb2c platform feedback archives",
+        "AutoResearch 专家终检问题汇总（2026-11-13）",
+        "Harbor 1074题执行复盘（2026-10-26）",
+        "题包运行问题修复说明：错误 / 正确样例（19题）",
+        "AutoResearch 题包返修指南：算法要求与平台常见报错",
+        "Skill修改清单与格式说明",
+        "交付验收与专家返修分流｜20261107"
+      ],
+      "report_metadata": {
+        "version": "0.5.6-current.1",
+        "standard": "Xpert current revision2189; required norms/L0 and existing project/platform requirements",
+        "evaluated_check_count": 50,
+        "coverage_counts": {"core": 31, "format": 7, "current_standard": 3, "supplement": 49},
+        "verification_scope": {
+          "review": "source_and_submitted_evidence",
+          "task_code_executed": false,
+          "platform_runtime_status": "not_executed"
+        }
+      },
+      "mechanical_overlays": [
+        "G03 role-specific source identity and raw B/R command evidence",
+        "QA05/QA11/A03 exact public contract disclosure for nonlocal and staged import whitelist",
+        "H02 Oracle source/artifact handoff: DREAM source staged into SOLUTION_DIR before training",
+        "H04 best_method frozen adapter: weights_only=True and synchronized source hashes",
+        "failure-zero: failure paths must not publish ordinary 0.0",
+        "terminal review five problem families as advisory catalog, not automatic FAIL unless mechanically evidenced"
+      ]
+    },
+    "current-20261114": {
+      "status": "effective",
+      "inherits": ["official-0.5.0-current.1", "platform-0.5.6-current.1-report"],
+      "gate": true,
+      "conflict_resolution": [
+        {"topic": "hard_gate", "winner": "-10", "loser": "-1", "reason": "0.5.0 current policy and 0.5.6 reports"},
+        {"topic": "docker_image", "winner": "no hardcoded expert docker_image; Dockerfile/context and platform image config", "loser": "V4 task.toml docker_image example", "reason": "2026-11 platform repair guide and Harbor 1074 review"},
+        {"topic": "final_decision", "winner": "PASS/FAIL", "loser": "PASS_WITH_WAIVERS/INCOMPLETE/PASS_WITH_OPEN as external final decision", "reason": "0.5.0 current policy; incomplete internal checks become QA_NOT_FINISHED, not author PASS"},
+        {"topic": "NOP", "winner": "not restored", "loser": "NOP must be resubmitted after each repair", "reason": "0.5.0 current checks"},
+        {"topic": "check_count", "winner": "90-item current catalog / 50 evaluated report scope", "loser": "0.3.10 21-item as final", "reason": "0.5.0/0.5.6"},
+        {"topic": "two trajectories", "winner": "do not restore fixed 10h/7h/eight-field gate", "loser": "V4 restored mandatory gate", "reason": "0.5.0 current policy"},
+        {"topic": "best_method_adapter", "winner": "active Starter frozen adapter weights_only=True", "loser": "historical weights_only=False best_method tree", "reason": "0.5.6 H04 report"}
+      ]
+    }
+  }
+}

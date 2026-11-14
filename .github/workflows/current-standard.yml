@@ -1,0 +1,33 @@
+name: current-standard
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate rule catalog
+        run: python -I scripts/validate_rule_catalog.py --out rule-catalog-validation.json
+      - name: Run unit tests
+        run: python -I -m unittest discover -s tests -p "test_*.py"
+      - name: Run local ablation suite
+        # The accepted v30 package tree is not tracked here. This step validates
+        # suite mechanics and records an explicit skipped status in CI; full
+        # good/bad package ablation runs locally where the evidence tree exists.
+        run: python -I scripts/run_ablation_suite.py --out ablation-suite.json
+        env:
+          CURRENT_STANDARD_GOOD_ROOT: ${{ github.workspace }}/.ci/v30_tree
+      - name: Upload validation artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: current-standard-validation
+          path: |
+            rule-catalog-validation.json
+            ablation-suite.json

@@ -1,0 +1,6 @@
+{
+  "schema": "ablation-case-ref/1",
+  "case_id": "trusted_fault_score",
+  "rule": "no_ordinary_zero_failure",
+  "catalog": "config/ablation_cases.json"
+}

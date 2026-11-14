@@ -47,10 +47,13 @@ def judgment(verdict: str, model: str) -> dict:
     }
 
 
-def run(work: Path, task: Path):
+def run(work: Path, task: Path, legacy: bool = False):
+    args = [sys.executable, str(SCRIPT), "--repo-root", str(ROOT),
+            "--task-root", str(task), "--work-dir", str(work)]
+    if legacy:
+        args.append("--legacy-incomplete")
     return subprocess.run(
-        [sys.executable, str(SCRIPT), "--repo-root", str(ROOT),
-         "--task-root", str(task), "--work-dir", str(work)],
+        args,
         capture_output=True, text=True, encoding="utf-8", errors="replace",
     )
 
@@ -80,13 +83,22 @@ class StrictVerifyTests(unittest.TestCase):
         verdict = json.loads((self.work / "verdict.json").read_text(encoding="utf-8"))
         self.assertEqual(verdict["decision"], "PASS")
 
-    def test_manual_without_panel_is_incomplete(self):
+    def test_manual_without_panel_is_qa_not_finished(self):
         self.write_spec(manual=True)
         proc = run(self.work, self.task)
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        verdict = json.loads((self.work / "verdict.json").read_text(encoding="utf-8"))
+        self.assertEqual(verdict["decision"], "FAIL")
+        self.assertEqual(verdict["completion_status"], "QA_NOT_FINISHED")
+        self.assertIn("C1", verdict["open_ids"])
+
+    def test_legacy_orchestration_preserves_incomplete(self):
+        self.write_spec(manual=True)
+        proc = run(self.work, self.task, legacy=True)
         self.assertEqual(proc.returncode, 2, proc.stdout + proc.stderr)
         verdict = json.loads((self.work / "verdict.json").read_text(encoding="utf-8"))
-        self.assertEqual(verdict["decision"], "INCOMPLETE")
-        self.assertIn("C1", verdict["open_ids"])
+        self.assertEqual(verdict["decision"], "FAIL")
+        self.assertEqual(verdict["legacy_orchestration_decision"], "INCOMPLETE")
 
     def test_manual_with_agreeing_panel_passes(self):
         self.write_spec(manual=True)

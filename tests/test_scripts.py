@@ -50,7 +50,7 @@ def evaluate(timeout):
                 sys.executable, str(SCRIPTS / "check_return_contracts.py"),
                 "--root", str(root), "--out", str(output), "--fail-on-findings",
             ], capture_output=True, text=True)
-            self.assertEqual(process.returncode, 1, process.stdout + process.stderr)
+            self.assertEqual(process.returncode, 1, (process.stdout or "") + (process.stderr or ""))
             self.assertTrue(output.exists())
 
 
@@ -68,7 +68,7 @@ class CollectorTests(unittest.TestCase):
                 sys.executable, str(SCRIPTS / "collect_evidence.py"),
                 "--root", str(root), "--out", str(out), "--max-files-per-shard", "1",
             ], capture_output=True, text=True)
-            self.assertEqual(process.returncode, 0, process.stdout + process.stderr)
+            self.assertEqual(process.returncode, 0, (process.stdout or "") + (process.stderr or ""))
             manifest = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
             self.assertEqual(manifest["files_total"], 2)
             self.assertEqual(manifest["python_files_indexed"], 1)
@@ -196,7 +196,7 @@ class AutoResearchIntegrationTests(unittest.TestCase):
     def test_contract_probe_and_complete_minimal_delivery(self):
         contract_path = self.root / "contract.json"
         process = self.run_cli("contract", "--official-skill", str(self.official), "--out", str(contract_path))
-        self.assertEqual(process.returncode, 0, process.stdout + process.stderr)
+        self.assertEqual(process.returncode, 0, (process.stdout or "") + (process.stderr or ""))
         contract = json.loads(contract_path.read_text(encoding="utf-8"))
         self.assertTrue(contract["valid"])
         self.assertEqual(contract["references_checked"], 18)
@@ -209,7 +209,7 @@ class AutoResearchIntegrationTests(unittest.TestCase):
         delivery.mkdir()
         coverage_path = delivery / "autoresearch_coverage.json"
         process = self.run_cli("init-coverage", "--artifact", str(artifact), "--sha256", artifact_sha, "--out", str(coverage_path))
-        self.assertEqual(process.returncode, 0, process.stdout + process.stderr)
+        self.assertEqual(process.returncode, 0, (process.stdout or "") + (process.stderr or ""))
         coverage = json.loads(coverage_path.read_text(encoding="utf-8"))
         self.assertGreaterEqual(len(coverage["requirements"]), 115)
         for row in coverage["requirements"]:
@@ -271,7 +271,7 @@ class AutoResearchIntegrationTests(unittest.TestCase):
             "--coverage", str(coverage_path), "--delivery-dir", str(delivery),
             "--official-skill", str(self.official),
         )
-        self.assertEqual(process.returncode, 0, process.stdout + process.stderr)
+        self.assertEqual(process.returncode, 0, (process.stdout or "") + (process.stderr or ""))
         self.assertTrue(json.loads(process.stdout)["valid"])
 
     def test_missing_coverage_requirement_blocks_pass(self):
@@ -314,8 +314,8 @@ class BundledOfficialTests(unittest.TestCase):
             process = subprocess.run([
                 sys.executable, str(SCRIPTS / "check_autoresearch_integration.py"),
                 "contract", "--out", str(out),
-            ], capture_output=True, text=True)
-            self.assertEqual(process.returncode, 0, process.stdout + process.stderr)
+            ], capture_output=True, text=True, encoding="utf-8", errors="replace")
+            self.assertEqual(process.returncode, 0, (process.stdout or "") + (process.stderr or ""))
             contract = json.loads(out.read_text(encoding="utf-8"))
             self.assertTrue(contract["valid"], contract.get("errors"))
             official = Path(contract["official_skill"])
@@ -480,14 +480,14 @@ class ReviewWorkspaceTests(unittest.TestCase):
             "--artifact", str(artifact), "--task-id", "auto2001", "--package-version", "v37",
             "--model", "cli-model", "--session-id", "cli-sess", "--root", str(self.out_root),
         ], capture_output=True, text=True)
-        self.assertEqual(process.returncode, 0, process.stdout + process.stderr)
+        self.assertEqual(process.returncode, 0, (process.stdout or "") + (process.stderr or ""))
         result = json.loads(process.stdout)
         self.assertTrue(result["valid"])
         process = subprocess.run([
             sys.executable, str(SCRIPTS / "prepare_review_workspace.py"), "verify",
             "--workspace", result["workspace"],
         ], capture_output=True, text=True)
-        self.assertEqual(process.returncode, 0, process.stdout + process.stderr)
+        self.assertEqual(process.returncode, 0, (process.stdout or "") + (process.stderr or ""))
         self.assertTrue(json.loads(process.stdout)["valid"])
 
 

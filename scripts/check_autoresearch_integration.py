@@ -15,7 +15,10 @@ import re
 import subprocess
 import sys
 
-import validate_review
+HERE = Path(__file__).resolve().parent
+if str(HERE) not in sys.path:
+    sys.path.insert(0, str(HERE))
+import validate_review  # noqa: E402
 
 
 SKILL_ROOT = Path(__file__).resolve().parents[1]
@@ -145,10 +148,13 @@ def inspect_official_skill(explicit=None, probe=True):
                 [sys.executable, str(entrypoint), "--help"],
                 capture_output=True,
                 text=True,
+                encoding="utf-8",
+                errors="replace",
                 timeout=30,
                 cwd=str(root / "scripts"),
             )
-            if process.returncode != 0 or "--standard-review" not in process.stdout or "--review" not in process.stdout or "--out-dir" not in process.stdout:
+            stdout = process.stdout or ""
+            if process.returncode != 0 or "--standard-review" not in stdout or "--review" not in stdout or "--out-dir" not in stdout:
                 errors.append("Official CLI help did not expose the required standard-review/review/out-dir contract")
         except (OSError, subprocess.SubprocessError) as exc:
             errors.append("Official CLI probe failed: " + str(exc))

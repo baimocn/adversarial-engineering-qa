@@ -1,0 +1,62 @@
+{
+  "schema": "current-standard-profile/1",
+  "profile": "default",
+  "paths": {
+    "task": "workspace/harbor_task",
+    "best_method": "expert_evidence/best_method",
+    "selection": "expert_evidence/best_method_selection.json",
+    "revalidation": "expert_evidence/qa16_best_method_revalidation.json",
+    "provenance": "optimization_evidence/EVIDENCE_PROVENANCE.md",
+    "source_binding": "optimization_evidence/formal_run_source_binding.json",
+    "br_results": "optimization_evidence/formal_test_scoring/br_results.json"
+  },
+  "task_config": {
+    "artifacts_value": "\"/workspace/solution\"",
+    "separate_marker": "environment_mode"
+  },
+  "reward": {
+    "formal_file": "reward.json",
+    "historical_file": "reward.txt",
+    "hard_gate_value": "-10",
+    "trusted_fault_tokens": ["TRUSTED_FAULT_CODES", "GRADER_ERROR", "NOT_READY"],
+    "no_score_markers": ["reward\": None", "不写任何 reward"]
+  },
+  "public_contract": {
+    "required_rejected_constructs": ["nonlocal"],
+    "construct_needles": {
+      "lambda": "lambda",
+      "async/await": "async/await",
+      "yield/yield from": "yield/yield from",
+      "global": "global",
+      "nonlocal": "nonlocal",
+      "del": "del",
+      "assignment expressions (:=)": ":=",
+      "match": "match"
+    },
+    "staged_markers": {
+      "instruction": "Staged numerical modules are stricter",
+      "readme": "staged 数值模块"
+    }
+  },
+  "oracle": {
+    "required_components": ["train.py", "config", "predictor", "run.sh"],
+    "copy_marker": "cp -a",
+    "assembler_pattern": "bash\\s+\"?\\$\\{ORACLE_SOURCE_DIR\\}/([A-Za-z0-9_.-]+\\.sh)\"?",
+    "submitted_entry": "run.sh",
+    "private_copy_markers": ["COPY solution/", "COPY reference/"]
+  },
+  "best_method": {
+    "frozen_policy_path": "workspace/harbor_task/tests/contract_policy.json",
+    "require_scope_flags": false,
+    "bad_data_sha256": null
+  },
+  "provenance": {
+    "forbidden_claim": "逐字节一致；`data.py`",
+    "required_role_sha256": []
+  },
+  "required_conflict_winners": {
+    "hard_gate": "-10",
+    "NOP": "not restored",
+    "final_decision": "PASS/FAIL"
+  }
+}

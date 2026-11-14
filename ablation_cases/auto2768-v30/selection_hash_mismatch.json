@@ -1,0 +1,6 @@
+{
+  "schema": "ablation-case-ref/1",
+  "case_id": "selection_hash_mismatch",
+  "rule": "best_method_source_binding_synced",
+  "catalog": "config/ablation_cases.json"
+}

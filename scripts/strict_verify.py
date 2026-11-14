@@ -40,6 +40,8 @@ def main() -> int:
     parser.add_argument("--work-dir", required=True)
     parser.add_argument("--package-zip", default=None,
                         help="submission zip; enables the official 0.3.10 and 0.5.0 layers")
+    parser.add_argument("--legacy-incomplete", action="store_true",
+                        help="compatibility only: pass through legacy INCOMPLETE/PASS_WITH_OPEN orchestration")
     args = parser.parse_args()
 
     task = Path(args.task_root).resolve()
@@ -170,11 +172,20 @@ def main() -> int:
         steps.append({"step": "official-merge", "rc": 0,
                       "tail": "%d official checks" % len(official)})
 
-    rc, out = run("verdict.py", ["--results", str(results), "--out", str(work / "verdict.json")])
+    verdict_args = ["--results", str(results), "--out", str(work / "verdict.json")]
+    if args.legacy_incomplete:
+        verdict_args.append("--legacy-incomplete")
+    rc, out = run("verdict.py", verdict_args)
     steps.append({"step": "verdict", "rc": rc, "tail": out[-500:]})
     verdict = {}
     if (work / "verdict.json").is_file():
         verdict = json.loads((work / "verdict.json").read_text(encoding="utf-8"))
+    if args.legacy_incomplete:
+        legacy_decision = verdict.get("legacy_orchestration_decision")
+        if legacy_decision == "INCOMPLETE":
+            rc = 2
+        elif legacy_decision == "PASS_WITH_OPEN":
+            rc = 0
 
     summary = {
         "schema": "strict-verify/1",

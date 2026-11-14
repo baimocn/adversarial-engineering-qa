@@ -1,0 +1,90 @@
+{
+  "schema": "ablation-case-catalog/1",
+  "good_root": "D:/Desktop/论文最新包/2768/qa_compare/v30_tree",
+  "good_profile": "auto2768-v30",
+  "cases": [
+    {
+      "id": "hard_gate_minus1",
+      "rule": "hard_gate_minus_10",
+      "op": "replace",
+      "path": "workspace/harbor_task/tests/grader.py",
+      "old": "HARD_GATE = -10.0",
+      "new": "HARD_GATE = -1.0"
+    },
+    {
+      "id": "reward_txt_publish",
+      "rule": "no_reward_txt_publish",
+      "op": "append",
+      "path": "workspace/harbor_task/tests/grader.py",
+      "text": "\n\ndef publish_old_reward():\n    _atomic_write(os.path.join(REWARD_DIR, 'reward.txt'), '0')\n"
+    },
+    {
+      "id": "docker_image",
+      "rule": "no_expert_docker_image",
+      "op": "replace",
+      "path": "workspace/harbor_task/task.toml",
+      "old": "schema_version = \"1.4\"",
+      "new": "schema_version = \"1.4\"\ndocker_image = \"hub.byted.org/legacy/task:tag\""
+    },
+    {
+      "id": "nonlocal_removed",
+      "rule": "public_contract_nonlocal",
+      "op": "replace_all_append",
+      "path": "workspace/harbor_task/instruction.md",
+      "old": "nonlocal",
+      "new": "local-nested-scope",
+      "append": "\n\n<!-- disclosure removed by ablation -->\n"
+    },
+    {
+      "id": "staged_whitelist_widened",
+      "rule": "public_contract_staged_import",
+      "op": "json_set",
+      "path": "workspace/harbor_task/environment/public_eval/protocol.json",
+      "pointer": "/implementation_boundary/staged_import_whitelist/allowed_import_modules",
+      "value": ["torch", "numpy", "math"]
+    },
+    {
+      "id": "oracle_handoff_removed",
+      "rule": "oracle_handoff_source_before_training",
+      "op": "replace",
+      "path": "workspace/harbor_task/solution/solve.sh",
+      "old": "assemble_dream_solution.sh",
+      "new": "missing_assembler.sh"
+    },
+    {
+      "id": "best_method_weights_only_false",
+      "rule": "best_method_restored_starter_adapter",
+      "op": "copy_file",
+      "src": "D:/Desktop/论文最新包/2768/qa_compare/v29_tree/expert_evidence/best_method/data.py",
+      "path": "expert_evidence/best_method/data.py"
+    },
+    {
+      "id": "selection_hash_mismatch",
+      "rule": "best_method_source_binding_synced",
+      "op": "json_set",
+      "path": "expert_evidence/best_method_selection.json",
+      "pointer": "/method_sha256/data.py",
+      "value": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "id": "provenance_blanket_claim",
+      "rule": "g03_role_source_binding",
+      "op": "append",
+      "path": "optimization_evidence/EVIDENCE_PROVENANCE.md",
+      "text": "\n- 旧声明：同一 train.py 与 starter/solution 逐字节一致；`data.py` 差异不影响。\n"
+    },
+    {
+      "id": "task_toml_missing",
+      "rule": "canonical_task_toml",
+      "op": "delete",
+      "path": "workspace/harbor_task/task.toml"
+    },
+    {
+      "id": "trusted_fault_score",
+      "rule": "no_ordinary_zero_failure",
+      "op": "append",
+      "path": "workspace/harbor_task/tests/grader.py",
+      "text": "\n\ndef publish_trusted_fault_score():\n    write_reward(0)\n"
+    }
+  ]
+}

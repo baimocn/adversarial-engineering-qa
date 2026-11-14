@@ -1,0 +1,6 @@
+{
+  "schema": "ablation-case-ref/1",
+  "case_id": "provenance_blanket_claim",
+  "rule": "g03_role_source_binding",
+  "catalog": "config/ablation_cases.json"
+}

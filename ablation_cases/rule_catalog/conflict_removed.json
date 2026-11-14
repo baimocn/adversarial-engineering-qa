@@ -1,0 +1,6 @@
+{
+  "schema": "ablation-case-ref/1",
+  "case_id": "conflict_removed",
+  "rule": "version_conflict_resolution",
+  "catalog": "tests/test_rule_catalog.py"
+}

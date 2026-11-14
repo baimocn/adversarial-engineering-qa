@@ -1,0 +1,186 @@
+{
+  "schema": "rule-catalog/1",
+  "effective_profile": "current-20261114",
+  "rules": [
+    {
+      "id": "canonical_task_toml",
+      "class": "current_mechanical",
+      "source_docs": [
+        "05_skill_modification_list_format_notes.md",
+        "08_format_self_check_delivery_spec_20261020.md"
+      ],
+      "verification": "mechanical",
+      "bad_case": "ablation_cases/auto2768-v30/task_toml_missing.json"
+    },
+    {
+      "id": "no_expert_docker_image",
+      "class": "current_mechanical",
+      "source_docs": [
+        "02_harbor_1074_failure_review_20261026.md",
+        "04_repair_guide_algorithm_platform_errors.md"
+      ],
+      "verification": "mechanical",
+      "bad_case": "ablation_cases/auto2768-v30/docker_image.json"
+    },
+    {
+      "id": "single_formal_reward",
+      "class": "current_mechanical",
+      "source_docs": [
+        "05_skill_modification_list_format_notes.md",
+        "08_format_self_check_delivery_spec_20261020.md"
+      ],
+      "verification": "mechanical",
+      "bad_case": "ablation_cases/auto2768-v30/reward_txt_publish.json"
+    },
+    {
+      "id": "hard_gate_minus_10",
+      "class": "current_mechanical",
+      "source_docs": [
+        "01_zhongjian_wenti_huizong_20261113.md",
+        "05_skill_modification_list_format_notes.md"
+      ],
+      "verification": "mechanical",
+      "bad_case": "ablation_cases/auto2768-v30/hard_gate_minus1.json",
+      "supersedes": [
+        "hard_gate_minus_1"
+      ]
+    },
+    {
+      "id": "trusted_fault_no_score",
+      "class": "current_mechanical",
+      "source_docs": [
+        "01_zhongjian_wenti_huizong_20261113.md",
+        "05_skill_modification_list_format_notes.md"
+      ],
+      "verification": "mechanical",
+      "bad_case": "ablation_cases/auto2768-v30/trusted_fault_score.json"
+    },
+    {
+      "id": "public_contract_nonlocal",
+      "class": "current_mechanical",
+      "source_docs": [
+        "platform reports cafe7056",
+        "05_skill_modification_list_format_notes.md"
+      ],
+      "verification": "mechanical",
+      "bad_case": "ablation_cases/auto2768-v30/nonlocal_removed.json"
+    },
+    {
+      "id": "public_contract_staged_import",
+      "class": "current_mechanical",
+      "source_docs": [
+        "platform reports cafe7056",
+        "05_skill_modification_list_format_notes.md"
+      ],
+      "verification": "mechanical",
+      "bad_case": "ablation_cases/auto2768-v30/staged_whitelist_widened.json"
+    },
+    {
+      "id": "oracle_handoff_source_before_training",
+      "class": "current_mechanical",
+      "source_docs": [
+        "03_package_runtime_fix_examples_19.md",
+        "05_skill_modification_list_format_notes.md",
+        "platform report a3aa8f70"
+      ],
+      "verification": "mechanical",
+      "bad_case": "ablation_cases/auto2768-v30/oracle_handoff_removed.json"
+    },
+    {
+      "id": "best_method_restored_starter_adapter",
+      "class": "current_mechanical",
+      "source_docs": [
+        "platform report 18dfe9fc",
+        "09_expert_annotation_tutorial_v4.md"
+      ],
+      "verification": "mechanical",
+      "bad_case": "ablation_cases/auto2768-v30/best_method_weights_only_false.json"
+    },
+    {
+      "id": "best_method_source_binding_synced",
+      "class": "current_mechanical",
+      "source_docs": [
+        "platform report 18dfe9fc"
+      ],
+      "verification": "mechanical",
+      "bad_case": "ablation_cases/auto2768-v30/selection_hash_mismatch.json"
+    },
+    {
+      "id": "g03_role_source_binding",
+      "class": "current_ablation_only",
+      "source_docs": [
+        "platform report cafe7056",
+        "09_expert_annotation_tutorial_v4.md"
+      ],
+      "verification": "ablation",
+      "bad_case": "ablation_cases/auto2768-v30/provenance_blanket_claim.json"
+    },
+    {
+      "id": "version_conflict_resolution",
+      "class": "current_mechanical",
+      "source_docs": [
+        "config/rule_versions.json"
+      ],
+      "verification": "mechanical",
+      "bad_case": "ablation_cases/rule_catalog/conflict_removed.json"
+    },
+    {
+      "id": "platform_runtime_scope",
+      "class": "platform_scope",
+      "source_docs": [
+        "01_zhongjian_wenti_huizong_20261113.md",
+        "04_repair_guide_algorithm_platform_errors.md"
+      ],
+      "verification": "platform_runtime",
+      "note": "Docker/Harbor/Hidden/GPU/image size are not statically proven"
+    },
+    {
+      "id": "terminal_review_five_problem_families",
+      "class": "platform_scope",
+      "source_docs": [
+        "01_zhongjian_wenti_huizong_20261113.md",
+        "06_acceptance_triage_20261107"
+      ],
+      "verification": "advisory_catalog",
+      "note": "difficulty and verifier budget are not auto-fail without mechanical evidence"
+    },
+    {
+      "id": "legacy_hard_gate_minus_1",
+      "class": "legacy_archived",
+      "source_docs": [
+        "09_expert_annotation_tutorial_v4.md",
+        "07_waiver_list_qa_scope.md"
+      ],
+      "verification": "archived",
+      "superseded_by": "hard_gate_minus_10"
+    },
+    {
+      "id": "legacy_nop_mandatory_after_repair",
+      "class": "legacy_archived",
+      "source_docs": [
+        "07_waiver_list_qa_scope.md",
+        "08_format_self_check_delivery_spec_20261020.md"
+      ],
+      "verification": "archived",
+      "superseded_by": "NOP_not_restored"
+    },
+    {
+      "id": "legacy_pass_with_waivers_external",
+      "class": "legacy_archived",
+      "source_docs": [
+        "07_waiver_list_qa_scope.md"
+      ],
+      "verification": "archived",
+      "superseded_by": "binary_PASS_FAIL"
+    },
+    {
+      "id": "legacy_two_tracks_10h_eight_fields",
+      "class": "legacy_archived",
+      "source_docs": [
+        "09_expert_annotation_tutorial_v4.md"
+      ],
+      "verification": "archived",
+      "superseded_by": "current-standard-policy-no-restore"
+    }
+  ]
+}

@@ -77,9 +77,13 @@ sha256/size 全量复算（评分合同清单失配=blocking，专家证据清�
 （`verified / judged_agree / judged_adjudicated / human_required / unknown`
 五档总判；模型不参与裁决）。拆题由编排模型在启动时用 `ListModels` 问人选
 最强模型，拆题缓存到 `criteria/decompositions/<题族>.json`，校验后复用。
-单题确定性入口：`scripts/strict_verify.py`；多题与模型选择契约见
-`workflows/README.md`。`--package-zip` 时同时跑 0.3.10 与 0.5.0 官方层，
-两层的聚合 decision 进 strict verdict；官方底稿未填时记 human_required。
+单题确定性入口（v2.7 当前标准）：`scripts/current_standard_gate.py`；需要
+2+1/官方层编排时用 `scripts/strict_verify.py --legacy-incomplete`。多题与模型
+选择契约见 `workflows/README.md`。`--package-zip` 时仍可跑 0.3.10 与 0.5.0
+官方层作参考，但当前结论以版本目录 `config/rule_versions.json` 与二态
+`scripts/verdict.py` 为准；官方底稿未填不再给作者 PASS，而记
+`QA_NOT_FINISHED`。旧 0.3.10、V4、NOP、PASS_WITH_WAIVERS、固定两轨 10h 等
+只作 legacy 材料，不再参与当前 gate。
 
 ## 目标
 
