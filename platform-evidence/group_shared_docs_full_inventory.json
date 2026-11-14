@@ -1,0 +1,399 @@
+[
+  {
+    "source": "live_a5_full",
+    "time": "2026-10-03 14:30",
+    "message_id": "om_x100b633e404cbcacc3608a7d1aabef0",
+    "sender": "用户530394",
+    "msg_type": "post",
+    "urls": [
+      "https://ark.volcengine.com/region:cn-beijing/docs/ark/agent-plan-personal-codex?lang=zh",
+      "https://ark.volcengine.com/region:cn-beijing/docs/ark/agent-plan-personal-codex?lang=zh"
+    ],
+    "files": [],
+    "excerpt": "@用户926560 官方不是有文档吗你直接把文档丢给codex让他给你部署[https://ark.volcengine.com/region:cn-beijing/docs/ark/agent-plan-personal-codex?lang=zh](https://ark.volcengine.com/region:cn-beijing/docs/ark/agent-plan-personal-codex?lang=zh) ![Image](<attachment-token>)"
+  },
+  {
+    "source": "live_a5_full",
+    "time": "2026-10-04 12:44",
+    "message_id": "om_x100b6329d2b5fca4b398e9d98e71edc",
+    "sender": "张思琪",
+    "msg_type": "text",
+    "urls": [
+      "<lark-doc>",
+      "<lark-doc>",
+      "<lark-doc>",
+      "<lark-doc>",
+      "<lark-doc>"
+    ],
+    "files": [],
+    "excerpt": "@_all  第三期已经快过半了，我看到有些老师还没有开始作业以及有些老师还不太熟悉流程，这里是一个比较详细的步骤和一些问题回复，大家可以看看<lark-doc>   这是第三期的流程文档，里面可以注重看看领题流程<lark-doc>  会议录制<lark-doc>   作业表格https://byted"
+  },
+  {
+    "source": "live_a5_full",
+    "time": "2026-10-04 17:30",
+    "message_id": "om_x100b631583cb44a0b24b25496b461a4",
+    "sender": "张思琪",
+    "msg_type": "text",
+    "urls": [
+      "<lark-doc>"
+    ],
+    "files": [],
+    "excerpt": "@_all 现在领题表快没有题目了 大家可以自行去找paper来出题 找到过后可以发给我 来看看有没有符合要求或者重复的[送心]或者让我帮忙找也可以 <lark-doc> 难度打标是根据这个表格哦 自行找的题目就没有24h内上传harbor task的要求啦[送心]"
+  },
+  {
+    "source": "live_a5_full",
+    "time": "2026-10-07 18:01",
+    "message_id": "om_x100b6355c81a70a0c2be21358ed0b5c",
+    "sender": "张思琪",
+    "msg_type": "text",
+    "urls": [
+      "http://vast.ai/这个平台也可以支持docker，大家可以看看"
+    ],
+    "files": [],
+    "excerpt": "@_all 如果在专家自选题表未完成的题目大于10题，那么无法再继续新增题目。现在发现有一些专家疯狂出题，但是前面的题还没完成，这种出题会严重影响到其他专家出题，所以现在设置一下自选题的上限为【未完成的题目不可大于10题】 http://vast.ai/这个平台也可以支持docker，大家可以看看"
+  },
+  {
+    "source": "live_a5_full",
+    "time": "2026-10-09 11:00",
+    "message_id": "om_x100b63b1c53738b8c4364a92eb1d6ac",
+    "sender": "用户306175",
+    "msg_type": "file",
+    "urls": [],
+    "files": [
+      {
+        "key": "<attachment-token>",
+        "name": "0055_优化面试跑与QA自检结论.txt"
+      }
+    ],
+    "excerpt": "<file key=\"<attachment-token>\" name=\"0055_优化面试跑与QA自检结论.txt\"/>"
+  },
+  {
+    "source": "live_a5_full",
+    "time": "2026-10-09 11:00",
+    "message_id": "om_x100b63b1c29444a0c2e652de85ead40",
+    "sender": "用户306175",
+    "msg_type": "file",
+    "urls": [],
+    "files": [
+      {
+        "key": "<attachment-token>",
+        "name": "1370_优化面试跑与QA自检结论.txt"
+      }
+    ],
+    "excerpt": "<file key=\"<attachment-token>\" name=\"1370_优化面试跑与QA自检结论.txt\"/>"
+  },
+  {
+    "source": "live_a5_full",
+    "time": "2026-10-09 11:00",
+    "message_id": "om_x100b63b1c267cc44c2e87e2e67c390b",
+    "sender": "用户306175",
+    "msg_type": "file",
+    "urls": [],
+    "files": [
+      {
+        "key": "<attachment-token>",
+        "name": "1371_优化面试跑与QA自检结论.txt"
+      }
+    ],
+    "excerpt": "<file key=\"<attachment-token>\" name=\"1371_优化面试跑与QA自检结论.txt\"/>"
+  },
+  {
+    "source": "live_a5_full",
+    "time": "2026-10-20 11:54",
+    "message_id": "om_x100b625a2eb460a4c0a222421212656",
+    "sender": "用户926560",
+    "msg_type": "text",
+    "urls": [
+      "https://ai.duckduckport.top/register?aff=2WMTE8HER23Q"
+    ],
+    "files": [],
+    "excerpt": "@王仪琦  https://ai.duckduckport.top/register?aff=2WMTE8HER23Q 我用的这个中转，挺稳定的，10h不断能跑完，可以试试"
+  },
+  {
+    "source": "live_a5_full",
+    "time": "2026-10-20 18:50",
+    "message_id": "om_x100b6240394114acdf721a6d981208d",
+    "sender": "张思琪",
+    "msg_type": "post",
+    "urls": [
+      "<lark-doc>",
+      "<lark-doc>"
+    ],
+    "files": [],
+    "excerpt": "<at user_id=\"all\"></at> 各位专家好： 在与算法需求方对齐质检方案后，我们将于今天正式启动二期、三期内容的统一质检工作。 由于本次涉及的题量较大、题目复杂度较高，整体质检周期预计会相对较长。我们将在保证质检质量的前提下尽快推进，并及时向大家同步质检进展及后续安排。 1. 本次质检主要分为两部分：一是格式与题目静态质检，二是roll harbor代码包。对于质检不通过的题目，完成返修后，大家可以使用配套脚本进行格式自检，尽量减少遗漏和重复修改。返修自检参考文档：[<lark-doc>](<lark-doc>"
+  },
+  {
+    "source": "live_a5_full",
+    "time": "2026-10-21 13:53",
+    "message_id": "om_x100b62b17bddf0b4dd162013370cb2a",
+    "sender": "张思琪",
+    "msg_type": "post",
+    "urls": [
+      "<lark-doc>",
+      "<lark-doc>"
+    ],
+    "files": [],
+    "excerpt": "<at user_id=\"all\"></at> 各位老师好  这是最新标注文档[<lark-doc>"
+  },
+  {
+    "source": "live_a5_full",
+    "time": "2026-10-21 16:23",
+    "message_id": "om_x100b62b3268dd0a4c0e7f8d1e06ae3c",
+    "sender": "张思琪",
+    "msg_type": "post",
+    "urls": [
+      "<lark-doc>",
+      "<lark-doc>",
+      "<lark-doc>",
+      "<lark-doc>"
+    ],
+    "files": [],
+    "excerpt": "<at user_id=\"all\"></at>  **关于项目返修及二次质检安排的通知** 各位专家好： 昨天项目组完成了一批质检。由于提交格式要求有所调整，本批次大部分题目需要进行格式返修。为加快整体质检进度，现将返修及后续安排通知如下。 **一、请先完成格式返修与自查** 目前已开放以下工具： - 格式自查脚本：[<lark-doc>](<lark-doc>)  - 新版规则质检 Skill：[<lark-doc>"
+  },
+  {
+    "source": "live_a5_full",
+    "time": "2026-10-21 18:14",
+    "message_id": "om_x100b62bd463308b4df61727048eda72",
+    "sender": "张思琪",
+    "msg_type": "text",
+    "urls": [
+      "<lark-doc>"
+    ],
+    "files": [],
+    "excerpt": "@_all 二期的表格已经开放，同时我们已经将二期的表格内容同步迁移到多维表格了。请各位专家在飞书表格<lark-doc>"
+  },
+  {
+    "source": "live_a5_full",
+    "time": "2026-10-22 09:17",
+    "message_id": "om_x100b62a20c03b4a8dd12dbea3fbe7c8",
+    "sender": "张思琪",
+    "msg_type": "post",
+    "urls": [
+      "<lark-doc>",
+      "<lark-doc>"
+    ],
+    "files": [],
+    "excerpt": "<at user_id=\"all\"></at>  各位老师，由于部分完整提交包文件较大，无法直接上传至收题表，此类提交包请按以下步骤完成提交： **C端专家：** 1. 打开‌领题平台，进入项目任务，点击“进入题目” 2. 填写对应题号，并上传压缩包。 3. 点击「上传」，获取内网访问地址。 4. 打开(‌[<lark-doc>](<lark-doc>"
+  },
+  {
+    "source": "live_a5_full",
+    "time": "2026-10-22 14:15",
+    "message_id": "om_x100b62aeee6fc4a0ded878a52cc403c",
+    "sender": "张思琪",
+    "msg_type": "text",
+    "urls": [
+      "<lark-doc>"
+    ],
+    "files": [],
+    "excerpt": "@_all 各位老师好，平台实际运行题目时，发现部分题包存在目录权限、启动准备、模型和数据资产、候选产物移交等兼容性问题。部分问题在看文件或本地单次运行时不容易发现，需要在平台真实执行后才能确认。请结合收到的反馈，返修的时候稍微避开目前遇到的问题，然后格式自检通过后，平台还会安排实际运行，再跑一次完整链路。 <lark-doc>"
+  },
+  {
+    "source": "live_a5_full",
+    "time": "2026-10-22 16:37",
+    "message_id": "om_x100b62a8fa87b4a8de335c4143a20f3",
+    "sender": "张思琪",
+    "msg_type": "text",
+    "urls": [
+      "<lark-doc>"
+    ],
+    "files": [],
+    "excerpt": "@_all  <lark-doc> 各位老师下午好，目前针对这次豁免版更新了skill，本轮旧题先按新版要求完成格式和交付配置返修，不要求为此次迁移重新跑实验或长程 Agent。因换卡、封装或配置调整，以及新增标准造成的旧记录差异，我们会按本轮口径标明豁免；不要求补造历史八字段、哈希或新增 NOP 记录。请保留原记录的真实卡型、版本、分数和耗时，并说明本次改动。 缺文件、路径、入口、构建材料及配置等格式问题仍需修复。内部镜像准备和实际 Harbor 运行由字节侧后续完成；如发现原研究、评分或记录本身的问题，会单独反馈。"
+  },
+  {
+    "source": "live_a5_full",
+    "time": "2026-10-22 16:45",
+    "message_id": "om_x100b62a89f28cca0de08f47f7842029",
+    "sender": "张思琪",
+    "msg_type": "file",
+    "urls": [],
+    "files": [
+      {
+        "key": "<attachment-token>",
+        "name": "review_skill-0.3.10-legacy-waiver.2_1022.zip"
+      }
+    ],
+    "excerpt": "<file key=\"<attachment-token>\" name=\"review_skill-0.3.10-legacy-waiver.2_1022.zip\"/>"
+  },
+  {
+    "source": "live_a5_full",
+    "time": "2026-10-24 15:28",
+    "message_id": "om_x100b62f1af085ca4c095a0a633706e9",
+    "sender": "张思琪",
+    "msg_type": "post",
+    "urls": [
+      "<lark-doc>",
+      "<lark-doc>",
+      "<lark-doc>",
+      "<lark-doc>",
+      "<lark-doc>",
+      "<lark-doc>",
+      "<lark-doc>",
+      "<lark-doc>",
+      "<lark-doc>",
+      "<lark-doc>"
+    ],
+    "files": [],
+    "excerpt": "<at user_id=\"all\"></at> 各位专家好，这是目前的完整要求： 一、请先完成格式返修与自查 目前已开放以下工具： - 格式自查脚本：[<lark-doc>](<lark-doc>) - 因为有些格式更改后的不匹配问题，用豁免版skill来进行质检：[<lark-doc>](<lark-doc>"
+  },
+  {
+    "source": "live_a5_full",
+    "time": "2026-10-24 15:29",
+    "message_id": "om_x100b62f1aa1f04a0de5585b14a6b23e",
+    "sender": "张思琪",
+    "msg_type": "file",
+    "urls": [],
+    "files": [
+      {
+        "key": "<attachment-token>",
+        "name": "review_skill-0.3.10-standard-waiver.5_1023.zip"
+      }
+    ],
+    "excerpt": "<file key=\"<attachment-token>\" name=\"review_skill-0.3.10-standard-waiver.5_1023.zip\"/>"
+  },
+  {
+    "source": "live_a5_full",
+    "time": "2026-10-26 21:22",
+    "message_id": "om_x100b62c1713920a4b0809888de93deb",
+    "sender": "张思琪",
+    "msg_type": "file",
+    "urls": [],
+    "files": [
+      {
+        "key": "<attachment-token>",
+        "name": "review_skill-0.3.10-standard-waiver.5_1023.zip"
+      }
+    ],
+    "excerpt": "<file key=\"<attachment-token>\" name=\"review_skill-0.3.10-standard-waiver.5_1023.zip\"/>"
+  },
+  {
+    "source": "live_a5_full",
+    "time": "2026-10-26 21:22",
+    "message_id": "om_x100b62c1713954a4b4f72af62aa9d09",
+    "sender": "张思琪",
+    "msg_type": "file",
+    "urls": [],
+    "files": [
+      {
+        "key": "<attachment-token>",
+        "name": "review_skill-0.3.10_1015.zip"
+      }
+    ],
+    "excerpt": "<file key=\"<attachment-token>\" name=\"review_skill-0.3.10_1015.zip\"/>"
+  },
+  {
+    "source": "live_a5_full",
+    "time": "2026-11-03 19:55",
+    "message_id": "om_x100b61a8f5f774a0cd1d8165fb7f549",
+    "sender": "张思琪",
+    "msg_type": "post",
+    "urls": [
+      "<lark-doc>",
+      "<lark-doc>"
+    ],
+    "files": [],
+    "excerpt": "<at user_id=\"all\"></at> 各位专家老师好，关于 AutoResearch 项目终检进展，和大家同步一下本轮返修的具体安排。 1. **终检结果分批次同步，以多维表格提醒为准** 终检结果会**分批次**陆续处理。需要返修的题目，终检结果和原因会直接写入多维表格，并通过**多维表格工作流自动发消息提醒到对应老师**。 *终检未通过的老师需要重新过一遍静态质检。 2. **本轮返修截止时间** 请收到提醒的老师在 **本周五（11 月 6 日）17:00 前** 完成修改并在多维表格中提交。本轮返修不限制次数，若周五截止前仍未完成一次返修则按废弃处理。后续批次的时间取决于复核进度，有新的结果写入后会继续通过同样方式提醒。 3. **多维表格填写与操作说明** - **如何确"
+  },
+  {
+    "source": "live_a5_full",
+    "time": "2026-11-03 19:57",
+    "message_id": "om_x100b61a88e3e80accf57c106af8724a",
+    "sender": "张思琪",
+    "msg_type": "file",
+    "urls": [],
+    "files": [
+      {
+        "key": "<attachment-token>",
+        "name": "autoresearch-supplement-platform-audit-v1.0.1_20261102.zip"
+      }
+    ],
+    "excerpt": "<file key=\"<attachment-token>\" name=\"autoresearch-supplement-platform-audit-v1.0.1_20261102.zip\"/>"
+  },
+  {
+    "source": "live_a5_full",
+    "time": "2026-11-06 20:02",
+    "message_id": "om_x100b61e8557658a4b36974b6770c325",
+    "sender": "张思琪",
+    "msg_type": "text",
+    "urls": [
+      "<lark-doc>"
+    ],
+    "files": [],
+    "excerpt": "@_all 平台rollout不通过的一些case，各位老师可以看一下，帮助修改～[共同成长]  <lark-doc>"
+  },
+  {
+    "source": "live_a5_full",
+    "time": "2026-11-07 13:51",
+    "message_id": "om_x100b61df8b81e0a0de362b5c7d732c8",
+    "sender": "张思琪",
+    "msg_type": "text",
+    "urls": [
+      "<lark-doc>",
+      "<lark-doc>"
+    ],
+    "files": [],
+    "excerpt": "@_all 大家根据新的skill自查和修改一下自己的题目 <lark-doc> 这是部分题目的具体修改，事项大家根据这个核对一下 <lark-doc> 下面是新的skill"
+  },
+  {
+    "source": "live_a5_full",
+    "time": "2026-11-07 13:51",
+    "message_id": "om_x100b61df8b04fca8c4789cf0ce43750",
+    "sender": "张思琪",
+    "msg_type": "file",
+    "urls": [],
+    "files": [
+      {
+        "key": "<attachment-token>",
+        "name": "autoresearch-unified-qa-v0.5.0-current.1_20261107.zip"
+      }
+    ],
+    "excerpt": "<file key=\"<attachment-token>\" name=\"autoresearch-unified-qa-v0.5.0-current.1_20261107.zip\"/>"
+  },
+  {
+    "source": "live_a5_full",
+    "time": "2026-11-10 20:27",
+    "message_id": "om_x100b600494817ca8c0b6b7c1aac8456",
+    "sender": "张思琪",
+    "msg_type": "text",
+    "urls": [
+      "<lark-doc>"
+    ],
+    "files": [],
+    "excerpt": "@_all 这是已经通过验收的题目<lark-doc> （其他题目再继续送检中） 今晚同步的「暂无需返修」转为需要返修的题目稍后会撤回，此类题目各位专家先不要修改。"
+  },
+  {
+    "source": "live_a5_full",
+    "time": "2026-11-14 00:19",
+    "message_id": "om_x100b6047c7ab24a0dfca4a07dd1f08f",
+    "sender": "张思琪",
+    "msg_type": "text",
+    "urls": [
+      "<lark-doc>"
+    ],
+    "files": [],
+    "excerpt": "@_all <lark-doc> 老师们这是一些问题汇总可以看看"
+  },
+  {
+    "source": "live_discussion_full",
+    "time": "2026-10-03 14:37",
+    "message_id": "om_x100b633e66733ca0c38c8aa57f111e1",
+    "sender": "张恒基",
+    "msg_type": "post",
+    "urls": [
+      "https://github.com/bosprimigenious/autoresearch-skills"
+    ],
+    "files": [],
+    "excerpt": "[GitHub - bosprimigenious/autoresearch-skills: Reusable skills for AutoResearch task design, isolatio](https://github.com/bosprimigenious/autoresearch-skills)  针对三期做了一些升级，希望大家都给我发PR，把自己的想法贡献出来，大家一起多多赚钱，努力出题:CRY:努力升级打磨skills 主要升级优化点 1. 关于GPU按天/小时 租的区别 2. 三期的服务器内置Docker 3. 自己的失败体会，做第三题的时候自我返修了两遍 4. 关于Seedapi 使用plan 还是api的问题。。其实也很好选 5. 关于三期加入了专家自选题目，s"
+  },
+  {
+    "source": "live_discussion_full",
+    "time": "2026-10-05 16:59",
+    "message_id": "om_x100b6302207850a4c159111806dca87",
+    "sender": "张恒基",
+    "msg_type": "text",
+    "urls": [
+      "https://github.com/bosprimigenious/autoresearch-skills"
+    ],
+    "files": [],
+    "excerpt": "https://github.com/bosprimigenious/autoresearch-skills  感谢大家，目前居然已经有41 stars了[无辜笑] 我也会继续更新，欢迎大家给我发pr提issue啊"
+  }
+]

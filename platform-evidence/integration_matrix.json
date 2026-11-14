@@ -1,0 +1,53 @@
+{
+  "schema": "platform-experience-integration-matrix/1",
+  "effective_profile": "current-20261114",
+  "summary": {
+    "current_mechanical": 12,
+    "current_ablation_only": 1,
+    "platform_scope": 2,
+    "legacy_archived": 4
+  },
+  "buckets": {
+    "current_mechanical": [
+      "canonical_task_toml",
+      "no_expert_docker_image",
+      "single_formal_reward",
+      "no_reward_txt_publish",
+      "hard_gate_minus_10",
+      "trusted_fault_no_score",
+      "public_contract_nonlocal",
+      "public_contract_staged_import",
+      "oracle_handoff_source_before_training",
+      "best_method_restored_starter_adapter",
+      "best_method_source_binding_synced",
+      "version_conflict_resolution"
+    ],
+    "current_ablation_only": [
+      "g03_role_source_binding"
+    ],
+    "platform_scope": [
+      "platform_runtime_scope",
+      "terminal_review_five_problem_families"
+    ],
+    "legacy_archived": [
+      "legacy_hard_gate_minus_1",
+      "legacy_nop_mandatory_after_repair",
+      "legacy_pass_with_waivers_external",
+      "legacy_two_tracks_10h_eight_fields"
+    ]
+  },
+  "rules_not_implemented_as_auto_fail": [
+    "difficulty_low_short_time_to_peak",
+    "difficulty_high_no_legal_high_score",
+    "verifier_parallelization_and_budget_fit",
+    "gpu_h20_l20_actual_runtime",
+    "public_data_reconstruct_hidden_inputs",
+    "timeout_shutdown_margin",
+    "shared_uid_nproc_conflict",
+    "model_or_tokenizer_asset_delivery",
+    "mujoco_or_pycache_submission_pollution",
+    "judge_swallowed_exception",
+    "old_card_result_as_target_card"
+  ],
+  "reason": "These require semantic judgement, controlled runtime probes, or platform execution. They are retained as advisory catalog / platform_scope, not silently converted into static author FAIL."
+}
