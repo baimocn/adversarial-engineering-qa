@@ -1,0 +1,3049 @@
+{
+  "schema_version": 1,
+  "standard": "current-2189",
+  "checks": [
+    {
+      "id": "G01",
+      "section": "core",
+      "scope": "真实可执行的方法研究空间",
+      "guidance": "延续项目method_space必需（算法L1）；数值编码程序/策略或HPO方法本身不按关键词拒收",
+      "status": "pass",
+      "summary": "题面开放方法子类的损失、权重、辅助目标、训练安排及推断读出；守卫允许静态本地函数和多种张量、损失操作，固定骨干与训练器但并非只允许字面参数搜索。此判断是源码范围审查，不声称平台实跑。",
+      "evidence": [
+        "workspace/harbor_task/instruction.md:38-47",
+        "workspace/harbor_task/instruction.md:81-87",
+        "workspace/harbor_task/tests/contract_guard.py:326-335",
+        "workspace/harbor_task/tests/contract_guard.py:444-514",
+        "workspace/harbor_task/tests/contract_guard.py:549-605",
+        "workspace/harbor_task/tests/contract_guard.py:914-941"
+      ],
+      "findings": []
+    },
+    {
+      "id": "G02",
+      "section": "core",
+      "scope": "五维合理Baseline/Starter及真实公平对照",
+      "guidance": "确证明显不合理/过弱、故障或不公平仍fail；不要求SOTA，不凭少epochs或印象判错",
+      "status": "pass",
+      "summary": "GCN基线按固定架构和Adam在损坏训练标签上优化，独立验证选择检查点；训练、预算、原值及reload按同协议分别留存。200与Reference 500轮不单独构成不公平，未新训练或认证平台运行。",
+      "evidence": [
+        "workspace/harbor_task/environment/starter/predictor/GCN_Predictor.py:6-17",
+        "workspace/harbor_task/environment/starter/predictor/Base_Predictor.py:76-112",
+        "workspace/harbor_task/environment/starter/predictor/Base_Predictor.py:124-157",
+        "workspace/harbor_task/environment/starter/config/gcn/gcn_cora.yaml:1-16",
+        "optimization_evidence/comparison_summary.json:20-35",
+        "optimization_evidence/comparison_summary.json:83-100"
+      ],
+      "findings": []
+    },
+    {
+      "id": "G03",
+      "section": "core",
+      "scope": "真实可解可提升及项目全seed/3sigma/Reference校准",
+      "guidance": "reference_calibration延续必需（算法L2）；5sigma/headroom仅不作为额外验收义务，确定性统一5%不恢复",
+      "status": "fail",
+      "summary": "声明seed 3000/3001/3002的B为59.15/62.25/63.15、R为68.75/71.35/69.75；样本标准差2.0984、均值提升8.4333为4.0189倍，生效B=61.5167、U=75.1333下Reference约0.6193，数学门均成立。但正式B/R来源声明与两份不同现源直接矛盾，工件方法源码身份为空，不能确认原成绩对应声明候选，历史源码缺口兼容条件不成立；不认定造假或当前训练必然改变。",
+      "evidence": [
+        "optimization_evidence/formal_test_scoring_declared.json:1-155",
+        "optimization_evidence/comparison_summary.json:1-61",
+        "workspace/harbor_task/tests/calibration.json:1-49",
+        "optimization_evidence/EVIDENCE_PROVENANCE.md:8-16",
+        "workspace/harbor_task/environment/starter/train.py:30-62",
+        "workspace/harbor_task/solution/train.py:30-60",
+        "optimization_evidence/baseline_runs/seed_3000/model/artifact.json:10-40",
+        "optimization_evidence/reference_runs/seed_3000/model/artifact.json:10-40",
+        "expert_evidence/repair/v23b_pre_registration.json:46-65"
+      ],
+      "findings": [
+        {
+          "rule": "reference_calibration",
+          "reason": "正式B/R运行来源说明称同一train.py与当前Starter和solution均逐字节一致，但两份当前源码实际不同；所核B/R种子工件的method_source_sha256又为空，不能确定历史成绩所用源码与声明候选的身份对应。原值和checkpoint绑定不消除该矛盾，历史源码缺口兼容的候选身份条件未获确认。",
+          "remediation": "澄清并提供能将原B/R运行候选、实际源码身份与既有成绩对应起来的真实证据；不得改写原值或将未认证等价表述为已证。",
+          "responsibility": "author",
+          "evidence": [
+            "optimization_evidence/EVIDENCE_PROVENANCE.md:8-16",
+            "workspace/harbor_task/environment/starter/train.py:30-62",
+            "workspace/harbor_task/solution/train.py:30-60",
+            "optimization_evidence/baseline_runs/seed_3000/model/artifact.json:10-40",
+            "optimization_evidence/reference_runs/seed_3000/model/artifact.json:10-40",
+            "expert_evidence/repair/v23b_pre_registration.json:46-65"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "H01",
+      "section": "core",
+      "scope": "Harbor任务/Oracle可调用",
+      "guidance": "固定包根/实现名非默认门",
+      "status": "pass",
+      "summary": "Oracle入口solve.sh默认选择dream并调用包内run.sh；该脚本对两图调用train.py，注册表定位包内DREAM实现，训练后导出模型与预测。此为源码调用链核查，不宣称本次Docker或Harbor实跑成功。",
+      "evidence": [
+        "workspace/harbor_task/solution/solve.sh:10-19",
+        "workspace/harbor_task/solution/run.sh:6-39",
+        "workspace/harbor_task/solution/train.py:88-120",
+        "workspace/harbor_task/solution/predictor/__init__.py:7-10",
+        "workspace/harbor_task/solution/predictor/DREAM_Predictor.py:40-83",
+        "workspace/harbor_task/solution/predictor/DREAM_Predictor.py:475-500"
+      ],
+      "findings": []
+    },
+    {
+      "id": "H02",
+      "section": "core",
+      "scope": "有效配置/提交物移交",
+      "guidance": "unknown版本本身非门",
+      "status": "pass",
+      "summary": "配置声明移交/workspace/solution，题面要求每图模型和测试预测；Oracle runner在该目录创建对应artifacts并训练导出，评分器读取同一路径。属于调用与移交合同的源码核查，并非实际平台传输证明。",
+      "evidence": [
+        "workspace/harbor_task/task.toml:17-18",
+        "workspace/harbor_task/instruction.md:120-129",
+        "workspace/harbor_task/solution/run.sh:6-29",
+        "workspace/harbor_task/tests/grader.py:170-180"
+      ],
+      "findings": []
+    },
+    {
+      "id": "H03",
+      "section": "core",
+      "scope": "独立环境/依赖与真实能力",
+      "guidance": "unknown/未跑仅scope；Compose/Docker关键词不独自定错，实际额外计算工作环境依赖按当前H03阻断",
+      "status": "pass",
+      "summary": "Work和Verifier分别构建，Verifier自带依赖与私有资产并隔离Python导入；Work以非root运行且保护公共资产。源码审查未发现该评分入口调用额外沙箱工具，镜像构建与平台隔离未实测，网络和运行时能力不予认证。",
+      "evidence": [
+        "workspace/harbor_task/tests/test.sh:19-25",
+        "workspace/harbor_task/tests/Dockerfile:17-35",
+        "workspace/harbor_task/environment/Dockerfile:37-58",
+        "workspace/harbor_task/instruction.md:109-118"
+      ],
+      "findings": []
+    },
+    {
+      "id": "H04",
+      "section": "core",
+      "scope": "当前四分支评分及本次候选真实有效",
+      "guidance": "QA06/H04职责保留；单纯1h无分暂停，不能汇入其余高级新门",
+      "status": "pass",
+      "summary": "已追正常评分、候选拒绝、可信故障和中断的源码路径；作者本机Oracle smoke自报正常，但并非平台实跑或正式Hidden。Verifier只加载模型并评分预测，不认证两者来源对应，故不冒称已实测当前候选绑定。",
+      "evidence": [
+        "workspace/harbor_task/tests/grader.py:89-149",
+        "workspace/harbor_task/tests/grader.py:152-168",
+        "workspace/harbor_task/tests/grader.py:170-245",
+        "workspace/harbor_task/tests/test.sh:13-32",
+        "expert_evidence/repair/v25_oracle_smoke_evidence.json:3-11",
+        "workspace/harbor_task/instruction.md:81-87"
+      ],
+      "findings": []
+    },
+    {
+      "id": "H05",
+      "section": "core",
+      "scope": "实际镜像分支和tests供给",
+      "guidance": "第二份Dockerfile/内部tag新证明非必交",
+      "status": "pass",
+      "summary": "配置选择独立Verifier；Work构建只复制公开资产、Starter及公开评测器，tests构建提供独立评分器、守卫、锚点及私有标签。这里只确认源码及供给，不声称已构建或平台启动成功。",
+      "evidence": [
+        "workspace/harbor_task/task.toml:43-60",
+        "workspace/harbor_task/environment/Dockerfile:36-45",
+        "workspace/harbor_task/tests/Dockerfile:26-42"
+      ],
+      "findings": []
+    },
+    {
+      "id": "QA01",
+      "section": "core",
+      "scope": "题面目标/接口与无方法泄漏",
+      "guidance": "固定八标题/句数不作为额外验收义务",
+      "status": "pass",
+      "summary": "题面说明损坏训练标签的节点分类目标、两图隐藏测试宏平均及模型和预测的提交接口；公开方法空间是通用损失和训练策略，没有给出Reference具体算法实现。",
+      "evidence": [
+        "workspace/harbor_task/instruction.md:6-12",
+        "workspace/harbor_task/instruction.md:29-47",
+        "workspace/harbor_task/instruction.md:112-129"
+      ],
+      "findings": []
+    },
+    {
+      "id": "QA02",
+      "section": "core",
+      "scope": "实际评分方向/Starter0/上界1/B-U",
+      "guidance": "未统一clip取舍不自设门",
+      "status": "pass",
+      "summary": "当前源码对两图测试准确率取宏均值并最大化，归一化为(x−B)/(U−B)，B=61.5167、U=75.1333且B<U；代入两端分别为0和1，不裁剪。锚点来源与资格须由G03另行核验。",
+      "evidence": [
+        "workspace/harbor_task/instruction.md:29-35",
+        "workspace/harbor_task/tests/calibration.json:1-9",
+        "workspace/harbor_task/tests/contract_guard.py:55-80",
+        "workspace/harbor_task/tests/grader.py:227-245"
+      ],
+      "findings": []
+    },
+    {
+      "id": "QA03",
+      "section": "core",
+      "scope": "Oracle/Reference真实性与项目归一化区间",
+      "guidance": "Reference[.15,.8]按延续G03必需；固定结果目录不作门",
+      "status": "pass",
+      "summary": "原记录的三seed Reference均值69.95，以生效scorer锚B=61.5167、U=75.1333及未裁剪线性公式归一化约0.6193，落在[0.15,0.8]；100的0.2191是另一资格稳健性计算而非生效公式。历史U逐图test明细为事后补列，未反序列化预测和私有标签，不认证原始U来源；B/R候选来源矛盾由G03单独阻断。",
+      "evidence": [
+        "optimization_evidence/formal_test_scoring_declared.json:1-155",
+        "optimization_evidence/comparison_summary.json:1-61",
+        "workspace/harbor_task/tests/calibration.json:1-49",
+        "workspace/harbor_task/tests/grader.py:170-245",
+        "optimization_evidence/u_anchor_oracle/measurement.json:35-119"
+      ],
+      "findings": []
+    },
+    {
+      "id": "QA04",
+      "section": "core",
+      "scope": "正式同候选同协议全seed及项目随机校准",
+      "guidance": "随机>=3次/声明更多全查、Baseline样本3sigma保留；不另加固定5次或冒称独立训练",
+      "status": "pass",
+      "summary": "记录声明三seed、两图B/R配对，逐图test结果及非退化和reload相等字段均有；训练和reload日志为作者物化记录，不是平台原生记录。所列数字的3σ计算成立；候选源码身份的矛盾另按G03处理，不能将本项视为认证现版全seed重跑。",
+      "evidence": [
+        "optimization_evidence/formal_test_scoring_declared.json:1-155",
+        "optimization_evidence/comparison_summary.json:1-61",
+        "optimization_evidence/EVIDENCE_PROVENANCE.md:8-16",
+        "optimization_evidence/baseline_runs/seed_3000/run.log:1-6",
+        "optimization_evidence/reference_runs/seed_3000/run.log:1-6",
+        "optimization_evidence/baseline_runs/seed_3001/run.log:2-2",
+        "optimization_evidence/reference_runs/seed_3001/run.log:2-2",
+        "optimization_evidence/baseline_runs/seed_3002/run.log:2-2",
+        "optimization_evidence/reference_runs/seed_3002/run.log:2-2"
+      ],
+      "findings": []
+    },
+    {
+      "id": "QA05",
+      "section": "core",
+      "scope": "公开核心约束与合法提交一致",
+      "guidance": "全部文字禁令完全执行属L1；unknown不失败",
+      "status": "fail",
+      "summary": "题面开放训练损失和数值辅助函数，只明示lambda及笼统动态/反射等禁令；但守卫对普通nonlocal闭包也无条件拒绝，影响不访问受保护状态的训练方法。",
+      "evidence": [
+        "workspace/harbor_task/instruction.md:38-49",
+        "workspace/harbor_task/instruction.md:81-87",
+        "workspace/harbor_task/tests/contract_guard.py:549-565",
+        "workspace/harbor_task/tests/contract_guard.py:796-810",
+        "workspace/harbor_task/tests/contract_guard.py:930-941",
+        "workspace/harbor_task/tests/grader.py:152-164"
+      ],
+      "findings": [
+        {
+          "rule": "task_contract",
+          "reason": "公开训练方法支持范围未披露守卫对nonlocal的无条件拒绝；例如在局部嵌套数值辅助函数中更新外围局部计数或累加值，不触及模块全局、保护状态或标签，也会被判UNSUPPORTED并计−10。",
+          "remediation": "使公开合同明确披露该影响合法方法的限制，或调整守卫使相应合法方案可提交。",
+          "responsibility": "author",
+          "evidence": [
+            "workspace/harbor_task/instruction.md:38-49",
+            "workspace/harbor_task/instruction.md:81-87",
+            "workspace/harbor_task/tests/contract_guard.py:549-565",
+            "workspace/harbor_task/tests/contract_guard.py:796-810",
+            "workspace/harbor_task/tests/contract_guard.py:930-941",
+            "workspace/harbor_task/tests/grader.py:152-164"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "QA06",
+      "section": "core",
+      "scope": "评分入口/主分/错误状态/消费链",
+      "guidance": "单独负分或假想异常不足判错",
+      "status": "pass",
+      "summary": "test.sh以隔离Python进入可信grader，正常输出单一JSON数值reward；候选拒绝写−10并打印诊断，guard、校准和私有资产等可信故障输出NOT_READY且无reward，入口读回并传播退出码。本次仅核源码，未冒称平台消费实测。",
+      "evidence": [
+        "workspace/harbor_task/tests/test.sh:13-32",
+        "workspace/harbor_task/tests/grader.py:53-85",
+        "workspace/harbor_task/tests/grader.py:111-149",
+        "workspace/harbor_task/tests/grader.py:152-168",
+        "workspace/harbor_task/tests/grader.py:200-245"
+      ],
+      "findings": []
+    },
+    {
+      "id": "QA07",
+      "section": "core",
+      "scope": "题面Hidden泄漏",
+      "guidance": "目录名或禁止词不是泄漏",
+      "status": "pass",
+      "summary": "题面说明私有测试标签与评测方式，但未给出隐藏标签值或评分答案；独立镜像及资产暴露另行审查。",
+      "evidence": [
+        "workspace/harbor_task/instruction.md:14-35",
+        "workspace/harbor_task/instruction.md:99-108",
+        "workspace/harbor_task/instruction.md:121-128"
+      ],
+      "findings": []
+    },
+    {
+      "id": "QA08",
+      "section": "core",
+      "scope": "题面Reference方法泄漏",
+      "guidance": "通用背景非泄漏",
+      "status": "pass",
+      "summary": "题面列出通用方法修改范围与支持的接口，未披露Reference具体方法实现；Reference源码另在solution中供Oracle使用。",
+      "evidence": [
+        "workspace/harbor_task/instruction.md:38-47",
+        "workspace/harbor_task/instruction.md:81-97",
+        "workspace/harbor_task/solution/predictor/DREAM_Predictor.py:475-500"
+      ],
+      "findings": []
+    },
+    {
+      "id": "QA09",
+      "section": "core",
+      "scope": "正式输出生命周期/旧占位消费",
+      "guidance": "纯理论可能性不否定全部历史",
+      "status": "pass",
+      "summary": "入口先清理旧JSON和历史TXT，grader再次清理；写新JSON使用同目录临时文件原子替换，只有当轮存在JSON才打印读回。未据此声称所有历史执行已验证。",
+      "evidence": [
+        "workspace/harbor_task/tests/test.sh:13-32",
+        "workspace/harbor_task/tests/grader.py:89-120",
+        "workspace/harbor_task/tests/grader.py:152-155"
+      ],
+      "findings": []
+    },
+    {
+      "id": "QA10",
+      "section": "core",
+      "scope": "冻结资产可信恢复/只读边界",
+      "guidance": "固定trusted目录/digest探针非必交",
+      "status": "pass",
+      "summary": "公开资产、Starter和公开评测器在非root Work环境设为只读；独立Verifier自带冻结策略和校准，守卫核对固定源码AST和配置。未实测平台文件系统隔离。",
+      "evidence": [
+        "workspace/harbor_task/environment/Dockerfile:36-58",
+        "workspace/harbor_task/tests/Dockerfile:26-35",
+        "workspace/harbor_task/tests/contract_guard.py:898-929",
+        "workspace/harbor_task/tests/contract_guard.py:152-173"
+      ],
+      "findings": []
+    },
+    {
+      "id": "QA11",
+      "section": "core",
+      "scope": "实际guard限制反查公开合同",
+      "guidance": "非影响合法方案的内部细节非必公开",
+      "status": "fail",
+      "summary": "staged数值方案可用模块的导入范围未在公开合同明确，守卫实质执行严格白名单，导致合法数值实现被拒。",
+      "evidence": [
+        "workspace/harbor_task/instruction.md:91-95",
+        "workspace/harbor_task/tests/contract_guard.py:796-810",
+        "workspace/harbor_task/tests/contract_guard.py:930-941",
+        "workspace/harbor_task/tests/grader.py:152-164",
+        "workspace/harbor_task/tests/contract_guard.py:666-675"
+      ],
+      "findings": [
+        {
+          "rule": "task_contract",
+          "reason": "题面开放staged数值辅助函数，却未列实际导入白名单；守卫只批准特定torch/math/numeric_api导入，普通numpy数值实现也无条件UNSUPPORTED、−10，限制影响公开合法方法。",
+          "remediation": "公开与实际守卫一致的staged数值模块导入限制，或调整守卫以支持题面允许的数值实现。",
+          "responsibility": "author",
+          "evidence": [
+            "workspace/harbor_task/instruction.md:91-95",
+            "workspace/harbor_task/tests/contract_guard.py:796-810",
+            "workspace/harbor_task/tests/contract_guard.py:930-941",
+            "workspace/harbor_task/tests/grader.py:152-164",
+            "workspace/harbor_task/tests/contract_guard.py:666-675"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "QA12",
+      "section": "core",
+      "scope": "公开版本库/构建层私有信息",
+      "guidance": "仅.git存在或未清全部历史非自动失败",
+      "status": "pass",
+      "summary": "Work构建仅复制公开资产、Starter和公开评测器；私有评分标签由独立tests镜像复制。索引中Work构建上下文未发现.git，私有二进制按清单和用途核对，未解码。未声称部署平台或所有历史完全审计。",
+      "evidence": [
+        "workspace/harbor_task/environment/Dockerfile:36-45",
+        "workspace/harbor_task/tests/Dockerfile:26-34",
+        "workspace/harbor_task/instruction.md:99-114"
+      ],
+      "findings": []
+    },
+    {
+      "id": "QA13",
+      "section": "core",
+      "scope": "合法Starter、真实可解可提升及项目校准",
+      "guidance": "G03全seed/样本3sigma/Reference区间保留；固定B-R目录不作门",
+      "status": "pass",
+      "summary": "当前Starter接口及评分公式可静态对应B零点；所声明B/R原值提升与3σ和Reference区间的算术满足项目门。旧运行源码/候选对应存在矛盾，已在G03保留阻断；未执行Starter或宣称当前版本完成全seed。",
+      "evidence": [
+        "workspace/harbor_task/environment/starter/train.py:30-62",
+        "optimization_evidence/formal_test_scoring_declared.json:1-155",
+        "optimization_evidence/comparison_summary.json:1-61",
+        "workspace/harbor_task/tests/calibration.json:1-49",
+        "workspace/harbor_task/tests/grader.py:170-245",
+        "optimization_evidence/EVIDENCE_PROVENANCE.md:8-16"
+      ],
+      "findings": []
+    },
+    {
+      "id": "QA14",
+      "section": "core",
+      "scope": "延续项目真实方法空间与持续空间分析",
+      "guidance": "G01方法空间必需；快速满分/headroom等其余高级不足不作为额外验收义务，无独立饱和阈值",
+      "status": "pass",
+      "summary": "题面开放损失、辅助目标、训练安排和推断读出；守卫在受控方法接口中允许本地函数和多种张量与损失操作，提供的不只是固定数值超参数搜索。该结论只覆盖源码允许的空间，不认证运行时表现。",
+      "evidence": [
+        "workspace/harbor_task/instruction.md:38-47",
+        "workspace/harbor_task/instruction.md:81-95",
+        "workspace/harbor_task/tests/contract_guard.py:444-514",
+        "workspace/harbor_task/tests/contract_guard.py:549-605"
+      ],
+      "findings": []
+    },
+    {
+      "id": "QA15",
+      "section": "core",
+      "scope": "资源上限/正式单seed2h多seed8h及Dev整链2h",
+      "guidance": "真实并发/共享deadline核算；未知到卡/无实际size不猜FAIL，不机械相加timeout",
+      "status": "pass",
+      "summary": "任务声明两图训练共享7200秒、reload不在此预算内；实际公开整链仍需遵守2小时，正式单seed及多seed分别为2小时和8小时。Starter每图timeout默认3600秒，不机械相加为实际耗时；旧字节公开训练与评测有记录，当前迁移版本只读到训练及独立reload，未验证当前公开评测整链或平台运行。未发现可触发的确定超预算分支，不将未认证视作超时。",
+      "evidence": [
+        "workspace/harbor_task/instruction.md:59-79",
+        "workspace/harbor_task/task.toml:30-34",
+        "expert_evidence/repair/original_v7_current_bytes/seed/events.jsonl:1-7",
+        "expert_evidence/repair/current_source_revalidation/reference_seed_3000_cora/run.log:1-7",
+        "expert_evidence/repair/current_source_revalidation/reference_seed_3000_citeseer/run.log:1-7",
+        "expert_evidence/repair/current_source_revalidation/reference_seed_3000_cora/reload.log:1-7",
+        "expert_evidence/repair/current_source_revalidation/reference_seed_3000_citeseer/reload.log:1-7"
+      ],
+      "findings": []
+    },
+    {
+      "id": "QA16",
+      "section": "core",
+      "scope": "已有实际有效时长事实",
+      "guidance": "旧两轨10h/7h无当前来源",
+      "status": "not_applicable",
+      "summary": "此历史研究时长项不属于当前验收要求。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "QA17",
+      "section": "core",
+      "scope": "Harbor当前必需事实汇总",
+      "guidance": "只聚合H01-H05当前必需事实；不传播未核验旧child或其余高级不作为额外验收义务",
+      "status": "pass",
+      "summary": "汇总Harbor路径的源码审查：Oracle入口、提交移交、两侧独立构建、评分分支和tests供给已核；平台构建、隔离、消费、中断和正式评分未实测。",
+      "evidence": [
+        "workspace/harbor_task/solution/solve.sh:10-19",
+        "workspace/harbor_task/task.toml:17-18",
+        "workspace/harbor_task/environment/Dockerfile:36-45",
+        "workspace/harbor_task/tests/Dockerfile:26-42",
+        "workspace/harbor_task/tests/test.sh:13-32",
+        "workspace/harbor_task/tests/grader.py:152-168"
+      ],
+      "findings": []
+    },
+    {
+      "id": "QA18",
+      "section": "core",
+      "scope": "相关会话行为/候选/成绩",
+      "guidance": "固定两模型/最高档/八字段不作为额外验收义务",
+      "status": "pass",
+      "summary": "相关轮次摘要记录Seed第43轮保留71.4、Codex第183轮保留66.7，之后均有同分；Seed旧字节复验71.1，迁移后当前单seed公开Dev为71.2，并非原分或正式Hidden。旧完整方法摘要及部分会话映射不齐，不能认证全部历史轮次来源。",
+      "evidence": [
+        "expert_evidence/trajectory_seed.json#/rounds/42",
+        "expert_evidence/trajectory_seed.json#/rounds/43",
+        "expert_evidence/trajectory_codex.json#/rounds/182",
+        "expert_evidence/trajectory_codex.json#/rounds/183",
+        "expert_evidence/repair/original_v7_current_bytes/seed/summary.json:16-33",
+        "expert_evidence/best_method_selection.json:30-73",
+        "expert_evidence/repair/historical_timing_mapping/report.txt:1-25",
+        "expert_evidence/repair/historical_timing_mapping/report.txt:30-59"
+      ],
+      "findings": []
+    },
+    {
+      "id": "QA19",
+      "section": "core",
+      "scope": "实际随机性/提升协议与项目校准一致",
+      "guidance": "既有G03校准保留；不强制题面复写全部统计细节，不另加固定5次",
+      "status": "pass",
+      "summary": "声明随机seed为3000/3001/3002，B/R逐seed同split配对，按B样本标准差而非标准误或配对差求3σ；结果提升8.4333、约4.0189σ。记录为作者自报CPU运行，不冒称平台运行；候选身份矛盾单列G03。",
+      "evidence": [
+        "optimization_evidence/formal_test_scoring_declared.json:1-155",
+        "optimization_evidence/comparison_summary.json:1-61",
+        "expert_evidence/repair/v23b_pre_registration.json:46-65",
+        "optimization_evidence/EVIDENCE_PROVENANCE.md:8-16"
+      ],
+      "findings": []
+    },
+    {
+      "id": "QA20",
+      "section": "core",
+      "scope": "可改/网络工具及私有边界",
+      "guidance": "L1所有文字禁令；unknown本身非失败",
+      "status": "pass",
+      "summary": "题面限定可修改训练方法与只读资产、禁止访问私有标签和外查干净标签，说明任务自身不保证网络隔离；Work和独立Verifier按各自Dockerfile供给公开及私有资产。未证实运行平台网络隔离，不以unknown判断失败。",
+      "evidence": [
+        "workspace/harbor_task/instruction.md:38-49",
+        "workspace/harbor_task/instruction.md:99-119",
+        "workspace/harbor_task/environment/Dockerfile:36-45",
+        "workspace/harbor_task/tests/Dockerfile:26-34"
+      ],
+      "findings": []
+    },
+    {
+      "id": "QA21",
+      "section": "core",
+      "scope": "本题/候选/评分真实身份",
+      "guidance": "四hash/新receipt/八字段必交不作为额外验收义务",
+      "status": "pass",
+      "summary": "Seed最佳方法迁移后的候选与单seed公开复验以方法名和输入清单对应；本机DREAM smoke是另一Oracle运行，非该候选正式分数。B/R方法source_sha256为空，且运行树同时逐字节等于两份不同现源的来源声明不成立；不因此认证旧运行源码身份或等价，也不推定伪造。",
+      "evidence": [
+        "expert_evidence/best_method_selection.json:1-8",
+        "expert_evidence/best_method_selection.json:30-73",
+        "expert_evidence/repair/current_source_revalidation/input_manifest.json:1-20",
+        "expert_evidence/repair/v25_oracle_smoke_evidence.json:3-11",
+        "optimization_evidence/EVIDENCE_PROVENANCE.md:8-16",
+        "optimization_evidence/baseline_runs/seed_3000/model/artifact.json:35-40",
+        "optimization_evidence/reference_runs/seed_3000/model/artifact.json:35-40",
+        "workspace/harbor_task/tests/contract_policy.json:19-34"
+      ],
+      "findings": []
+    },
+    {
+      "id": "T01",
+      "section": "core",
+      "scope": "相关主要轨迹的真实方法/候选/分数",
+      "guidance": "不要求固定两轨/模型/10h；L2实质多方法默认不作为额外验收义务",
+      "status": "pass",
+      "summary": "Seed轨迹第43轮记录71.4并保留，第44轮亦为71.4但未保留；选中身份是第43轮经兼容迁移的版本，非唯一最高数值。迁移后的公开单seed复验71.2与历史71.4不是同一运行或正式Hidden成绩，轨迹为轮次摘要而非完整会话。",
+      "evidence": [
+        "expert_evidence/trajectory_seed.json#/rounds/42",
+        "expert_evidence/trajectory_seed.json#/rounds/43",
+        "expert_evidence/best_method_selection.json:30-70",
+        "expert_evidence/repair/current_source_revalidation/comparison_public.json:1-34"
+      ],
+      "findings": []
+    },
+    {
+      "id": "T02",
+      "section": "core",
+      "scope": "相关其余轨迹/恢复重试及真实比较",
+      "guidance": "无第二轨不等于缺L0；声称独立却造假仍L0",
+      "status": "pass",
+      "summary": "Codex轨迹第183轮66.7被保留，第184与193轮同分未刷新；Seed旧字节首轮退出137且OOMKilled=false、原因未确定，独立重试未复用输出并得到公开71.1，与历史71.4不一致，不能写成匹配或正式Hidden成绩。",
+      "evidence": [
+        "expert_evidence/trajectory_codex.json#/rounds/182",
+        "expert_evidence/trajectory_codex.json#/rounds/183",
+        "expert_evidence/trajectory_codex.json#/rounds/192",
+        "expert_evidence/repair/original_v7_current_bytes/seed/summary.json:10-34",
+        "expert_evidence/repair/original_v7_current_bytes/seed/events.jsonl:1-7"
+      ],
+      "findings": []
+    },
+    {
+      "id": "F01",
+      "section": "format",
+      "scope": "任务核心文件/有效接口",
+      "guidance": "固定workspace/harbor_task布局不作为额外验收义务",
+      "status": "pass",
+      "summary": "题面声明目标、候选接口和提交路径；配置标识任务、移交目录及独立评分环境，tests入口调用评分器，solution/solve.sh调用包内Oracle训练入口。这里只检查现有源码与接口。",
+      "evidence": [
+        "workspace/harbor_task/instruction.md:6-12",
+        "workspace/harbor_task/instruction.md:120-129",
+        "workspace/harbor_task/task.toml:17-29",
+        "workspace/harbor_task/task.toml:50-60",
+        "workspace/harbor_task/tests/test.sh:22-32",
+        "workspace/harbor_task/solution/solve.sh:10-19"
+      ],
+      "findings": []
+    },
+    {
+      "id": "F02",
+      "section": "format",
+      "scope": "实际构建/镜像与COPY可见性",
+      "guidance": "固定构建路径/必须Dockerfile非独立门",
+      "status": "pass",
+      "summary": "实际Work与Verifier Dockerfile分别声明Python镜像及依赖；Work COPY公开数据、Starter和公开评测器，独立tests COPY评分与私有数据。配置指定separate；未验证实构建或镜像发布。",
+      "evidence": [
+        "workspace/harbor_task/environment/Dockerfile:9-45",
+        "workspace/harbor_task/tests/Dockerfile:17-34",
+        "workspace/harbor_task/task.toml:43-60"
+      ],
+      "findings": []
+    },
+    {
+      "id": "F03",
+      "section": "format",
+      "scope": "评分入口/独立依赖/输出",
+      "guidance": "第二评分Dockerfile非必交",
+      "status": "pass",
+      "summary": "独立Verifier由tests镜像安装自身numpy及CPU torch依赖并复制评分器、校准和私有资产；test.sh调用grader并仅保留正式reward.json。此为交付与源码核查，不表示已在目标平台构建运行。",
+      "evidence": [
+        "workspace/harbor_task/task.toml:50-60",
+        "workspace/harbor_task/tests/Dockerfile:17-34",
+        "workspace/harbor_task/tests/requirements.txt:1-8",
+        "workspace/harbor_task/tests/test.sh:13-30"
+      ],
+      "findings": []
+    },
+    {
+      "id": "F04",
+      "section": "format",
+      "scope": "artifacts真实移交",
+      "guidance": "固定receipt/全工作区移交非必交",
+      "status": "pass",
+      "summary": "配置声明移交/workspace/solution，入口在其中按图生成artifacts，评分器读取同一路径的预测和模型；该结论仅覆盖配置和源码路径，不冒称平台已实传。",
+      "evidence": [
+        "workspace/harbor_task/task.toml:17-18",
+        "workspace/harbor_task/solution/run.sh:14-29",
+        "workspace/harbor_task/tests/grader.py:170-181"
+      ],
+      "findings": []
+    },
+    {
+      "id": "F05",
+      "section": "format",
+      "scope": "公开Dev与私有边界",
+      "guidance": "不按目录名认定隔离",
+      "status": "pass",
+      "summary": "Work镜像复制公开图与公开评测器；公开评测读取公开验证标签和val_pred，而独立Verifier镜像单独复制private并对test_pred评分。仅核实际构建和读取路径，不声称已实测平台隔离。",
+      "evidence": [
+        "workspace/harbor_task/environment/Dockerfile:36-45",
+        "workspace/harbor_task/environment/public_eval/evaluate.py:22-28",
+        "workspace/harbor_task/environment/public_eval/evaluate.py:38-54",
+        "workspace/harbor_task/tests/Dockerfile:26-34",
+        "workspace/harbor_task/tests/grader.py:212-219"
+      ],
+      "findings": []
+    },
+    {
+      "id": "F06",
+      "section": "format",
+      "scope": "separate及实际目标资源",
+      "guidance": "仅旧Compose文件/关键词不自动门；已确认任务另起或使用额外计算工作环境仍按当前平台边界",
+      "status": "pass",
+      "summary": "配置采用separate Verifier，Work及Verifier各分配16 CPU、64GB和零GPU；当前入口以包内依赖及公开资产训练，评分在独立环境进行。此为配置和调用链审查，未认证平台实际调度。",
+      "evidence": [
+        "workspace/harbor_task/task.toml:43-60",
+        "workspace/harbor_task/solution/run.sh:6-33",
+        "workspace/harbor_task/environment/Dockerfile:20-45",
+        "workspace/harbor_task/tests/Dockerfile:17-34"
+      ],
+      "findings": []
+    },
+    {
+      "id": "F07",
+      "section": "format",
+      "scope": "当前实现与数据完整性",
+      "guidance": "未用理论漏洞高级不作为额外验收义务，当前错分/泄漏仍L0",
+      "status": "pass",
+      "summary": "现有评分实际读取两个预测并比较私有标签，公开与私有资产分别供给；预测产出来源未由评分器认证，不据此单独推定作弊或当前错分。",
+      "evidence": [
+        "workspace/harbor_task/tests/grader.py:170-180",
+        "workspace/harbor_task/tests/grader.py:200-245",
+        "workspace/harbor_task/environment/Dockerfile:36-45",
+        "workspace/harbor_task/tests/Dockerfile:26-34",
+        "workspace/harbor_task/instruction.md:81-87"
+      ],
+      "findings": []
+    },
+    {
+      "id": "CS03",
+      "section": "current_standard",
+      "scope": "唯一正式reward文件",
+      "guidance": "所有题统一，无旧双文件例外",
+      "status": "pass",
+      "summary": "当前评分源码仅写reward.json；入口清理历史reward.txt并只读回JSON。仅源码范围，未执行Harbor。",
+      "evidence": [
+        "workspace/harbor_task/tests/grader.py:89-120",
+        "workspace/harbor_task/tests/test.sh:13-32"
+      ],
+      "findings": []
+    },
+    {
+      "id": "CS04",
+      "section": "current_standard",
+      "scope": "JSON主reward/有限数值/读取链",
+      "guidance": "历史坏记录不能误作当前",
+      "status": "pass",
+      "summary": "当前writer以reward为数值主键写唯一JSON；精确率由非空标签比较所得，锚点和归一化输入检查有限且B<U，入口读回JSON并传播退出状态。仅审源码，不冒称本版本已在平台执行。",
+      "evidence": [
+        "workspace/harbor_task/tests/grader.py:111-120",
+        "workspace/harbor_task/tests/grader.py:212-245",
+        "workspace/harbor_task/tests/contract_guard.py:55-80",
+        "workspace/harbor_task/tests/test.sh:22-32",
+        "workspace/harbor_task/tests/calibration.json:1-9"
+      ],
+      "findings": []
+    },
+    {
+      "id": "CS05",
+      "section": "current_standard",
+      "scope": "指定退出主Agent≥51responses",
+      "guidance": "主动完成不套，工具/实验/子Agent不计",
+      "status": "not_applicable",
+      "summary": "仅自动交卷/超时退出适用主Agent至少51条response；本包轮次摘要和被杀/重启说明未证明最终退出类型，也不含主Agent response计数。不能把53/193实验轮或闭合session数冒充response；此条件适用性和计数未认证。",
+      "evidence": [
+        "expert_evidence/run_summary.json:9-53",
+        "expert_evidence/repair/historical_timing_mapping/report.txt:1-25",
+        "expert_evidence/repair/historical_timing_mapping/report.txt:30-59"
+      ],
+      "findings": []
+    },
+    {
+      "id": "A01",
+      "section": "supplement",
+      "scope": "运行与候选成绩对应",
+      "guidance": "只按原A报告条件，不能抹去其他L0",
+      "status": "pass",
+      "summary": "保留实际候选和成绩差异：历史Seed 71.4、旧字节复验71.1、迁移后当前源码公开复验71.2分别为不同记录；DREAM本机smoke另属Oracle而非Seed正式Hidden成绩。不能把当前复验或源身份差异涂改成历史同一成绩。",
+      "evidence": [
+        "expert_evidence/best_method_selection.json:30-73",
+        "expert_evidence/repair/original_v7_current_bytes/seed/summary.json:16-33",
+        "expert_evidence/repair/current_source_revalidation/input_manifest.json:1-20",
+        "expert_evidence/repair/v25_oracle_smoke_evidence.json:3-11"
+      ],
+      "findings": []
+    },
+    {
+      "id": "A02",
+      "section": "supplement",
+      "scope": "实际越界行为",
+      "guidance": "请求/理论攻击不等于成功；静态L0缺陷另查",
+      "status": "pass",
+      "summary": "已核历史Reference确曾使用验证标签训练，记录明确invalid不得采纳；当前DREAM方法代码使用训练噪声标签构建信号。旧Seed适配器暴露合并标签但记录称目标只取训练位置，不能仅凭暴露断言实际读取或由重评分认证来源干净；相关历史不利事实保留。",
+      "evidence": [
+        "optimization_evidence/historical_v7_invalid_reference/comparison_summary.json:75-80",
+        "workspace/harbor_task/solution/predictor/DREAM_Predictor.py:69-83",
+        "workspace/harbor_task/solution/predictor/DREAM_Predictor.py:475-500",
+        "expert_evidence/repair/standalone_migration_history.json:9-16"
+      ],
+      "findings": []
+    },
+    {
+      "id": "A03",
+      "section": "supplement",
+      "scope": "承诺与实际执行冲突",
+      "guidance": "保留原A排除，不取消QA11 L0",
+      "status": "fail",
+      "summary": "反查公开合同发现nonlocal和staged导入限制不完整；实际静态拒绝及−10为题面与执行冲突，详见QA05/QA11。",
+      "evidence": [
+        "workspace/harbor_task/instruction.md:38-49",
+        "workspace/harbor_task/instruction.md:81-87",
+        "workspace/harbor_task/instruction.md:91-95",
+        "workspace/harbor_task/tests/contract_guard.py:549-565",
+        "workspace/harbor_task/tests/contract_guard.py:796-810",
+        "workspace/harbor_task/tests/contract_guard.py:930-941",
+        "workspace/harbor_task/tests/grader.py:152-164"
+      ],
+      "findings": [
+        {
+          "rule": "task_contract",
+          "reason": "公开方法边界未列nonlocal与staged数值导入白名单，而守卫会拒绝这些静态数值写法并由评分器计−10。",
+          "remediation": "使公开方法合同与实际影响合法方案的AST及导入限制一致。",
+          "responsibility": "author",
+          "evidence": [
+            "workspace/harbor_task/instruction.md:38-49",
+            "workspace/harbor_task/instruction.md:81-87",
+            "workspace/harbor_task/instruction.md:91-95",
+            "workspace/harbor_task/tests/contract_guard.py:549-565",
+            "workspace/harbor_task/tests/contract_guard.py:796-810",
+            "workspace/harbor_task/tests/contract_guard.py:930-941",
+            "workspace/harbor_task/tests/grader.py:152-164"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "A04",
+      "section": "supplement",
+      "scope": "优化对象参与评分",
+      "guidance": "具体完全未用，不按权重小推定",
+      "status": "pass",
+      "summary": "公开优化目标为两图宏平均准确率；Verifier实际读取两图预测并与私有标签比较后等权平均归一化，不能以模型加载门误称优化对象未参与。",
+      "evidence": [
+        "workspace/harbor_task/tests/grader.py:170-180",
+        "workspace/harbor_task/tests/grader.py:200-245",
+        "workspace/harbor_task/instruction.md:133-139"
+      ],
+      "findings": []
+    },
+    {
+      "id": "A05",
+      "section": "supplement",
+      "scope": "承诺工具/数据/目录可用",
+      "guidance": "真实失败/源码必然，unknown不假定失败",
+      "status": "pass",
+      "summary": "源码及索引显示公开两图、Starter与评测器由Work镜像供给，私有标签及评分器由Verifier镜像供给；公开评测器实际读取验证预测与公开标签。未实测镜像构建或平台挂载。",
+      "evidence": [
+        "workspace/harbor_task/environment/Dockerfile:36-45",
+        "workspace/harbor_task/tests/Dockerfile:26-34",
+        "workspace/harbor_task/environment/public_eval/evaluate.py:22-62"
+      ],
+      "findings": []
+    },
+    {
+      "id": "A06",
+      "section": "supplement",
+      "scope": "私有内容可见/重建与用途",
+      "guidance": "具体内容/路径/正式目标用途，相关事实定点复核",
+      "status": "pass",
+      "summary": "公开构建侧供给公开资产、Verifier独立持有私有测试标签；已读历史记录仅证旧Reference使用了评价专用验证标签，并未据此推定Solver取得私有测试标签。未解码私有负载，也未认证不可见会话。",
+      "evidence": [
+        "workspace/harbor_task/environment/Dockerfile:36-45",
+        "workspace/harbor_task/tests/Dockerfile:26-34",
+        "optimization_evidence/historical_v7_invalid_reference/comparison_summary.json:75-80",
+        "expert_evidence/repair/historical_timing_mapping/report.txt:1-4"
+      ],
+      "findings": []
+    },
+    {
+      "id": "B-C01",
+      "section": "supplement",
+      "scope": "实际Runner可定位有效任务",
+      "guidance": "固定workspace路径/全包仅一TOML旧规则不作为额外验收义务",
+      "status": "pass",
+      "summary": "题包给出任务配置、任务说明、独立Verifier与Oracle入口，配置包含可移交目录及环境资源；仅确认当前包可定位和源码约定，不声称平台实跑。",
+      "evidence": [
+        "workspace/harbor_task/task.toml:17-26",
+        "workspace/harbor_task/task.toml:43-60",
+        "workspace/harbor_task/tests/test.sh:19-24",
+        "workspace/harbor_task/solution/solve.sh:10-19"
+      ],
+      "findings": []
+    },
+    {
+      "id": "B-C02",
+      "section": "supplement",
+      "scope": "真实镜像/构建和资产",
+      "guidance": "禁止源包docker_image/必须Dockerfile旧规则不作为额外验收义务",
+      "status": "pass",
+      "summary": "当前Work和Verifier分别由各自Dockerfile构建并复制公开资产与私有测试资产；索引中两图公开实体及两份私有实体均存在。旧NOP仅绑定旧版本，不是当前构建实跑或实际镜像大小证明；部署平台构建和大小仍属未实测范围。",
+      "evidence": [
+        "workspace/harbor_task/environment/Dockerfile:20-45",
+        "workspace/harbor_task/tests/Dockerfile:17-34",
+        "workspace/harbor_task/environment/public_assets/manifest.json:2-29",
+        "expert_evidence/repair/harbor/native_nop_trial/VERSION_BINDING.md:13-19"
+      ],
+      "findings": []
+    },
+    {
+      "id": "B-C03",
+      "section": "supplement",
+      "scope": "非npm依赖实际使用生态官方源",
+      "guidance": "延续平台third_party_source必需（算法scope）；已有批准替代接受，模型资产/内部镜像不误当包源",
+      "status": "pass",
+      "summary": "两个构建脚本的默认Python包源为官方PyPI与PyTorch CPU索引；requirements和constraints限定所需依赖。该结论限于源码默认构建配置，未声称核验实际构建网络。",
+      "evidence": [
+        "workspace/harbor_task/environment/Dockerfile:22-34",
+        "workspace/harbor_task/tests/Dockerfile:1-24",
+        "workspace/harbor_task/environment/requirements.txt:1-17",
+        "workspace/harbor_task/tests/requirements.txt:1-8"
+      ],
+      "findings": []
+    },
+    {
+      "id": "B-C04",
+      "section": "supplement",
+      "scope": "实际npm生效registry为指定bnpm",
+      "guidance": "延续平台third_party_source必需（算法scope）；批准替代/等效配置接受，无npm不适用",
+      "status": "not_applicable",
+      "summary": "当前Work和Verifier Docker构建链使用apt和pip，题包任务目录未见npm包管理清单；未发现实际npm安装链，本项不适用。未执行镜像构建。",
+      "evidence": [
+        "workspace/harbor_task/environment/Dockerfile:9-34",
+        "workspace/harbor_task/tests/Dockerfile:3-24",
+        "workspace/harbor_task/environment/requirements.txt:8-17",
+        "workspace/harbor_task/tests/requirements.txt:1-8"
+      ],
+      "findings": []
+    },
+    {
+      "id": "B-E01",
+      "section": "supplement",
+      "scope": "工作目录可写",
+      "guidance": "正常预算截止/模型拒绝/缺摘要不是作者代码失败；1h无分暂缓；确证当前环境故障按控制方处理",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-E02",
+      "section": "supplement",
+      "scope": "HOME/临时/日志/PID权限",
+      "guidance": "正常预算截止/模型拒绝/缺摘要不是作者代码失败；1h无分暂缓；确证当前环境故障按控制方处理",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-E03",
+      "section": "supplement",
+      "scope": "Agent超时终态",
+      "guidance": "正常预算截止/模型拒绝/缺摘要不是作者代码失败；1h无分暂缓；确证当前环境故障按控制方处理",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-E04",
+      "section": "supplement",
+      "scope": "其他非零Agent退出",
+      "guidance": "正常预算截止/模型拒绝/缺摘要不是作者代码失败；1h无分暂缓；确证当前环境故障按控制方处理",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-E05",
+      "section": "supplement",
+      "scope": "模型安全拒绝",
+      "guidance": "正常预算截止/模型拒绝/缺摘要不是作者代码失败；1h无分暂缓；确证当前环境故障按控制方处理",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-E06",
+      "section": "supplement",
+      "scope": "终态与原生摘要",
+      "guidance": "正常预算截止/模型拒绝/缺摘要不是作者代码失败；1h无分暂缓；确证当前环境故障按控制方处理",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-E07",
+      "section": "supplement",
+      "scope": "健康检查",
+      "guidance": "正常预算截止/模型拒绝/缺摘要不是作者代码失败；1h无分暂缓；确证当前环境故障按控制方处理",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-E08",
+      "section": "supplement",
+      "scope": "环境/cgroup创建",
+      "guidance": "正常预算截止/模型拒绝/缺摘要不是作者代码失败；1h无分暂缓；确证当前环境故障按控制方处理",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-E09",
+      "section": "supplement",
+      "scope": "sandbox生命周期",
+      "guidance": "正常预算截止/模型拒绝/缺摘要不是作者代码失败；1h无分暂缓；确证当前环境故障按控制方处理",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-ENV",
+      "section": "supplement",
+      "scope": "必要平台变量注入",
+      "guidance": "仅记名称/存在/环节不读值，平台责任不转专家",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-GPU",
+      "section": "supplement",
+      "scope": "实际GPU初始化/路由",
+      "guidance": "未知到卡无新证明；已有实际不相容故障仍查",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-P01",
+      "section": "supplement",
+      "scope": "镜像仓库不可达",
+      "guidance": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-P02",
+      "section": "supplement",
+      "scope": "APT下载403/连带签名",
+      "guidance": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-P03",
+      "section": "supplement",
+      "scope": "Python分发/环境兼容",
+      "guidance": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-P04",
+      "section": "supplement",
+      "scope": "镜像引用/授权",
+      "guidance": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-P05",
+      "section": "supplement",
+      "scope": "Git访问/锁/推送",
+      "guidance": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-P06",
+      "section": "supplement",
+      "scope": "发布包结构/归档损坏",
+      "guidance": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-P07",
+      "section": "supplement",
+      "scope": "wheel下载/代理",
+      "guidance": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-P08",
+      "section": "supplement",
+      "scope": "镜像层上传会话",
+      "guidance": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-P09",
+      "section": "supplement",
+      "scope": "模型/公开资产下载",
+      "guidance": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-P10",
+      "section": "supplement",
+      "scope": "npm代理407",
+      "guidance": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-P11",
+      "section": "supplement",
+      "scope": "manifest/digest/代理",
+      "guidance": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-P12",
+      "section": "supplement",
+      "scope": "context/COPY/ignore缺资产",
+      "guidance": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-P13",
+      "section": "supplement",
+      "scope": "APT100无首因",
+      "guidance": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-P14",
+      "section": "supplement",
+      "scope": "APT锁版本不可用",
+      "guidance": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-P15",
+      "section": "supplement",
+      "scope": "Python依赖冲突",
+      "guidance": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-P16",
+      "section": "supplement",
+      "scope": "准备脚本/校验失败",
+      "guidance": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-P17",
+      "section": "supplement",
+      "scope": "证书临时目录",
+      "guidance": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-P18",
+      "section": "supplement",
+      "scope": "评分资产/锚点装配",
+      "guidance": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-P19",
+      "section": "supplement",
+      "scope": "源包读取权限",
+      "guidance": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-P20",
+      "section": "supplement",
+      "scope": "bootstrap解释器",
+      "guidance": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-P21",
+      "section": "supplement",
+      "scope": "sudoers语法",
+      "guidance": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-P22",
+      "section": "supplement",
+      "scope": "Hub429",
+      "guidance": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-P23",
+      "section": "supplement",
+      "scope": "用户UID冲突",
+      "guidance": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-P24",
+      "section": "supplement",
+      "scope": "sudo下载无首因",
+      "guidance": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-P25",
+      "section": "supplement",
+      "scope": "依赖哈希不匹配",
+      "guidance": "只以当前确证且影响正常准备/评分的故障按L0；无日志/历史已恢复仅scope，不新增证明",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-S01",
+      "section": "supplement",
+      "scope": "正式评分产物/读取路径",
+      "guidance": "已确认当前错误按L0；单纯1h无分/未交日志不新增门，历史scope不冒充当前",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-S02",
+      "section": "supplement",
+      "scope": "Verifier下载/归档/回传",
+      "guidance": "已确认当前错误按L0；单纯1h无分/未交日志不新增门，历史scope不冒充当前",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    },
+    {
+      "id": "B-S03",
+      "section": "supplement",
+      "scope": "权威主分有限数值",
+      "guidance": "已确认当前错误按L0；单纯1h无分/未交日志不新增门，历史scope不冒充当前",
+      "status": "not_applicable",
+      "summary": "本诊断分类仅在本次存在相关实际故障/适用证据时使用，不要求添加无问题评语。",
+      "evidence": [],
+      "findings": []
+    }
+  ],
+  "engineering": {
+    "score_paths": {
+      "summary": "按现有源码追踪正常、候选拒绝、可信故障和外部中断四路径；当前输出仅为源码范围结论，未把旧版合成场景当成当前平台实跑。",
+      "evidence": [
+        "workspace/harbor_task/tests/test.sh:13-32",
+        "workspace/harbor_task/tests/grader.py:89-149",
+        "workspace/harbor_task/tests/grader.py:152-168",
+        "workspace/harbor_task/tests/grader.py:200-259"
+      ],
+      "details": "隔离解释器加载可信评分逻辑；奖励在结束时原子提交，启动时清理旧输出，test.sh传播grader状态。实际平台信号传播和结果收集尚未实测。",
+      "branches": {
+        "valid_candidate": {
+          "summary": "有效模型及整数非退化预测通过后，与私有标签比较两图准确率并归一化。",
+          "evidence": [
+            "workspace/harbor_task/tests/grader.py:170-245"
+          ],
+          "outcome": "仅写reward.json的数值reward并返回0"
+        },
+        "candidate_rejected": {
+          "summary": "守卫拒绝、模型缺失或预测格式和质量错误均落候选错误分支并提供定位。",
+          "evidence": [
+            "workspace/harbor_task/tests/grader.py:53-85",
+            "workspace/harbor_task/tests/grader.py:123-149",
+            "workspace/harbor_task/tests/grader.py:152-205",
+            "workspace/harbor_task/tests/grader.py:227-232"
+          ],
+          "outcome": "写−10并返回非零"
+        },
+        "trusted_failure": {
+          "summary": "守卫不可用、校准失败、私有标签故障和未预期grader异常分别进入可信错误处理。",
+          "evidence": [
+            "workspace/harbor_task/tests/grader.py:69-75",
+            "workspace/harbor_task/tests/grader.py:123-168",
+            "workspace/harbor_task/tests/grader.py:212-225",
+            "workspace/harbor_task/tests/grader.py:249-255"
+          ],
+          "outcome": "NOT_READY、无正式reward并返回非零"
+        },
+        "interrupted": {
+          "summary": "入口预清旧reward，grader在计算完成后才原子写正式文件，入口返回子进程状态；外部signal及平台收集的具体运行未提供实测。",
+          "evidence": [
+            "workspace/harbor_task/tests/test.sh:13-32",
+            "workspace/harbor_task/tests/grader.py:89-120",
+            "workspace/harbor_task/tests/grader.py:240-245"
+          ],
+          "outcome": "静态核对不显示预写占位分；实际外部中断行为留平台范围"
+        }
+      }
+    },
+    "timeout_budget": {
+      "summary": "题面按两图训练声明7200秒，将reload排除在该训练预算之外；当前Starter每图timeout默认3600秒但可替换入口不由此守卫。已有候选公开复验两图训练加reload约552.86秒，单独的公开评测耗时和完整正式多seed总时仍须核验，不能把此值说成Dev整链实测。",
+      "evidence": [
+        "workspace/harbor_task/instruction.md:59-79",
+        "workspace/harbor_task/environment/starter/run.sh:18-37",
+        "expert_evidence/repair/current_source_revalidation/reference_seed_3000_cora/run.log:6-7",
+        "expert_evidence/repair/current_source_revalidation/reference_seed_3000_cora/reload.log:6-7",
+        "expert_evidence/repair/current_source_revalidation/reference_seed_3000_citeseer/run.log:6-7",
+        "expert_evidence/repair/current_source_revalidation/reference_seed_3000_citeseer/reload.log:6-7"
+      ],
+      "details": "该复验使用CPU、仅公共验证、非Harbor，训练分别248.48和293.49秒，reload分别5.37和5.52秒；复验运行环境Python 3.10和torch-geometric 2.8与交付镜像的Python 3.12及2.6不同。未把timeout上限简单相加，也不把公共验证当作Hidden结果。"
+    },
+    "resource_alignment": {
+      "summary": "任务声明Work和独立Verifier各16 CPU、65536 MB、零GPU，训练两图总预算7200秒；当前源码公开复验为CPU运行，不等同交付镜像的完整Public Dev链或平台实测。",
+      "evidence": [
+        "workspace/harbor_task/task.toml:39-60",
+        "workspace/harbor_task/instruction.md:59-74",
+        "expert_evidence/repair/current_source_revalidation/runtime.json:1-15",
+        "expert_evidence/repair/current_source_revalidation/reference_seed_3000_cora/run.log:6-7",
+        "expert_evidence/repair/current_source_revalidation/reference_seed_3000_citeseer/run.log:6-7"
+      ],
+      "details": "旧NOP使用较小宿主并忽略CPU和内存施加，其资源记录不能证明当前声明资源已部署；当前平台、实际镜像大小及完整反馈耗时未实测，预算上限与具体耗时继续由QA15审定。"
+    },
+    "controls_logs": {
+      "summary": "Starter按图运行train.py并设置默认3600秒timeout、超时退出124；静态守卫检查提交源，Verifier只消费提交工件而不重训。",
+      "evidence": [
+        "workspace/harbor_task/environment/starter/run.sh:14-40",
+        "workspace/harbor_task/instruction.md:64-74",
+        "workspace/harbor_task/tests/grader.py:151-180"
+      ],
+      "details": "该timeout不覆盖独立reload及替代入口，题面明确平台执行未核实；历史公开复验和NOP输出均有各自版本范围，不能冒称当前正式运行。"
+    },
+    "score_scope": {
+      "summary": "选择记录声明Seed第43轮为方法来源，当前源码公开单seed复验71.2；正式Hidden评分和平台受理均未完成，不能将该公开分当作本次正式成绩。",
+      "evidence": [
+        "expert_evidence/best_method_selection.json:2-3",
+        "expert_evidence/best_method_selection.json:30-31",
+        "expert_evidence/best_method_selection.json:62-72",
+        "expert_evidence/repair/protocol_decisions.json:70-72"
+      ],
+      "details": "历史候选成绩、当前源码公开复验与当前正式评分分属不同范围；有公开分不等于正式分有效或平台采用。",
+      "note": "Existing scope evidence only; absent receipt is nonblocking. has_score, score_valid and formal_adoption are separate claims."
+    },
+    "delivery_lineage": {
+      "summary": "明确候选声明为Seed第43轮移植方法，旧NOP仅绑定历史树；现有材料不声明当前字节的平台正式Trial已受理。",
+      "evidence": [
+        "expert_evidence/best_method_selection.json:2-3",
+        "expert_evidence/best_method_selection.json:62-72",
+        "expert_evidence/repair/harbor/native_nop_trial/VERSION_BINDING.md:13-19"
+      ],
+      "details": "不依据时间最新猜正式身份，不用旧NOP替代当前运行回执；候选历史来源和相关越界反证仍须继续审查。",
+      "note": "Optional batch/ledger/QC binding; choose the formal Trial explicitly, not necessarily the newest."
+    }
+  },
+  "delivery_contract": {
+    "groups": {
+      "task_contract": {
+        "status": "pass",
+        "summary": "记录题面目标、方法边界和当前评分器实际提交契约；守卫与全部公开约束的进一步一致性由QA05/QA11继续核查。",
+        "evidence": [
+          "workspace/harbor_task/instruction.md:29-57",
+          "workspace/harbor_task/instruction.md:81-98",
+          "workspace/harbor_task/instruction.md:121-129",
+          "workspace/harbor_task/tests/grader.py:170-245"
+        ],
+        "details": {
+          "goal_metric": {
+            "summary": "最大化Cora和Citeseer隐藏测试节点准确率百分比的等权宏平均，正式reward为(x−B)/(U−B)，无clip。",
+            "evidence": [
+              "workspace/harbor_task/instruction.md:29-35",
+              "workspace/harbor_task/tests/grader.py:234-245",
+              "workspace/harbor_task/tests/contract_guard.py:75-80"
+            ],
+            "guidance": "Record the actual objective, primary metric, formula, aggregation and direction."
+          },
+          "allowed_scope": {
+            "summary": "可在solution支持的方法模块内修改损失、权重、可信节点估计、辅助目标、调度和读出；图及划分、损坏标签、GCN骨干与Adam参数固定，干净验证标签仅供评估。",
+            "evidence": [
+              "workspace/harbor_task/instruction.md:38-57",
+              "workspace/harbor_task/instruction.md:81-95",
+              "workspace/harbor_task/instruction.md:99-108"
+            ],
+            "guidance": "Record the files, algorithms and visible data the agent may change or use."
+          },
+          "submission_contract": {
+            "summary": "提交/workspace/solution，两个图分别提交artifacts/<dataset>/model.pt与test_pred.npy；Verifier要求非空可安全加载的state dict，预测为与私有y_test同shape的整数数组且至少两类。",
+            "evidence": [
+              "workspace/harbor_task/instruction.md:121-128",
+              "workspace/harbor_task/tests/grader.py:170-205",
+              "workspace/harbor_task/tests/grader.py:212-232"
+            ],
+            "guidance": "Record actual submission paths, fields, shapes and the verifier's reader."
+          },
+          "enforced_constraints": {
+            "summary": "公开声明两图训练7200秒、每图默认3600秒，Starter的timeout不覆盖reload或替代入口；守卫检查冻结面及静态方法调用，评分器核模型与预测的存在、shape、dtype及非退化。公开声明自身说明平台预算执行尚未验证。",
+            "evidence": [
+              "workspace/harbor_task/instruction.md:59-79",
+              "workspace/harbor_task/environment/starter/run.sh:18-37",
+              "workspace/harbor_task/tests/contract_guard.py:444-480",
+              "workspace/harbor_task/tests/contract_guard.py:914-941",
+              "workspace/harbor_task/tests/grader.py:170-205",
+              "workspace/harbor_task/tests/grader.py:227-232"
+            ],
+            "guidance": "Read actual deadlines, AST rules, graph/array shapes and compare them to public instructions."
+          },
+          "completion_conditions": {
+            "summary": "正常评分要求守卫和校准可用、两图模型与预测通过质量门，随后与私有标签比较并写单个reward.json；评分器不重训练或重建预测来源。",
+            "evidence": [
+              "workspace/harbor_task/instruction.md:121-128",
+              "workspace/harbor_task/tests/grader.py:152-168",
+              "workspace/harbor_task/tests/grader.py:170-205",
+              "workspace/harbor_task/tests/grader.py:212-245",
+              "workspace/harbor_task/tests/grader.py:111-120"
+            ],
+            "guidance": "Record when a submission is complete and how this agrees with actual scoring."
+          }
+        },
+        "findings": []
+      },
+      "normalization_anchors": {
+        "status": "pass",
+        "summary": "按当前生效评分代码和校准文件记录锚点与公式；U原始来源及历史预登记范围继续由相关资格目标审查，公式事实不代表已独立认证来源。",
+        "evidence": [
+          "workspace/harbor_task/tests/contract_guard.py:55-80",
+          "workspace/harbor_task/tests/calibration.json:1-18",
+          "workspace/harbor_task/tests/grader.py:234-245",
+          "expert_evidence/repair/historical_evidence_assessment.json:3-11"
+        ],
+        "details": {
+          "endpoints": {
+            "summary": "固定B=61.5167、U=75.1333且B<U，公式代入B为0、U为1；此为锚点数值的算术端点，不冒称三次训练的每次Starter成绩均为0。",
+            "evidence": [
+              "workspace/harbor_task/tests/contract_guard.py:55-80",
+              "workspace/harbor_task/tests/calibration.json:1-12"
+            ],
+            "guidance": "Verify starter maps to zero and the stated upper endpoint to one; no new clipping choice is required."
+          },
+          "direction_formula": {
+            "summary": "最大化两图私有测试准确率的非加权均值x，评分为(x−B)/(U−B)，源码没有clip；−10是候选拒绝哨兵。",
+            "evidence": [
+              "workspace/harbor_task/instruction.md:29-36",
+              "workspace/harbor_task/tests/contract_guard.py:75-80",
+              "workspace/harbor_task/tests/grader.py:234-245"
+            ],
+            "guidance": "Record the actual formula and metric direction, including lower-is-better tasks."
+          },
+          "anchor_values": {
+            "summary": "生效校准文件声明B=61.5167为三seed损坏标签GCN均值，U=75.1333为干净标签oracle均值；U的历史原始测试来源曾被明确记为不完整，后续补录与预登记时钟的证据界限仍需另审。",
+            "evidence": [
+              "workspace/harbor_task/tests/calibration.json:1-12",
+              "optimization_evidence/u_anchor_oracle/measurement.json:1-4",
+              "optimization_evidence/u_anchor_oracle/measurement.json:35-46",
+              "expert_evidence/repair/historical_evidence_assessment.json:3-11",
+              "expert_evidence/repair/v25_static_self_review_scope.md:12-17"
+            ],
+            "guidance": "Identify the actual baseline B and upper U consumed by the formal scorer and their provenance."
+          },
+          "protocol_binding": {
+            "summary": "校准协议为robust-node-v8的两图隐藏测试宏均；当前Verifier只读取一个提交预测集，资格全seed统计和Public Dev复验不是该次正式分。题面资格归一化分母100，与正式reward的U不同。",
+            "evidence": [
+              "workspace/harbor_task/tests/calibration.json:1-9",
+              "workspace/harbor_task/instruction.md:133-145",
+              "workspace/harbor_task/tests/grader.py:234-245",
+              "expert_evidence/repair/current_source_revalidation/comparison_public.json:1-34"
+            ],
+            "guidance": "Identify split, scoring protocol and candidate binding; do not subtract values from different splits."
+          },
+          "hardware_calibration": {
+            "summary": "正式指标是固定预测的准确率而非时延、吞吐或固定墙钟；当前未认证平台卡型或交付镜像动态运行，不因设备差异单独推定锚点失效。",
+            "evidence": [
+              "workspace/harbor_task/instruction.md:29-35",
+              "workspace/harbor_task/task.toml:43-60",
+              "expert_evidence/repair/current_source_revalidation/runtime.json:1-15"
+            ],
+            "guidance": "For latency, throughput or fixed wall-clock metrics, check target-hardware formal anchors; missing old records alone do not fail.",
+            "hardware_sensitive": false,
+            "hardware_mismatch_confirmed": false,
+            "formal_anchor_reused": true,
+            "target_protocol_calibrated": null
+          }
+        },
+        "findings": []
+      },
+      "image_dependency_fit": {
+        "status": "pass",
+        "summary": "Work和独立Verifier均声明16 CPU、64 GiB、无GPU，分别定义Python及计算依赖；源码审阅不声称镜像构建、真实部署、跨版本模型加载或镜像大小已经验证。",
+        "evidence": [
+          "workspace/harbor_task/task.toml:39-60",
+          "workspace/harbor_task/environment/Dockerfile:11-36",
+          "workspace/harbor_task/tests/Dockerfile:1-24",
+          "workspace/harbor_task/tests/requirements.txt:1-8"
+        ],
+        "details": {
+          "work": {
+            "summary": "Work镜像采用Python 3.12和CPU torch 2.5.1，带numpy及torch-geometric；当前源码公开复验在CPU上完成训练及reload，但Python和PyG版本不同且非完整Dev链实测。",
+            "evidence": [
+              "workspace/harbor_task/task.toml:39-48",
+              "workspace/harbor_task/environment/Dockerfile:11-36",
+              "workspace/harbor_task/environment/requirements.txt:1-17",
+              "expert_evidence/repair/current_source_revalidation/runtime.json:1-15",
+              "expert_evidence/repair/current_source_revalidation/reference_seed_3000_cora/run.log:6-7",
+              "expert_evidence/repair/current_source_revalidation/reference_seed_3000_citeseer/run.log:6-7"
+            ],
+            "guidance": "Review selected Work resources, image and dependencies against actual compute needs."
+          },
+          "judge": {
+            "summary": "独立Verifier镜像装numpy和CPU torch 2.4.1以读取预测和安全加载模型，内含评分器及私有资产；版本与Work torch 2.5.1不同，构建及跨版本加载尚未由平台验证。",
+            "evidence": [
+              "workspace/harbor_task/task.toml:50-60",
+              "workspace/harbor_task/tests/Dockerfile:1-35",
+              "workspace/harbor_task/tests/requirements.txt:1-8",
+              "workspace/harbor_task/tests/grader.py:176-205"
+            ],
+            "guidance": "Review selected Judge resources, image and dependencies independently of Work."
+          }
+        },
+        "findings": []
+      },
+      "infra_capabilities": {
+        "status": "pass",
+        "summary": "已审评分入口使用隔离Python与独立Verifier，Work采用非root和只读资产；实际镜像及平台网络隔离未运行，不能从源码推定平台支持或失败。",
+        "evidence": [
+          "workspace/harbor_task/tests/test.sh:19-25",
+          "workspace/harbor_task/tests/Dockerfile:17-35",
+          "workspace/harbor_task/environment/Dockerfile:37-58",
+          "workspace/harbor_task/instruction.md:109-118"
+        ],
+        "details": {
+          "dependencies": {
+            "summary": "Verifier入口使用Python隔离模式并加载自有评分器、静态守卫，Dockerfile安装声明依赖；已审实际评分入口没有调用bwrap或Landlock，外部运行时能力仍未知。",
+            "evidence": [
+              "workspace/harbor_task/tests/test.sh:19-25",
+              "workspace/harbor_task/tests/grader.py:53-85",
+              "workspace/harbor_task/tests/Dockerfile:17-35"
+            ],
+            "guidance": "Identify required kernel/infra features such as Landlock or bwrap from their actual call chain."
+          },
+          "environment_compatibility": {
+            "summary": "Work和Verifier独立定义镜像与依赖，既有公开CPU复验运行环境不同于交付镜像；没有当前平台镜像构建或网络隔离实测。",
+            "evidence": [
+              "workspace/harbor_task/environment/Dockerfile:20-34",
+              "workspace/harbor_task/tests/Dockerfile:17-24",
+              "expert_evidence/repair/current_source_revalidation/runtime.json:1-15",
+              "workspace/harbor_task/instruction.md:109-114"
+            ],
+            "guidance": "Use actual environment evidence or existing logs if provided; no new runtime proof is required for source review."
+          },
+          "control_necessity": {
+            "summary": "已审入口采用隔离解释器、不导入候选代码及非root只读资产；并无已证实失败的额外内核控制需要判定替代。HF离线标志不是网络沙箱。",
+            "evidence": [
+              "workspace/harbor_task/tests/test.sh:19-25",
+              "workspace/harbor_task/environment/Dockerfile:45-58",
+              "workspace/harbor_task/instruction.md:109-114"
+            ],
+            "guidance": "Determine whether a failing control is uniquely necessary or an effective alternative exists."
+          }
+        },
+        "findings": []
+      },
+      "batch_acceptance": {
+        "status": "pass",
+        "summary": "现有公开复验、作者本地烟测和旧NOP分别记录；没有把任何一项升级为当前字节的正式平台受理或Hidden成绩。",
+        "evidence": [
+          "expert_evidence/best_method_selection.json:30-31",
+          "expert_evidence/best_method_selection.json:62-72",
+          "expert_evidence/repair/v25_oracle_smoke_evidence.json:3-11",
+          "expert_evidence/repair/harbor/native_nop_trial/VERSION_BINDING.md:13-19"
+        ],
+        "details": {
+          "rollout_evidence": {
+            "summary": "Seed第43轮为历史方法来源；当前源码公开单seed复验为71.2。作者另报告本地Oracle烟测有限reward 0.5973076979569057，明确非平台运行与正式Hidden成绩；旧NOP reward 0是旧树未提交分支，不是当前候选正常评分。",
+            "evidence": [
+              "expert_evidence/best_method_selection.json:30-31",
+              "expert_evidence/best_method_selection.json:62-72",
+              "expert_evidence/repair/v25_oracle_smoke_evidence.json:3-11",
+              "expert_evidence/repair/harbor/native_nop_trial/native_trial/verifier/reward.json:1",
+              "expert_evidence/repair/harbor/native_nop_trial/VERSION_BINDING.md:13-19"
+            ],
+            "guidance": "Select existing run evidence; distinguish a finite actual score from placeholders and absent scoring.",
+            "selected_trial": null,
+            "score_valid": null,
+            "non_placeholder": null,
+            "normal_evaluation_completed": null,
+            "trajectory_review_passed": null,
+            "agent_timeout": null,
+            "verifier_timeout": null
+          },
+          "agent_verifier_separation": {
+            "summary": "配置的Agent总时限43200秒与Verifier 3600秒分别属于不同阶段；当前平台运行、超时、收分及迁移后轨迹审查均未认证。",
+            "evidence": [
+              "workspace/harbor_task/task.toml:39-52",
+              "expert_evidence/repair/v25_static_self_review_scope.md:9-17",
+              "expert_evidence/best_method_selection.json:62-72"
+            ],
+            "guidance": "Distinguish Agent timeout, Verifier timeout, actual scoring and trajectory review."
+          },
+          "admission_basis": {
+            "summary": "当前未提供正式平台受理成绩；公开复验和本地烟测不能代替该成绩，但单纯缺可选受理回执或无分不自动拒收。实际候选来源与轨迹不利事实仍由相关检查审查。",
+            "evidence": [
+              "expert_evidence/best_method_selection.json:62-72",
+              "expert_evidence/repair/v25_oracle_smoke_evidence.json:3-11",
+              "expert_evidence/repair/v25_static_self_review_scope.md:9-19"
+            ],
+            "guidance": "Record current score coverage; historical records provide no admission exception, and no-score/timeout alone adds no rejection or rerun requirement."
+          }
+        },
+        "findings": [],
+        "optional_details": {
+          "level_assurance": {
+            "summary": "",
+            "evidence": [],
+            "status": "unreviewed",
+            "covered_facets": [],
+            "dynamic_evidence": [],
+            "induced_cheat_rollout_verified": null,
+            "guidance": "Additional assurance evidence is read as information, without a caller-selected level or whole-level certification. Actual inducement prompts, full executed conversations and results establish dynamic coverage; static facet labels do not."
+          }
+        }
+      },
+      "new_intake_protocol": {
+        "status": "pass",
+        "summary": "当前Oracle入口、依赖约束、单一正式JSON reward和候选hard gate均可在交付源码中定位；这是静态审阅，不表示当前平台执行成功。",
+        "evidence": [
+          "workspace/harbor_task/solution/solve.sh:10-19",
+          "workspace/harbor_task/solution/run.sh:14-29",
+          "workspace/harbor_task/environment/Dockerfile:26-36",
+          "workspace/harbor_task/tests/Dockerfile:19-24",
+          "workspace/harbor_task/tests/grader.py:53-75",
+          "workspace/harbor_task/tests/grader.py:111-120",
+          "workspace/harbor_task/tests/test.sh:13-29"
+        ],
+        "details": {
+          "oracle_entry": {
+            "summary": "solve.sh默认DREAM、CPU、seed 3000及两图，执行同目录run.sh，后者调用同目录train.py写正常提交工件。",
+            "evidence": [
+              "workspace/harbor_task/solution/solve.sh:10-19",
+              "workspace/harbor_task/solution/run.sh:6-29",
+              "workspace/harbor_task/solution/train.py:1-43"
+            ],
+            "guidance": "Identify mandatory solution/solve.sh and its reachable implementation inside solution/; implementation name and language are unrestricted.",
+            "entry": "solution/solve.sh",
+            "implementation_paths": [
+              "solution/run.sh",
+              "solution/train.py",
+              "solution/predictor/DREAM_Predictor.py"
+            ]
+          },
+          "dependency_lock": {
+            "summary": "Work和Verifier分别以精确版本requirements及constraints安装；Work使用torch 2.5.1 CPU、Verifier使用2.4.1，存在版本差异但当前构建与跨版本加载未实测。",
+            "evidence": [
+              "workspace/harbor_task/environment/requirements.txt:1-17",
+              "workspace/harbor_task/environment/constraints.txt:1-62",
+              "workspace/harbor_task/environment/Dockerfile:26-36",
+              "workspace/harbor_task/tests/requirements.txt:1-8",
+              "workspace/harbor_task/tests/constraints.txt:1-20",
+              "workspace/harbor_task/tests/Dockerfile:19-24"
+            ],
+            "guidance": "Review effective dependency pin/lock semantics; a filename alone does not establish reproducibility.",
+            "locked": true
+          },
+          "formal_reward": {
+            "summary": "入口清除旧txt与json，评分器只写reward.json并包含数字reward主键；历史NOP双输出为旧树，不认证当前运行。",
+            "evidence": [
+              "workspace/harbor_task/tests/test.sh:13-29",
+              "workspace/harbor_task/tests/grader.py:89-120",
+              "expert_evidence/repair/harbor/native_nop_trial/VERSION_BINDING.md:13-19"
+            ],
+            "guidance": "For every task, use one formal reward file per execution and the numeric reward main key in JSON.",
+            "output_files": [
+              "/logs/verifier/reward.json"
+            ],
+            "json_main_key": "reward"
+          },
+          "gate_penalty": {
+            "summary": "候选格式及hard gate拒绝写−10；可信侧评分或环境错误标NOT_READY且无正式reward。",
+            "evidence": [
+              "workspace/harbor_task/tests/grader.py:53-75",
+              "workspace/harbor_task/tests/grader.py:123-149"
+            ],
+            "guidance": "For every task, rejected candidate hard-gate cases use the deterministic -10 result.",
+            "value": -10
+          }
+        },
+        "findings": []
+      }
+    },
+    "reward_runs": [],
+    "context_example": {
+      "standard": "current",
+      "package_stage": "source"
+    },
+    "notes": [
+      "Pass context via audit(context=...), separately from review.",
+      "Each detail requires a concrete summary and existing evidence; missing material can be evidence_limited.",
+      "Findings require positioned evidence, reason, remediation, code (optional) and explicit blocking boolean.",
+      "No-score/timeout alone only records coverage; the one-hour rejection policy is on hold.",
+      "All tasks require the four protocol items; new_intake_protocol is a retained storage name, not an intake selector.",
+      "Existing reward outputs must still be read; historical outputs never create an admission exception."
+    ]
+  },
+  "record_compatibility": [
+    {
+      "policy": "historical_calibration_source_gap",
+      "scope": "historical_source_evidence_gap_only",
+      "selector": {
+        "check_id": "G03",
+        "rule": "reference_calibration",
+        "reason": "正式B/R运行来源说明称同一train.py与当前Starter和solution均逐字节一致，但两份当前源码实际不同；所核B/R种子工件的method_source_sha256又为空，不能确定历史成绩所用源码与声明候选的身份对应。原值和checkpoint绑定不消除该矛盾，历史源码缺口兼容的候选身份条件未获确认。",
+        "evidence": [
+          "optimization_evidence/EVIDENCE_PROVENANCE.md:8-16",
+          "workspace/harbor_task/environment/starter/train.py:30-62",
+          "workspace/harbor_task/solution/train.py:30-60",
+          "optimization_evidence/baseline_runs/seed_3000/model/artifact.json:10-40",
+          "optimization_evidence/reference_runs/seed_3000/model/artifact.json:10-40",
+          "expert_evidence/repair/v23b_pre_registration.json:46-65"
+        ]
+      },
+      "summary": "仅检查旧源码证明缺口兼容；实际来源声明矛盾且候选身份未确认，不能接受兼容或认定成绩伪造。",
+      "evidence": [
+        "optimization_evidence/EVIDENCE_PROVENANCE.md:8-16",
+        "workspace/harbor_task/environment/starter/train.py:30-62",
+        "workspace/harbor_task/solution/train.py:30-60",
+        "optimization_evidence/baseline_runs/seed_3000/model/artifact.json:10-40",
+        "optimization_evidence/reference_runs/seed_3000/model/artifact.json:10-40",
+        "expert_evidence/repair/v23b_pre_registration.json:46-65"
+      ],
+      "assessments": {
+        "historical_full_results_valid": {
+          "status": "not_confirmed",
+          "summary": "数值、非退化和reload字段齐全，但运行源身份矛盾，无法确认这批结果属于声明候选。",
+          "evidence": [
+            "optimization_evidence/formal_test_scoring_declared.json:1-155",
+            "optimization_evidence/EVIDENCE_PROVENANCE.md:8-16",
+            "optimization_evidence/baseline_runs/seed_3000/model/artifact.json:10-40",
+            "optimization_evidence/reference_runs/seed_3000/model/artifact.json:10-40"
+          ]
+        },
+        "declared_protocol_consistent": {
+          "status": "not_confirmed",
+          "summary": "运行树同时与两份不同当前train.py逐字节一致的声明不能同时成立。",
+          "evidence": [
+            "optimization_evidence/EVIDENCE_PROVENANCE.md:8-16",
+            "workspace/harbor_task/environment/starter/train.py:30-62",
+            "workspace/harbor_task/solution/train.py:30-60"
+          ]
+        },
+        "current_scoring_usable": {
+          "status": "confirmed",
+          "summary": "当前评分源码可静态读取预测、计算两图宏均值及线性reward；作者另有本机smoke，不声称平台实跑。",
+          "evidence": [
+            "workspace/harbor_task/tests/grader.py:170-245",
+            "expert_evidence/repair/v25_oracle_smoke_evidence.json:3-11"
+          ]
+        },
+        "no_confirmed_normal_protocol_change": {
+          "status": "confirmed",
+          "summary": "现有矛盾不足以确认旧训练、数据、split、指标或质量门实际改变，亦不认证其等价。",
+          "evidence": [
+            "optimization_evidence/EVIDENCE_PROVENANCE.md:8-16",
+            "workspace/harbor_task/environment/starter/train.py:30-62",
+            "workspace/harbor_task/solution/train.py:30-60",
+            "optimization_evidence/formal_test_scoring_declared.json:1-155"
+          ]
+        },
+        "candidate_identity_preserved": {
+          "status": "not_confirmed",
+          "summary": "B/R工件仅绑定checkpoint和成绩，所核方法source SHA为空，且运行源同等声明与现源矛盾，不能确认运行候选源码身份。",
+          "evidence": [
+            "optimization_evidence/EVIDENCE_PROVENANCE.md:8-16",
+            "optimization_evidence/baseline_runs/seed_3000/model/artifact.json:10-40",
+            "optimization_evidence/reference_runs/seed_3000/model/artifact.json:10-40",
+            "workspace/harbor_task/environment/starter/train.py:30-62",
+            "workspace/harbor_task/solution/train.py:30-60"
+          ]
+        },
+        "historical_scope_and_gap_disclosed": {
+          "status": "not_confirmed",
+          "summary": "来源说明披露物化及data.py补丁，但将运行源声明同时等于两份不同现源，并未澄清该身份缺口。",
+          "evidence": [
+            "optimization_evidence/EVIDENCE_PROVENANCE.md:8-16",
+            "workspace/harbor_task/environment/starter/train.py:30-62",
+            "workspace/harbor_task/solution/train.py:30-60"
+          ]
+        },
+        "other_defects_retained": {
+          "status": "confirmed",
+          "summary": "nonlocal与staged导入限制对应公开合同和守卫不一致的其他发现均保留。",
+          "evidence": [
+            "workspace/harbor_task/instruction.md:81-95",
+            "workspace/harbor_task/tests/contract_guard.py:796-810"
+          ]
+        }
+      }
+    }
+  ],
+  "coverage": {
+    "policy": "goal-oriented-v1",
+    "goal_review_complete": true,
+    "algorithm_a_review_complete": true,
+    "sources": [
+      {
+        "path": "expert_evidence/repair/v25_oracle_smoke_evidence.json",
+        "disposition": "read",
+        "sha256": "703dcaaebcdc35d1b08845973a6e9f9397792e9781ac878e91e320e4227c31c9",
+        "read_ranges": [
+          [
+            1,
+            12
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/repair/v25_static_self_review_scope.md",
+        "disposition": "read",
+        "sha256": "0c8620172f1b01f0f60d6267ec627cce3a4c290c5167a266b5c8199b7cdd940b",
+        "read_ranges": [
+          [
+            1,
+            19
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/repair/protocol_decisions.json",
+        "disposition": "read",
+        "sha256": "17eb426d5fe369efe9b4c31d4ff64f2d3d350317736dd26a139475134735e674",
+        "read_ranges": [
+          [
+            1,
+            75
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/repair/harbor/native_nop_trial/README.md",
+        "disposition": "read",
+        "sha256": "d79c75a10a43d07519f1eb67bb2ec6004e64b464dbe22ef1fc14535b79586e1e",
+        "read_ranges": [
+          [
+            1,
+            116
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/repair/harbor/native_nop_trial/VERSION_BINDING.md",
+        "disposition": "read",
+        "sha256": "af1af610f9315bb4c1156ca77ed7f93db99c06c2e530976d74066d2d1b1b2c58",
+        "read_ranges": [
+          [
+            1,
+            73
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/repair/harbor/native_nop_trial/nop_trial_summary.json",
+        "disposition": "read",
+        "sha256": "6a20a72b717896ce996540da211b215a261002e6fc211440cc5df9bf07ce2f3e",
+        "read_ranges": [
+          [
+            1,
+            14
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/repair/harbor/native_nop_trial/native_trial/verifier/test-stdout.txt",
+        "disposition": "read",
+        "sha256": "06fc6f96c7babd8ef20c682d79a3cb4df8a9b7c4b1418dc50773f1c685c84ccb",
+        "read_ranges": [
+          [
+            1,
+            7
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/repair/harbor/native_nop_trial/native_trial/verifier/reward.json",
+        "disposition": "read",
+        "sha256": "b2695462ed3c7dd9715862d5c6f030c98f63b701b75282bb90a60ffcaeab06b2",
+        "read_ranges": [
+          [
+            1,
+            1
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/repair/harbor/native_nop_trial/native_trial/verifier/reward.txt",
+        "disposition": "read",
+        "sha256": "65e8fe344f770e52ea7f3f8fc8633959361bb78e6ad3a178b7d3b1f16b6e2e9f",
+        "read_ranges": [
+          [
+            1,
+            1
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/repair/harbor/native_nop_trial/native_trial/trial.log",
+        "disposition": "read",
+        "sha256": "489791292e9eb0e5b0218369393df2e6a24fbd196f7e900a9e2e25ee9bf3df95",
+        "read_ranges": [
+          [
+            1,
+            3
+          ]
+        ]
+      },
+      {
+        "path": "workspace/harbor_task/tests/grader.py",
+        "disposition": "read",
+        "sha256": "cdbdf463fc770dc2a4341c61ad49a6d569be16567c8f3b6d757ab4132ad59a19",
+        "read_ranges": [
+          [
+            1,
+            259
+          ]
+        ]
+      },
+      {
+        "path": "workspace/harbor_task/tests/test.sh",
+        "disposition": "read",
+        "sha256": "854575348e8ba71f11b0b5f20efaf2d61c4e1642e95ea7a124d38aa6cd993f9f",
+        "read_ranges": [
+          [
+            1,
+            32
+          ]
+        ]
+      },
+      {
+        "path": "workspace/harbor_task/tests/contract_guard.py",
+        "disposition": "read",
+        "sha256": "04c22f96751f06c39733f5541e0d7301219600929c06cce9ffbc939f8504443e",
+        "read_ranges": [
+          [
+            1,
+            25
+          ],
+          [
+            50,
+            90
+          ],
+          [
+            326,
+            335
+          ],
+          [
+            444,
+            514
+          ],
+          [
+            549,
+            605
+          ],
+          [
+            914,
+            941
+          ],
+          [
+            984,
+            997
+          ],
+          [
+            108,
+            176
+          ],
+          [
+            888,
+            982
+          ],
+          [
+            177,
+            325
+          ],
+          [
+            515,
+            548
+          ],
+          [
+            606,
+            887
+          ]
+        ]
+      },
+      {
+        "path": "workspace/harbor_task/tests/calibration.json",
+        "disposition": "read",
+        "sha256": "76d14d42ec839cbcb9502f667b9a657096d82ee002702f8b51968b345310abb7",
+        "read_ranges": [
+          [
+            1,
+            50
+          ]
+        ]
+      },
+      {
+        "path": "workspace/harbor_task/instruction.md",
+        "disposition": "read",
+        "sha256": "41d50296be654042d3a4d1b18b6dc6776a4c9147b7ee745ddac5e813dbf198f1",
+        "read_ranges": [
+          [
+            1,
+            166
+          ]
+        ]
+      },
+      {
+        "path": "workspace/harbor_task/environment/starter/run.sh",
+        "disposition": "read",
+        "sha256": "b83bed894d80fc7369643f7089cbf0f223a2619511a47969823c79084b151089",
+        "read_ranges": [
+          [
+            1,
+            43
+          ]
+        ]
+      },
+      {
+        "path": "workspace/harbor_task/environment/constraints.txt",
+        "disposition": "read",
+        "sha256": "cf0ef61754c380d29ea619b4b5271847e9c7500b949f60cefc58c97d1887de34",
+        "read_ranges": [
+          [
+            1,
+            62
+          ]
+        ]
+      },
+      {
+        "path": "workspace/harbor_task/tests/constraints.txt",
+        "disposition": "read",
+        "sha256": "0adf0f156749e7f54d069873f707e5455affca66e5498d979bf3f1898a29d28e",
+        "read_ranges": [
+          [
+            1,
+            20
+          ]
+        ]
+      },
+      {
+        "path": "optimization_evidence/formal_test_scoring_declared.json",
+        "disposition": "read",
+        "sha256": "0af1af38fbebde2d8b2dfbe52aa39ccf2f9a2f3e0e4759ce0b4df360e433734c",
+        "read_ranges": [
+          [
+            1,
+            155
+          ]
+        ]
+      },
+      {
+        "path": "optimization_evidence/comparison_summary.json",
+        "disposition": "read",
+        "sha256": "d47af4b1978df1708274c5b6b7108e647bf47d273701b11570bab0769cb07ea1",
+        "read_ranges": [
+          [
+            1,
+            110
+          ]
+        ]
+      },
+      {
+        "path": "optimization_evidence/public_dev_qualification.json",
+        "disposition": "read",
+        "sha256": "55893369d104a823320bd85b013f1006185d11c08aa10aacc55593406609d63a",
+        "read_ranges": [
+          [
+            1,
+            23
+          ]
+        ]
+      },
+      {
+        "path": "optimization_evidence/baseline_runs/seed_3000/run.log",
+        "disposition": "read",
+        "sha256": "3e3de333689697254f86fc6c039e542f95b3cc090e169c8c2698addbc0f0afbd",
+        "read_ranges": [
+          [
+            1,
+            6
+          ]
+        ]
+      },
+      {
+        "path": "optimization_evidence/reference_runs/seed_3000/run.log",
+        "disposition": "read",
+        "sha256": "a6b7510ef28d60017609f8d5c0b7f2a65a0bb4c334f52212a4891fa12103ed7f",
+        "read_ranges": [
+          [
+            1,
+            6
+          ]
+        ]
+      },
+      {
+        "path": "optimization_evidence/baseline_runs/seed_3000/reload.log",
+        "disposition": "read",
+        "sha256": "4624cb9b81ca977491421d0a3da4397130b479c307a28423add2dd9603369dd6",
+        "read_ranges": [
+          [
+            1,
+            6
+          ]
+        ]
+      },
+      {
+        "path": "optimization_evidence/reference_runs/seed_3000/reload.log",
+        "disposition": "read",
+        "sha256": "77ed8b9b44ba54507fbaf9bb6b609c429d679656bc4e2549c9970a194071b689",
+        "read_ranges": [
+          [
+            1,
+            6
+          ]
+        ]
+      },
+      {
+        "path": "optimization_evidence/baseline_runs/seed_3001/run.log",
+        "disposition": "read",
+        "sha256": "72ad282a3835dc20d23eebb3ddaf38ba87ccc7c2fcd3507a69aa1a8ddb2c138e",
+        "read_ranges": [
+          [
+            2,
+            2
+          ],
+          [
+            5,
+            5
+          ]
+        ]
+      },
+      {
+        "path": "optimization_evidence/baseline_runs/seed_3001/reload.log",
+        "disposition": "read",
+        "sha256": "4b615b1dde1e8927fbb52737b21d896fc4aaca048a95cec8b070854208c98bd2",
+        "read_ranges": [
+          [
+            2,
+            2
+          ],
+          [
+            5,
+            5
+          ]
+        ]
+      },
+      {
+        "path": "optimization_evidence/baseline_runs/seed_3002/run.log",
+        "disposition": "read",
+        "sha256": "776ed9ef598db9b6d038b7438c4cd84c8a2f77652970eeca6ab72ed13d3a04d0",
+        "read_ranges": [
+          [
+            2,
+            2
+          ],
+          [
+            5,
+            5
+          ]
+        ]
+      },
+      {
+        "path": "optimization_evidence/baseline_runs/seed_3002/reload.log",
+        "disposition": "read",
+        "sha256": "012d13ac8019c2181dc8cc09c9a36bf43b00e7c9d8c93f1e4284fe8ccad0f8f5",
+        "read_ranges": [
+          [
+            2,
+            2
+          ],
+          [
+            5,
+            5
+          ]
+        ]
+      },
+      {
+        "path": "optimization_evidence/reference_runs/seed_3001/run.log",
+        "disposition": "read",
+        "sha256": "98713f6ed416047f2405e36186edc5288d42b0756cde2e34bc373e8b19d14a96",
+        "read_ranges": [
+          [
+            2,
+            2
+          ],
+          [
+            5,
+            5
+          ]
+        ]
+      },
+      {
+        "path": "optimization_evidence/reference_runs/seed_3001/reload.log",
+        "disposition": "read",
+        "sha256": "3d49275b0f72bd01ba0fc9b778848ad6115b3b2d03ba213943d694a8cde3c794",
+        "read_ranges": [
+          [
+            2,
+            2
+          ],
+          [
+            5,
+            5
+          ]
+        ]
+      },
+      {
+        "path": "optimization_evidence/reference_runs/seed_3002/run.log",
+        "disposition": "read",
+        "sha256": "f579d382db25792c39ab6cbdf8847f5b5213f9bcbc5c1acf46a84dce11f1d440",
+        "read_ranges": [
+          [
+            2,
+            2
+          ],
+          [
+            5,
+            5
+          ]
+        ]
+      },
+      {
+        "path": "optimization_evidence/reference_runs/seed_3002/reload.log",
+        "disposition": "read",
+        "sha256": "fa430229587016627d148c177e9ce5d958cefc999db72581179baea2b65e7e04",
+        "read_ranges": [
+          [
+            2,
+            2
+          ],
+          [
+            5,
+            5
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/repair/README_NOT_READY.md",
+        "disposition": "read",
+        "sha256": "82f1a922ceb5b2ae7e9dfe65c1fabddf6abde7f7243ffdf5f58b97ac0561912c",
+        "read_ranges": [
+          [
+            20,
+            48
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/repair/historical_evidence_assessment.json",
+        "disposition": "read",
+        "sha256": "2513c8619231c0a8d6b59e8cb231c21adaee6ce3df29c949a89bf9f128cbcf04",
+        "read_ranges": [
+          [
+            1,
+            25
+          ]
+        ]
+      },
+      {
+        "path": "optimization_evidence/u_anchor_oracle/measurement.json",
+        "disposition": "read",
+        "sha256": "c77740b26dc40e2ab7c6e3ff9f2b26cf12118c2775cd10f2b959b1c0037e093d",
+        "read_ranges": [
+          [
+            1,
+            119
+          ]
+        ]
+      },
+      {
+        "path": "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3000_cora/run.log",
+        "disposition": "read",
+        "sha256": "f32210ffa00b92e31fd278d7e3fa7eeac650e3a030f62754998779ae118a93c6",
+        "read_ranges": [
+          [
+            1,
+            11
+          ]
+        ]
+      },
+      {
+        "path": "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3000_citeseer/run.log",
+        "disposition": "read",
+        "sha256": "ae56b3c6cd35658b37bee813c9633dc2593d8d8d54a4933ccc3b14a4e4219c1f",
+        "read_ranges": [
+          [
+            1,
+            11
+          ]
+        ]
+      },
+      {
+        "path": "optimization_evidence/EVIDENCE_PROVENANCE.md",
+        "disposition": "read",
+        "sha256": "e0a7f48e55efe84c15dcd7ae6883c6e306c90b89c6b6e45d7f3549d4c5513e39",
+        "read_ranges": [
+          [
+            1,
+            22
+          ]
+        ]
+      },
+      {
+        "path": "workspace/harbor_task/environment/Dockerfile",
+        "disposition": "read",
+        "sha256": "544c6934ad2740dc644c91ddd5db4e4431a26b41951326cbdb8f5e8fa4c2afc2",
+        "read_ranges": [
+          [
+            1,
+            60
+          ]
+        ]
+      },
+      {
+        "path": "workspace/harbor_task/tests/Dockerfile",
+        "disposition": "read",
+        "sha256": "58e7a5714bad06952496d1c11684f7ca28c2f4cd6f658e16bafdff4ccdb0974b",
+        "read_ranges": [
+          [
+            1,
+            42
+          ]
+        ]
+      },
+      {
+        "path": "workspace/harbor_task/environment/requirements.txt",
+        "disposition": "read",
+        "sha256": "53f68fc9d46a693f53502c2c5f5ce368030b7457db85a025083fbb52b70f49ba",
+        "read_ranges": [
+          [
+            1,
+            17
+          ]
+        ]
+      },
+      {
+        "path": "workspace/harbor_task/tests/requirements.txt",
+        "disposition": "read",
+        "sha256": "df068816865b818df67591106f479361baf95c52d3ecdf44ec0b1a24d48f4f9c",
+        "read_ranges": [
+          [
+            1,
+            8
+          ]
+        ]
+      },
+      {
+        "path": "workspace/harbor_task/environment/public_assets/manifest.json",
+        "disposition": "read",
+        "sha256": "fe55020c55e1ebdce56f81f5de1ea5ca0ed691bf529daac63cee791a4bd3f3e2",
+        "read_ranges": [
+          [
+            1,
+            32
+          ]
+        ]
+      },
+      {
+        "path": "workspace/harbor_task/environment/starter/data.py",
+        "disposition": "read",
+        "sha256": "973ce9e0fbc5a3b59cc2c4b550b75fefb4eacf780ffeb4870fc50f1bd4cc43fd",
+        "read_ranges": [
+          [
+            1,
+            81
+          ]
+        ]
+      },
+      {
+        "path": "workspace/harbor_task/environment/public_eval/evaluate.py",
+        "disposition": "read",
+        "sha256": "e20fb8f82e410e7374780ffbc12aba3081f89559e3a89d4628679d5db1428c71",
+        "read_ranges": [
+          [
+            1,
+            66
+          ],
+          [
+            1,
+            66
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/best_method_selection.json",
+        "disposition": "read",
+        "sha256": "8765fea072ad8ee55e728d0d30f71d1c11eba113fab076b68e31d7eb1c5029fc",
+        "read_ranges": [
+          [
+            1,
+            74
+          ]
+        ]
+      },
+      {
+        "path": "workspace/harbor_task/solution/solve.sh",
+        "disposition": "read",
+        "sha256": "75bf7bd938837727ff982893ee5dcb96c51c112336adf9f607c7dc939390471d",
+        "read_ranges": [
+          [
+            1,
+            19
+          ]
+        ]
+      },
+      {
+        "path": "workspace/harbor_task/solution/run.sh",
+        "disposition": "read",
+        "sha256": "61273b69591a6f342fe473f58c2eed6a2ac808d3bd04681b730f60ab32021c70",
+        "read_ranges": [
+          [
+            1,
+            39
+          ]
+        ]
+      },
+      {
+        "path": "workspace/harbor_task/solution/train.py",
+        "disposition": "read",
+        "sha256": "5c57129bddeb2ef8ff628b60ff42f780f350099cd8978dcf7cb010eff8382f63",
+        "read_ranges": [
+          [
+            1,
+            43
+          ],
+          [
+            88,
+            130
+          ],
+          [
+            15,
+            65
+          ]
+        ]
+      },
+      {
+        "path": "workspace/harbor_task/solution/predictor/__init__.py",
+        "disposition": "read",
+        "sha256": "b93f87b5bfd5da48cce4272da7b473a6efc7f276135883345621d7d3f8f1eea7",
+        "read_ranges": [
+          [
+            1,
+            16
+          ]
+        ]
+      },
+      {
+        "path": "workspace/harbor_task/solution/predictor/DREAM_Predictor.py",
+        "disposition": "read",
+        "sha256": "da5c20b80dbffd36b2a88d09a474ea132a077e545833cc4cb3ef0626b5b9bab3",
+        "read_ranges": [
+          [
+            40,
+            85
+          ],
+          [
+            219,
+            243
+          ],
+          [
+            475,
+            500
+          ]
+        ]
+      },
+      {
+        "path": "workspace/harbor_task/task.toml",
+        "disposition": "read",
+        "sha256": "0668ae00c9a30ecc8c3725a063f4f6ac116a4fd27dfd8768a912bb4e1bd8e0fe",
+        "read_ranges": [
+          [
+            1,
+            61
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/repair/v23b_pre_registration.json",
+        "disposition": "read",
+        "sha256": "e24f54837c216b0076f11928b038076593983c217301387bfcc44955ad03e700",
+        "read_ranges": [
+          [
+            1,
+            68
+          ]
+        ]
+      },
+      {
+        "path": "workspace/harbor_task/tests/contract_policy.json",
+        "disposition": "read",
+        "sha256": "0ec94770905d9a542b116b585bf73dd3ea253d20bd2e03caba1300e950cb54b7",
+        "read_ranges": [
+          [
+            1,
+            37
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/repair/current_source_revalidation/runtime.json",
+        "disposition": "read",
+        "sha256": "468928e8dfbf1eadf3fa5e3a5ac5a34033dc6b2e70611f2d5afe6608b46a8916",
+        "read_ranges": [
+          [
+            1,
+            15
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/repair/current_source_revalidation/protocol.json",
+        "disposition": "read",
+        "sha256": "c611e8938f31d79364595ce71c7a762d5f94b357e14d280576c3a48901c16515",
+        "read_ranges": [
+          [
+            1,
+            20
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/repair/current_source_revalidation/comparison_public.json",
+        "disposition": "read",
+        "sha256": "1343cb1e6714eae4ebe032f961270eab4ba75df28a4e05fef01da87442dd90eb",
+        "read_ranges": [
+          [
+            1,
+            34
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/repair/current_source_revalidation/reference_seed_3000_cora/run.log",
+        "disposition": "read",
+        "sha256": "9a45212680105326f2372470ba962c53d89f93d6bea01ac3d5d7099083750808",
+        "read_ranges": [
+          [
+            1,
+            7
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/repair/current_source_revalidation/reference_seed_3000_cora/reload.log",
+        "disposition": "read",
+        "sha256": "2b48788ed6afbd7c2e88a8c62d84a5d57321a03a9e2d5c197d59935a16d77ea4",
+        "read_ranges": [
+          [
+            1,
+            7
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/repair/current_source_revalidation/reference_seed_3000_citeseer/run.log",
+        "disposition": "read",
+        "sha256": "c3c2b5a6f585bca6660dad086f15a7d1c95e00e9012309644883b288fec79d84",
+        "read_ranges": [
+          [
+            1,
+            7
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/repair/current_source_revalidation/reference_seed_3000_citeseer/reload.log",
+        "disposition": "read",
+        "sha256": "fae428d2fd26f2050785ca6f4e7c3945c0cb978315d4ea5ded572186de133dc2",
+        "read_ranges": [
+          [
+            1,
+            7
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/trajectory_seed.json",
+        "disposition": "structured_review",
+        "sha256": "cc99306666ae5765c38f4fe66cc04dae566e0c347ada39e362696e7c45b3fbab",
+        "reviewed_refs": [
+          "expert_evidence/trajectory_seed.json#/rounds/0",
+          "expert_evidence/trajectory_seed.json#/rounds/41",
+          "expert_evidence/trajectory_seed.json#/rounds/42",
+          "expert_evidence/trajectory_seed.json#/rounds/43",
+          "expert_evidence/trajectory_seed.json#/rounds/52"
+        ]
+      },
+      {
+        "path": "expert_evidence/trajectory_codex.json",
+        "disposition": "structured_review",
+        "sha256": "b41dc668b7861bfab92a7ae89e381d25f1d8244af1ada602b46c928911a9259e",
+        "reviewed_refs": [
+          "expert_evidence/trajectory_codex.json#/rounds/0",
+          "expert_evidence/trajectory_codex.json#/rounds/181",
+          "expert_evidence/trajectory_codex.json#/rounds/182",
+          "expert_evidence/trajectory_codex.json#/rounds/183",
+          "expert_evidence/trajectory_codex.json#/rounds/192"
+        ]
+      },
+      {
+        "path": "optimization_evidence/baseline_runs/seed_3000/result.json",
+        "disposition": "structured_review",
+        "sha256": "850f8f0c69719a7b6a217516a25e6a874362fcb24a56177fa6a09485a9e9a0ec",
+        "reviewed_refs": [
+          "optimization_evidence/baseline_runs/seed_3000/result.json#/status",
+          "optimization_evidence/baseline_runs/seed_3000/result.json#/role",
+          "optimization_evidence/baseline_runs/seed_3000/result.json#/seed",
+          "optimization_evidence/baseline_runs/seed_3000/result.json#/method",
+          "optimization_evidence/baseline_runs/seed_3000/result.json#/protocol/metric",
+          "optimization_evidence/baseline_runs/seed_3000/result.json#/protocol/split",
+          "optimization_evidence/baseline_runs/seed_3000/result.json#/training/per_dataset"
+        ]
+      },
+      {
+        "path": "optimization_evidence/baseline_runs/seed_3001/result.json",
+        "disposition": "structured_review",
+        "sha256": "283f0e0b4f78cc74fc9ca6f927afd3a5e02d7582402dacd4a841d054988da824",
+        "reviewed_refs": [
+          "optimization_evidence/baseline_runs/seed_3001/result.json#/status",
+          "optimization_evidence/baseline_runs/seed_3001/result.json#/role",
+          "optimization_evidence/baseline_runs/seed_3001/result.json#/seed",
+          "optimization_evidence/baseline_runs/seed_3001/result.json#/method",
+          "optimization_evidence/baseline_runs/seed_3001/result.json#/protocol/metric",
+          "optimization_evidence/baseline_runs/seed_3001/result.json#/protocol/split",
+          "optimization_evidence/baseline_runs/seed_3001/result.json#/training/per_dataset"
+        ]
+      },
+      {
+        "path": "optimization_evidence/baseline_runs/seed_3002/result.json",
+        "disposition": "structured_review",
+        "sha256": "2405e89db96f0e271d24ca093458a94cda43d6b7786f18d3acc9262a436ea042",
+        "reviewed_refs": [
+          "optimization_evidence/baseline_runs/seed_3002/result.json#/status",
+          "optimization_evidence/baseline_runs/seed_3002/result.json#/role",
+          "optimization_evidence/baseline_runs/seed_3002/result.json#/seed",
+          "optimization_evidence/baseline_runs/seed_3002/result.json#/method",
+          "optimization_evidence/baseline_runs/seed_3002/result.json#/protocol/metric",
+          "optimization_evidence/baseline_runs/seed_3002/result.json#/protocol/split",
+          "optimization_evidence/baseline_runs/seed_3002/result.json#/training/per_dataset"
+        ]
+      },
+      {
+        "path": "optimization_evidence/reference_runs/seed_3000/result.json",
+        "disposition": "structured_review",
+        "sha256": "0a4133f819cec62b12f7470684dc23375fbf2f154f5bc73b1d0eebc2d4e1a533",
+        "reviewed_refs": [
+          "optimization_evidence/reference_runs/seed_3000/result.json#/status",
+          "optimization_evidence/reference_runs/seed_3000/result.json#/role",
+          "optimization_evidence/reference_runs/seed_3000/result.json#/seed",
+          "optimization_evidence/reference_runs/seed_3000/result.json#/method",
+          "optimization_evidence/reference_runs/seed_3000/result.json#/protocol/metric",
+          "optimization_evidence/reference_runs/seed_3000/result.json#/protocol/split",
+          "optimization_evidence/reference_runs/seed_3000/result.json#/training/per_dataset"
+        ]
+      },
+      {
+        "path": "optimization_evidence/reference_runs/seed_3001/result.json",
+        "disposition": "structured_review",
+        "sha256": "a7e935ad643fed11947abe41fb4b9a795f906ef6f7a264c2279c1d0c8a8ba9f1",
+        "reviewed_refs": [
+          "optimization_evidence/reference_runs/seed_3001/result.json#/status",
+          "optimization_evidence/reference_runs/seed_3001/result.json#/role",
+          "optimization_evidence/reference_runs/seed_3001/result.json#/seed",
+          "optimization_evidence/reference_runs/seed_3001/result.json#/method",
+          "optimization_evidence/reference_runs/seed_3001/result.json#/protocol/metric",
+          "optimization_evidence/reference_runs/seed_3001/result.json#/protocol/split",
+          "optimization_evidence/reference_runs/seed_3001/result.json#/training/per_dataset"
+        ]
+      },
+      {
+        "path": "optimization_evidence/reference_runs/seed_3002/result.json",
+        "disposition": "structured_review",
+        "sha256": "97be7bc21a24ac60071cb05a3b8f980103c23e8ff213eb115ab4c40b4c54579f",
+        "reviewed_refs": [
+          "optimization_evidence/reference_runs/seed_3002/result.json#/status",
+          "optimization_evidence/reference_runs/seed_3002/result.json#/role",
+          "optimization_evidence/reference_runs/seed_3002/result.json#/seed",
+          "optimization_evidence/reference_runs/seed_3002/result.json#/method",
+          "optimization_evidence/reference_runs/seed_3002/result.json#/protocol/metric",
+          "optimization_evidence/reference_runs/seed_3002/result.json#/protocol/split",
+          "optimization_evidence/reference_runs/seed_3002/result.json#/training/per_dataset"
+        ]
+      },
+      {
+        "path": "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3000_citeseer/result.json",
+        "disposition": "structured_review",
+        "sha256": "3b1484b9f7030add0ddfa60fb30a49dc60da9a7772ca6a0ac80e4eace484cbe4",
+        "reviewed_refs": [
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3000_citeseer/result.json#/status",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3000_citeseer/result.json#/training_seed",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3000_citeseer/result.json#/dataset",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3000_citeseer/result.json#/execution",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3000_citeseer/result.json#/training",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3000_citeseer/result.json#/quality_gate",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3000_citeseer/result.json#/reload"
+        ]
+      },
+      {
+        "path": "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3000_cora/result.json",
+        "disposition": "structured_review",
+        "sha256": "73248f4cf3996c21e196a87f4bfa36c2ee14f9662c1633755f87295b728660cc",
+        "reviewed_refs": [
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3000_cora/result.json#/status",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3000_cora/result.json#/training_seed",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3000_cora/result.json#/dataset",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3000_cora/result.json#/execution",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3000_cora/result.json#/training",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3000_cora/result.json#/quality_gate",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3000_cora/result.json#/reload"
+        ]
+      },
+      {
+        "path": "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3001_citeseer/result.json",
+        "disposition": "structured_review",
+        "sha256": "b945d5cf730ce1b089acf554aa2fac653837ab7c5e6f5f802f4dc4f9ebe44fb0",
+        "reviewed_refs": [
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3001_citeseer/result.json#/status",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3001_citeseer/result.json#/training_seed",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3001_citeseer/result.json#/dataset",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3001_citeseer/result.json#/execution",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3001_citeseer/result.json#/training",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3001_citeseer/result.json#/quality_gate",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3001_citeseer/result.json#/reload"
+        ]
+      },
+      {
+        "path": "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3001_cora/result.json",
+        "disposition": "structured_review",
+        "sha256": "d9cc1b4ae23cdf4f6f7792e9f9430a924fa65b3a2d51bfea47a1158f4a5ca297",
+        "reviewed_refs": [
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3001_cora/result.json#/status",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3001_cora/result.json#/training_seed",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3001_cora/result.json#/dataset",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3001_cora/result.json#/execution",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3001_cora/result.json#/training",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3001_cora/result.json#/quality_gate",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3001_cora/result.json#/reload"
+        ]
+      },
+      {
+        "path": "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3002_citeseer/result.json",
+        "disposition": "structured_review",
+        "sha256": "9435e789d2a86e5324eaa7ed770b30cecfeb811f0f12ed153f139577363e1d4e",
+        "reviewed_refs": [
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3002_citeseer/result.json#/status",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3002_citeseer/result.json#/training_seed",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3002_citeseer/result.json#/dataset",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3002_citeseer/result.json#/execution",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3002_citeseer/result.json#/training",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3002_citeseer/result.json#/quality_gate",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3002_citeseer/result.json#/reload"
+        ]
+      },
+      {
+        "path": "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3002_cora/result.json",
+        "disposition": "structured_review",
+        "sha256": "1cbc3eee94e76d24dafb4a5f386ee9404c753402000145378c158d7b043c335d",
+        "reviewed_refs": [
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3002_cora/result.json#/status",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3002_cora/result.json#/training_seed",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3002_cora/result.json#/dataset",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3002_cora/result.json#/execution",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3002_cora/result.json#/training",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3002_cora/result.json#/quality_gate",
+          "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3002_cora/result.json#/reload"
+        ]
+      },
+      {
+        "path": "expert_evidence/repair/standalone_migration_history.json",
+        "disposition": "read",
+        "sha256": "d2bbf96a8aa94fd8bd4b998b995101fa25f596ed5d2966f6cd9288cb1f72ed30",
+        "read_ranges": [
+          [
+            1,
+            70
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/best_method/README_BEST_METHOD.md",
+        "disposition": "read",
+        "sha256": "1d66e3fe1587eb481ac156903de4cee69257166a238780c1bbe55c35b9ed5ca9",
+        "read_ranges": [
+          [
+            1,
+            19
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/repair/original_v7_current_bytes/seed/events.jsonl",
+        "disposition": "read",
+        "sha256": "8b418b89693e26bbdca5e552576248c27ffcb07210da77dfac0ee11e4117522e",
+        "read_ranges": [
+          [
+            1,
+            7
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/repair/original_v7_current_bytes/codex/events.jsonl",
+        "disposition": "read",
+        "sha256": "49257be7727c6b366b4269c59ab907b6405a777039af5d31b16cea4d5eacc6da",
+        "read_ranges": [
+          [
+            1,
+            7
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/repair/original_v7_current_bytes/seed/summary.json",
+        "disposition": "read",
+        "sha256": "ec7bf16e262c9afb3b8bdd0f1c4c621d253f78fc781614a8439f444e26d13c4d",
+        "read_ranges": [
+          [
+            1,
+            34
+          ]
+        ]
+      },
+      {
+        "path": "workspace/harbor_task/environment/starter/predictor/GCN_Predictor.py",
+        "disposition": "read",
+        "sha256": "b85a14b51908c7e8eec9e0ca089a4d3fb8a1d655f1645bdff93d0ca5ea358f21",
+        "read_ranges": [
+          [
+            1,
+            18
+          ]
+        ]
+      },
+      {
+        "path": "workspace/harbor_task/environment/starter/predictor/Base_Predictor.py",
+        "disposition": "read",
+        "sha256": "c2017bf1316f3588b0cdb588d8de59b98ca823a089af2fe8994985ec73ad112f",
+        "read_ranges": [
+          [
+            1,
+            200
+          ]
+        ]
+      },
+      {
+        "path": "workspace/harbor_task/environment/starter/config/gcn/gcn_cora.yaml",
+        "disposition": "read",
+        "sha256": "2b23a1aa0d6f2837850a0bd475e2f29053a1d4888a884f19b22039a1c714f86b",
+        "read_ranges": [
+          [
+            1,
+            24
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/repair/current_source_revalidation/input_manifest.json",
+        "disposition": "read",
+        "sha256": "20b0381ce224bc9c775030e875ab2fa87449e85b2a741ee6d5c7db5139d606dd",
+        "read_ranges": [
+          [
+            1,
+            35
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/qa16_best_method_revalidation.json",
+        "disposition": "read",
+        "sha256": "ab51236652b03d39690dc2919e915d37772c41c8550dad6c50f7d3c69dafd60c",
+        "read_ranges": [
+          [
+            1,
+            34
+          ],
+          [
+            62,
+            67
+          ]
+        ]
+      },
+      {
+        "path": "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3001_cora/run.log",
+        "disposition": "read",
+        "sha256": "44e9173d985784c9384afa7b304aa141bea2305b54c81e70699a3c857580ce92",
+        "read_ranges": [
+          [
+            1,
+            11
+          ]
+        ]
+      },
+      {
+        "path": "optimization_evidence/u_anchor_oracle/runs/baseline_seed_3001_cora/model/metrics.json",
+        "disposition": "read",
+        "sha256": "5aa62145269211af24f140683a81a1d54d3036d8e2fc11fa4130e071a58806da",
+        "read_ranges": [
+          [
+            1,
+            29
+          ]
+        ]
+      },
+      {
+        "path": "workspace/harbor_task/environment/starter/train.py",
+        "disposition": "read",
+        "sha256": "bfe9f7fe73ad47365a504576804a5e86244eb74c2afbc547c30c640020325e29",
+        "read_ranges": [
+          [
+            15,
+            65
+          ],
+          [
+            85,
+            142
+          ]
+        ]
+      },
+      {
+        "path": "workspace/harbor_task/environment/starter/reload.py",
+        "disposition": "read",
+        "sha256": "96b2fd16bccf2d18ed78a0d041c0991bb8aa159d86f15fc341ebde2012b7b59e",
+        "read_ranges": [
+          [
+            1,
+            43
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/run_summary.json",
+        "disposition": "read",
+        "sha256": "44d880499fd2a95ebfe1b72735bccbc735e82522f07a55b840afe1fe7417e55a",
+        "read_ranges": [
+          [
+            1,
+            53
+          ],
+          [
+            90,
+            97
+          ]
+        ]
+      },
+      {
+        "path": "expert_evidence/repair/historical_timing_mapping/report.txt",
+        "disposition": "read",
+        "sha256": "57da4946ac12404f3c8bf51ef97e44a8908cf996cf3a0c45c549e8fbc3d71c79",
+        "read_ranges": [
+          [
+            1,
+            59
+          ]
+        ]
+      },
+      {
+        "path": "optimization_evidence/historical_v7_invalid_reference/comparison_summary.json",
+        "disposition": "read",
+        "sha256": "cfa0f1c0bdd7656b435abe2cc407a0e9ee44a8b1239cc471d43cd082a76d9575",
+        "read_ranges": [
+          [
+            68,
+            80
+          ]
+        ]
+      },
+      {
+        "path": "optimization_evidence/baseline_runs/seed_3000/model/artifact.json",
+        "disposition": "read",
+        "sha256": "f3e864bd333831de3f24ea00154a58d783eb2dca803d42de822183059219e097",
+        "read_ranges": [
+          [
+            1,
+            40
+          ]
+        ]
+      },
+      {
+        "path": "optimization_evidence/reference_runs/seed_3000/model/artifact.json",
+        "disposition": "read",
+        "sha256": "f18eb1a32100b7d6806f020f1054994276e53eb8676779cb16aeadbc369906cf",
+        "read_ranges": [
+          [
+            1,
+            40
+          ]
+        ]
+      }
+    ]
+  },
+  "notes": [
+    "本轮完成项目校准原值算术审阅，记录完整随机seed及作者自报运行限制；历史source_gap逐条件审阅中候选身份、来源声明和有效对应未获确认，明确拒绝兼容。生效U与独立100资格计算不得混同；历史U后补记录仍不认证原始来源。",
+    "续审保留：作者历史Reference实际使用评价专用验证标签参与训练，旧记录已明确invalid；不能用重评分证明候选来源干净。两条轨迹是实验轮摘要，最终退出类型和主Agent response计数均未认证。旧B/R seed3000的checkpoint与成绩有清单绑定，但两个角色的method_source_sha256均为null；运行树声称同时等于两个不同现源无法成立，旧源码身份不因清单存在而自动认证。",
+    "本轮追加核查：训练方法局部nonlocal与staged numpy等数值导入虽未触及私有数据、全局状态或动态执行，源码仍无条件UNSUPPORTED；题面只公开lambda及一般动态限制，未列这两类影响合法方案的限制。已按task_contract记录作者责任，不将其视为质检技术恢复问题。",
+    "续审guard的污点传播、两类方法检查与staged plan/registry校验，以及Starter重载路径：当前staged scaffold的非PLAN单模型新名称会在build_inference_model的method!=gcn分支报错；题面明确新注册还须兼容审计runner和严格reload，不能仅凭注册断言合法或擅自修改冻结脚手架。已核具体源码边界，仍需结合公开合同判断实际影响，不凭该现象单独定FAIL。",
+    "续审时核对旧Seed公开重试的两图训练及公开评测events均退出0；该旧字节整链不是当前迁移源码整链或平台实跑。两轨只有逐轮摘要，未用轮数充当主Agent response次数。",
+    "发现来源声明与当前源的可核矛盾：EVIDENCE_PROVENANCE.md:13-16称运行树train.py与当前Starter和solution均逐字节一致，但可信索引显示Starter train.py为bfe9f7...、solution train.py为5c5712...，二者不同；源码的调度、模型构建与checkpoint保存亦不同。guard策略分别列single与staged两套固定profile；这可解释当前存在不同源码，但不能证明旧运行实际身份、训练语义一致或证明作者虚构。需按历史source_gap兼容完整条件继续追原B/R运行树身份，不把文档矛盾自动当正常评分故障。",
+    "续核U seed 3001 Cora：原运行命令使用专家侧 /job/source/oracle，训练退出0，metrics仅有公开val_acc而非test_acc；索引中存在U各seed预测载体，但未反序列化或重新计算私有标签，不能由此认定原始U test来源正确或实际缺失。",
+    "续核公开复验输入清单和日志：current_source_revalidation 的目录角色虽称 reference，其方法名和源码清单对应迁移后的 Seed 第43轮最佳方法，而非正式B/R中的 DREAM Reference；71.2 是该迁移方法的公开单seed验证结果，不能混成 DREAM 校准分数。旧字节公开复验71.1亦不等于历史71.4。",
+    "旧字节Seed公开复验summary显示第1次退出137且OOMKilled=false、原因未确定；第2次重试记录未复用输出并得到71.1，不得自行归因OOM，也不是当前正式评分。",
+    "续读旧字节公开复验两轨各7条事件：均为两图训练及公开评测命令记录，不是历史完整Agent会话或当前Hidden评分。Seed旧字节71.1与历史71.4不一致；各阶段和权限不得混同。",
+    "独立迁移记录称旧data.py将公开验证标签合入noisy_label，但Seed目标仅索引训练位置；并称旧模型仅保存最后单成员、修复工件保存五成员。该描述是重要反证和作者报告，不足单独证明历史全过程来源干净或实际违规，仍需沿相关源码和采用链核查。",
+    "最佳方法选择说明给出同分取较早者；因此Seed第43轮被保留虽与第44轮同分，选择规则与唯一最高数值不是一回事。",
+    "作者v25本地Oracle烟测记录Python 3.14/torch 2.13、grader OK及reward 0.5973076979569057；作者明确其非平台Docker/Harbor运行、非正式Hidden成绩。它是现有作者报告而非本次实跑或平台受理凭据。",
+    "作者本地旧Skill PASS仅为旧自审，不是当前规则终判；其明确U早先历史选择的不利事实、作者本地时钟和物化日志限制。",
+    "续审历史NOP的verifier输出及同一Trial的JSON/TXT：缺预测时旧版写0.0，两份reward一致；版本绑定明确旧树非当前交付，旧记录不能证明当前链路。当前评分源码的拒绝值和单JSON需以当前源码判定，不能把旧错误擦除或当作当前实跑。",
+    "历史NOP说明明确当时U选择发生于旧B/R之后；当前v23协议则称U在替代旧v21的B/R之前预登记。两项属于不同阶段，保留历史后验反证；当前预登记仅作者本地时钟，原始U数据来源及当前采用链仍需核验。",
+    "选中方法声明来自Seed第43轮，旧字节公开复验71.1、当前源码单seed公开复验71.2；平台尚未受理或执行当前正式Hidden评分，不能把它们冒充原历史71.4或正式成绩。",
+    "续读Seed轨迹第42–44及53轮、Codex第182–184及193轮：Seed第43轮71.4被保留，第44轮同为71.4但未保留；Codex第183轮66.7被保留，第184和193轮同为66.7未刷新。选择唯一保留候选与分数绝对唯一不是同一事实，历史声明须按此限定；当前源码公开复验71.2亦非历史71.4或正式Hidden实测。两条轨迹的实际来源与越界记录仍需追查。",
+    "续读预登记全文：其声明作者本地预先冻结U=75.1333并绑定部分U文件，不包含事后B/R分数；时间不是独立可信时间戳，且绑定不等于已认证干净资产和每seed原始测试来源。",
+    "补读B/R另外两个seed每图训练与reload日志的数值和退出字段：各自记录退出0、reload_identical=true，与formal_test_scoring_declared的原值一致；这些是派生记录，不冒充平台原生日志。",
+    "补读B/R seed 3000两图派生训练与reload日志：记录CPU训练退出0及reload相同；这些物化日志并非平台原生日志，其余seed原始训练记录、来源一致性仍需继续审查。",
+    "续审读取U的seed 3000两图run.log：命令使用/job/source/oracle资产，日志仅记录训练完成和公开验证准确率；测量文件另称以预测对私有测试标签计算U。日志不能单独证明干净训练资产与U测试原值，须继续追源；未反序列化数据。",
+    "Internal worksheet completed by the Skill Agent, never an expert form.",
+    "No mode, cohort, provider or target-level selection changes the standard.",
+    "Findings use rule/reason/remediation/evidence/responsibility; rule level and blocking are computed by the trusted checker.",
+    "Review only current required norms/L0 and retained project/platform requirements; do not generate optional improvement analyses.",
+    "Unknown deployment provider alone is a platform coverage note; do not invent support or blame the expert.",
+    "Select evidence by the 90 review goals; record actual ranges or reviewed_refs. No whole-package reading gate.",
+    "All formally declared calibration seeds remain required; assess candidate lineage and adverse evidence without inventing missing runtime.",
+    "未完成：校准记录与历史修复声明相互矛盾，当前calibration.json使用B=61.5167、U=75.1333，需继续追源与兼容条件；不得依据历史README单独判定。",
+    "未完成：已读取声明的三个seed及对应B/R测试数值；尚需追查原始运行、候选、数据及来源，不将汇总声明视为实证。",
+    "当前评分器直接读取预测且不复算模型预测；题面亦明确未认证来源。尚需核对本次实际采用链，不能仅凭未认证推定作弊。",
+    "已沿Oracle入口追至solution/run.sh、train.py和DREAM方法注册，源码显示默认两图、seed 3000和CPU；仍须检查实现及资产，不声称运行成功。",
+    "当前评分源码的候选错误写-10，可信故障无分；实际中断、平台消费与本次候选仍待追核。历史合成QA05运行包含旧协议-1及双reward，不能当作当前版本实跑。",
+    "U快照自报2026-11-12 23:49:21 +08:00；B/R日志自报同日23:58:29 +08:00，作者本地时钟并非外部时间证明，原始U实体和来源一致性仍须核实。",
+    "实际读取历史reward：NOP旧记录JSON/TXT均为0；合成QA05旧记录含通过、缺件、泄漏、退化和待校准情景，分别有2.0956、0、−1、−1、−1，属于旧版而非当前合格运行，不能把旧异常分数当当前成绩。",
+    "轨迹摘要中Seed第43轮Dev=71.4、后来相同分轮不保留；Codex最高66.7。旧字节独立复验Seed为71.1、修复后单seed公开Dev 71.2；这些不是当前正式Hidden评分，还需追候选绑定和不利行为。",
+    "来源说明明确B/R的result、log和curve为从本机运行物化的派生材料，并非平台原生日志；运行树data.py与现交付版本的weights_only安全加载不同。预登记时间仅作者本地时钟；不得把来源说明当独立认证。",
+    "U逐seed逐图test_acc记录为80.9/68.8、79.9/70.1、81.2/69.9，其宏均值为74.85、75.00、75.55；来源声明用包内预测和私有标签比较。索引未见同名正式图的干净训练标签oracle资产实体，未反序列化任何数据；是否满足历史来源兼容仍需逐条件审查，不可直接判缺陷或认证原值。",
+    "题面单轮正式reward采用U=75.1333，而题面独立研究资格规则明确使用数学上限100；目前两种分母计算的Reference归一化值分别为0.6193、0.2191，均落[0.15,0.8]，不可混用为同一公式。",
+    "source内solution/artifacts当前不存在，但run.sh创建该目录并由训练导出；不存在静态成品不自动构成缺陷。真实本次候选移交与预测绑定仍需追核。",
+    "本轮续审基线GCN及其训练/验证选择链、公开评测读取、守卫固定策略/扫描入口；Work只复制公开构建资产且为非root只读，独立Verifier持有私有标签。索引未见Work构建上下文.git，数据负载未反序列化。"
+  ],
+  "review_id": "07724cf1f6f947e49e136b3e4df5f479",
+  "source_index": {
+    "path": "/data00/wangsiyu/autoresearch-qa-1107/revisions/pipeline-ark61-eight-20261110/reports/cafe7056db84f6cf9e7d9ec98cac230d43fee47ecb77f7fae17bd2bad1f2bf8f/qa-work-056/prepare/inspection/source_index.json",
+    "source_root": "/data00/wangsiyu/autoresearch-qa-1107/revisions/pipeline-ark61-eight-20261110/reports/cafe7056db84f6cf9e7d9ec98cac230d43fee47ecb77f7fae17bd2bad1f2bf8f/qa-work-056/prepare/inspection/source",
+    "input_source": "/data00/wangsiyu/autoresearch-qa-1107/revisions/pipeline-ark61-eight-20261110/incoming/cafe7056db84f6cf9e7d9ec98cac230d43fee47ecb77f7fae17bd2bad1f2bf8f.zip",
+    "input_stat": {
+      "size": 69964757,
+      "mtime_ns": 1794591119879195603,
+      "ctime_ns": 1794591141353358653,
+      "dev": 65040,
+      "ino": 25815182
+    }
+  }
+}

@@ -1,0 +1,9 @@
+【1107:18dfe9fcbff6c29ff75c9d0532f161f8d1422603378051b36a46dac5d134a156:final】
+本轮结论：不通过
+标准：当前题目规范及L0必需要求，延续原项目科学、资源及平台要求；记录兼容及三类证明缺口按具体证据自动处理，不改评分口径，不需人工版本选择。
+范围：只读静态审阅及已交证据复核；本次未运行Docker或Harbor。
+
+专家返修：
+- H04：当前明确保留交付的expert_evidence/best_method由selection绑定data.py SHA=0c40b9e7…，run.sh运行本目录train.py且其import本目录data。data.py:29的weights_only=False使规范化AST为c12ce6a8e877f6c748198df8ee866d71f8f550364e44b6d5e3e03ed3883525f7；当前contract_policy共同冻结data只允许9d3b0a20364a29671a7d34997a9487096b21be488643758f0188c7e126a4b7df（Starter/Oracle实际为True，独立静态计算均匹配）。guard对所有profile共同文件逐一比较、不会豁免旧adapter，故该当前best提交树必产生FIXED_CONTRACT，grader在评分前返回INVALID/candidate_fault=true/hard_gate=true/reward=-10。已有71.2是PUBLIC_DEV_ONLY成功，不走当前guard；这是当前候选与生效冻结合同矛盾，非缺平台回执、非历史证明缺口、非质检读取失败。未执行题包或guard，结论来自完整可达源码及stdlib AST数学核验。
+  修改：作者将当前保留best_method的data.py恢复为生效Starter冻结adapter（weights_only=True版本），算法变化仅保留于允许method/hook面；同步best selection的真实源码绑定和当前验证范围。不能用旧71.4或公开71.2证明当前冻结门通过；不要放宽可信policy去容纳该非合规adapter。无需仅为旧回执范围重跑全部历史研究。
+  证据：expert_evidence/best_method_selection.json:1-17；expert_evidence/best_method_selection.json:30-74；expert_evidence/best_method/data.py:25-37；expert_evidence/best_method/run.sh:6-23；expert_evidence/best_method/train.py:19-39；workspace/harbor_task/tests/contract_policy.json:1-12；workspace/harbor_task/tests/contract_guard.py:898-929；workspace/harbor_task/tests/grader.py:123-164；workspace/harbor_task/environment/starter/data.py:25-37

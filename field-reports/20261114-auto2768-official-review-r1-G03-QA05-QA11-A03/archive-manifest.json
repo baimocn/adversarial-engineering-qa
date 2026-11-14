@@ -1,0 +1,26 @@
+{
+  "schema": "auto2768-official-feedback-raw-archive/1",
+  "source": "Feishu Base attachment fldRpEE4VF, record recvxeP2AYB9GI, table tblHNtQNFPVwuKiP",
+  "report_key": "358adb2c5633372203f659222491b34fec87daef979ec35b4527b4accb2cf0bd",
+  "attachment_file_token": "Yej6bpCtiojeD0xob97ckR9Lnpg",
+  "original_attachment_name": "auto2768-1107-final-cafe7056db84f6cf.zip",
+  "original_zip_sha256": "e38e982b75163e124e034f7fd04949c549ee7651ca26a250b11487cca39b82d2",
+  "original_zip_size": 238522,
+  "platform_decision": "PASS",
+  "platform_version": "0.5.6-current.1",
+  "implementation_patch": "read-recovery-fix-20261113-v1",
+  "reviewed_package": "v30",
+  "checks_summary": "通过",
+  "raw_files": [
+    "decision.txt",
+    "identity.json",
+    "last-message.txt",
+    "previous-feedback.txt",
+    "report.json",
+    "report.md",
+    "report.txt",
+    "return_to_expert.txt",
+    "review.json"
+  ],
+  "note": "Raw platform feedback files are copied byte-for-byte; monitor-generated findings.json/fix_report.md are deliberately excluded."
+}

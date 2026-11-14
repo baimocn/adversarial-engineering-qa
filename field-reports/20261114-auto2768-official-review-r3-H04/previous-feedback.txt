@@ -1,0 +1,9 @@
+【1107:a3aa8f703b0b83fa135b47a0430e32c28f89531cba95d954fca70ba1d0fddfca:final】
+本轮结论：不通过
+标准：当前题目规范及L0必需要求，延续原项目科学、资源及平台要求；记录兼容及三类证明缺口按具体证据自动处理，不改评分口径，不需人工版本选择。
+范围：只读静态审阅及已交证据复核；本次未运行Docker或Harbor。
+
+专家返修：
+- H02：默认Oracle源码与正式移交产物错位：私有solution/solve.sh调用自身run.sh/train.py以dream训练，却只向/workspace/solution/artifacts写模型/预测；Work在/workspace/solution放入仅注册gcn的starter，Oracle全链未复制DREAM源码/config。因此Verifier扫描/交付的是starter源码，却评分DREAM产物，无法满足可运行训练入口与retained-best产物的真实候选对应。该缺陷由当前可达源码直接证明，不是缺平台回执或质检读取失败。
+  修改：在Oracle入口执行训练前，将实际DREAM参考源码、注册表与配置完整组装到SOLUTION_DIR，并从该实际提交目录训练/导出，确保被移交源码与被评模型/预测来自同一候选；私有Reference继续不进入Agent Work镜像。
+  证据：workspace/harbor_task/solution/README.md:3-11；workspace/harbor_task/solution/solve.sh:10-19；workspace/harbor_task/solution/run.sh:6-39；workspace/harbor_task/environment/Dockerfile:39-42；workspace/harbor_task/environment/starter/predictor/__init__.py:1-42；workspace/harbor_task/environment/starter/train.py:20-99；workspace/harbor_task/instruction.md:162-170；workspace/harbor_task/task.toml:1-61；workspace/harbor_task/tests/grader.py:1-259
