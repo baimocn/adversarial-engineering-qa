@@ -6,7 +6,24 @@
 
 > **征集平台/官方质检报告**。仓库开了 [field-reports/](field-reports/) 目录，专门收**平台侧（官方 skill / 官方质检链路）对题包出的质检报告**，我们自己的复核报告不入库，自己人写的报告证明不了判据，平台出的 FAIL 和豁免才可以。已有样本是 auto2768 的三轮官方质检实录（FAIL 到 FAIL 到 PASS_WITH_WAIVERS）。你手里的平台报告就是下一个判据样本，脱敏后交到该目录，方式见其 README。
 
-**当前版本 v2.6.0（2026-11-13，strict-qa）**
+**当前版本 v2.7.0（2026-11-14，current-standard）**
+
+## v2.7 当前标准优先（current-standard）
+
+v2.7 把冲突规则按版本分层，明确以群聊最新官方包 `autoresearch-unified-qa v0.5.0-current.1` 为规则底座、以平台报告 `0.5.6-current.1 / read-recovery-fix-20261113-v1` 为覆盖口径；0.3.10/V4/豁免版只保留为历史材料，不参与当前 gate。
+
+- `config/rule_versions.json`：版本目录与冲突裁决（`-1`→`-10`、旧 `docker_image` 示例→无专家硬编码镜像、NOP 不恢复、最终二态 PASS/FAIL、`PASS_WITH_WAIVERS` 退出外部结论）。
+- `scripts/current_standard_gate.py`：单包机械门禁；覆盖 reward 二选一、`-10` hard gate、公开合同 nonlocal/staged 白名单、Oracle 源码/产物同源、best_method 冻结 adapter、G03 角色源码绑定、二态总判。
+- `scripts/verdict.py`：外部只输出 PASS/FAIL；内部 open/unknown 记 `completion_status=QA_NOT_FINISHED`，`--legacy-incomplete` 仅供旧编排兼容。
+- `tests/test_current_standard_gate.py`：v30 作为 good 基线，对 hard gate、reward、docker_image、公开合同、Oracle、best_method、provenance 做 bad/good 消融。
+- 静态 PASS 不冒充 Docker/Harbor/Hidden 实跑；平台运行范围在报告中列 `platform_scope`。
+
+当前入口：
+
+```bash
+python -I scripts/current_standard_gate.py --root <提交包解包目录> --out current_standard_gate.json
+python -I scripts/strict_verify.py --repo-root . --task-root <harbor_task> --work-dir <ws>
+```
 
 ## v2.6 低幻觉协议（strict-qa）
 
@@ -16,7 +33,7 @@ v2.6 解决的是「不同模型跑同一份 skill，结论不一样」：**模�
 - **拆题也由模型做**：编排模型用 `ListModels` 问人选择拆题/评审/裁决模型；拆题产物必须通过四条硬规则（有限答案、可执行验证、需求溯源、覆盖率），否则退回重拆；拆好的缓存到 `criteria/decompositions/`。
 - **CPU 真跑**：`run_decomposition_checks.py` 执行 command / file / JSON / regex / hash 检查；命令白名单、`shell=False`、超时。
 - **官方层**：`strict_verify.py --package-zip` 同时跑 0.3.10 与 0.5.0；只吃官方聚合 decision，旧版本地预填的布局误报不算官方 fail。
-- **确定性总判**：`verdict.py` 五档 `verified / judged_agree / judged_adjudicated / human_required / unknown`；strict 下 open 即 INCOMPLETE，缺证据不 PASS。
+- **确定性总判（当前标准）**：`verdict.py` 外部只给 PASS/FAIL；内部仍保留五档 category 作为覆盖率诊断，但 open/unknown 一律 `QA_NOT_FINISHED`，不得输出 `PASS_WITH_WAIVERS`/`PASS_WITH_OPEN` 作为作者结论。
 
 单题入口：
 
