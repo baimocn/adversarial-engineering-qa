@@ -1,0 +1,42 @@
+{
+  "schema": "platform-experience-coverage-matrix/1",
+  "generated_at": "2026-11-14",
+  "scope": {
+    "chat_messages": {
+      "notice_group": "oc_ac73f8678cb6c1b334eb3932741a4440",
+      "notice_group_messages": 272,
+      "discussion_group": "oc_e378eed4ffdf95faa1f10439f191c70e",
+      "discussion_group_messages": 403,
+      "has_more": false
+    },
+    "documents_read": 9,
+    "strict_skill": "D:/Desktop/论文最新包/2768/qa_compare/adversarial-engineering-qa-strict"
+  },
+  "entries": [
+    {"rule": "single_task_toml", "source_docs": ["02_harbor_1074_failure_review_20261026.md", "04_repair_guide_algorithm_platform_errors.md", "08_format_self_check_delivery_spec_20261020.md"], "strict_status": "implemented_degraded", "evidence": ["scripts/check_platform_rules.py:110-155", "scripts/check_platform_rules.py:53-59"]},
+    {"rule": "forbid_docker_image_current_202611", "source_docs": ["02_harbor_1074_failure_review_20261026.md", "04_repair_guide_algorithm_platform_errors.md"], "strict_status": "implemented_but_downgraded", "evidence": ["scripts/check_platform_rules.py:166-232", "references/platform-criteria-inference.md:159-170", "references/platform-criteria-inference.md:251-259"]},
+    {"rule": "official_dependency_sources_and_no_credentials", "source_docs": ["02_harbor_1074_failure_review_20261026.md", "04_repair_guide_algorithm_platform_errors.md"], "strict_status": "partial", "evidence": ["scripts/check_platform_rules.py:63-84", "scripts/check_platform_rules.py:288-337", "official/autoresearch-supplement-platform-audit/references/platform-audit.md:75"]},
+    {"rule": "gpu_h20_l20_cpu_no_gpu", "source_docs": ["04_repair_guide_algorithm_platform_errors.md", "09_expert_annotation_tutorial_v4.md"], "strict_status": "prose_only", "evidence": ["official/autoresearch-baseline-quality/SKILL.md:8", "references/autoresearch-v4-original.md:212"]},
+    {"rule": "separate_sandbox_public_dev_hidden_isolation", "source_docs": ["04_repair_guide_algorithm_platform_errors.md", "09_expert_annotation_tutorial_v4.md"], "strict_status": "partial", "evidence": ["scripts/check_delivery_contract.py:463-473", "official/autoresearch-supplement-platform-audit/references/platform-audit.md:55-58"]},
+    {"rule": "single_reward_file_and_finite_value", "source_docs": ["05_skill_modification_list_format_notes.md", "02_harbor_1074_failure_review_20261026.md"], "strict_status": "partial", "evidence": ["scripts/check_delivery_contract.py:333-439", "official/autoresearch-unified-qa/references/current-standard-checks.md:9-11"]},
+    {"rule": "candidate_hard_gate_minus_10_and_failure_classification", "source_docs": ["01_zhongjian_wenti_huizong_20261113.md", "05_skill_modification_list_format_notes.md", "06_acceptance_triage_20261107.json"], "strict_status": "prose_only_conflicted", "evidence": ["scripts/check_delivery_contract.py:18", "README.md:86", "scripts/verdict.py:5-14"]},
+    {"rule": "zero_only_legal_starter", "source_docs": ["01_zhongjian_wenti_huizong_20261113.md", "05_skill_modification_list_format_notes.md"], "strict_status": "not_implemented", "evidence": ["official/autoresearch-unified-qa/references/current-standard-policy.md:11-13"]},
+    {"rule": "nop_trial_and_waiver_ledger", "source_docs": ["07_waiver_list_qa_scope.md", "08_format_self_check_delivery_spec_20261020.md", "09_expert_annotation_tutorial_v4.md"], "strict_status": "partial_version_conflict", "evidence": ["scripts/qa_official.py:160-170", "scripts/qa_official.py:192-410", "official/autoresearch-task-qa-legacy-waiver/references/format-repair-policy.md:3"]},
+    {"rule": "90_checks_six_engineering_groups_six_delivery_groups_binary_result", "source_docs": ["05_skill_modification_list_format_notes.md"], "strict_status": "thin_wrapper_not_fully_wired", "evidence": ["scripts/qa_unified.py:39-103", "scripts/strict_verify.py:119-144", "official/autoresearch-unified-qa/references/standard-coverage.md:1-97", "scripts/verdict.py:5-14"]},
+    {"rule": "oracle_solution_entry_and_source_artifact_binding", "source_docs": ["05_skill_modification_list_format_notes.md", "03_package_runtime_fix_examples_19.md"], "strict_status": "partial", "evidence": ["scripts/check_delivery_contract.py:442-474", "scripts/check_delivery_contract.py:460-462"]},
+    {"rule": "best_method_frozen_adapter_contract_policy", "source_docs": ["09_expert_annotation_tutorial_v4.md"], "strict_status": "not_implemented", "evidence": ["strict_skill_grep:frozen_ast=0", "strict_skill_grep:contract_policy=0"]},
+    {"rule": "trajectory_eight_fields_and_task_fingerprint", "source_docs": ["07_waiver_list_qa_scope.md", "09_expert_annotation_tutorial_v4.md"], "strict_status": "partial_version_conflict", "evidence": ["scripts/qa_official.py:348-353", "scripts/qa_official.py:393-401", "official/autoresearch-unified-qa/references/current-standard-policy.md:35"]},
+    {"rule": "scoring_anchors_3sigma_015_08_seed_pairs_reload", "source_docs": ["04_repair_guide_algorithm_platform_errors.md", "07_waiver_list_qa_scope.md", "09_expert_annotation_tutorial_v4.md"], "strict_status": "partial", "evidence": ["scripts/qa_official.py:199-214", "scripts/qa_official.py:229-239", "scripts/qa_official.py:283-290", "scripts/qa_official.py:378-385"]},
+    {"rule": "instruction_eight_parts_and_guard_consistency", "source_docs": ["04_repair_guide_algorithm_platform_errors.md", "09_expert_annotation_tutorial_v4.md"], "strict_status": "partial_manual", "evidence": ["scripts/qa_official.py:192-196", "scripts/qa_official.py:293-294", "scripts/build_review_worklist.py:136-148"]},
+    {"rule": "runtime_compatibility_20_cases", "source_docs": ["03_package_runtime_fix_examples_19.md", "04_repair_guide_algorithm_platform_errors.md"], "strict_status": "six_static_rules_implemented", "evidence": ["scripts/check_execution_path.py:344-638", "references/autoresearch-integration.md:139-142"]},
+    {"rule": "terminal_review_five_problem_families", "source_docs": ["01_zhongjian_wenti_huizong_20261113.md"], "strict_status": "not_implemented", "evidence": ["strict_skill_grep:difficulty_low=0", "strict_skill_grep:failure_zero=0", "strict_skill_grep:verifier_budget=0"]}
+  ],
+  "version_conflicts": [
+    {"topic": "hard_gate", "old": "-1", "current": "-10", "evidence": ["official/autoresearch-task-qa-legacy-waiver/references/qa-spec.md:34", "SKILL.md:65"]},
+    {"topic": "docker_image", "old": "example requires or allows", "platform_202611": "forbid valid docker_image", "strict_v050": "downgraded to needs_manual", "evidence": ["references/platform-criteria-inference.md:159-170", "scripts/check_platform_rules.py:192-199"]},
+    {"topic": "final_result", "platform_current": "PASS/FAIL binary", "strict": "PASS/FAIL/INCOMPLETE/PASS_WITH_OPEN and category", "evidence": ["official/autoresearch-unified-qa/references/current-standard-policy.md:45", "scripts/verdict.py:5-14"]},
+    {"topic": "check_count", "legacy": "21 QA + Harbor six", "current_doc": "90 checks / six engineering / six delivery", "platform_report": "0.5.6-current.1, 90 checks / 50 evaluated", "evidence": ["official/autoresearch-unified-qa/references/standard-coverage.md:1-97", "scripts/qa_official.py:404-410"]},
+    {"topic": "skill_version", "strict_latest_vendored": "0.5.0-current.1", "platform_report": "0.5.6-current.1", "evidence": ["official/autoresearch-unified-qa/SKILL.md:5", "strict_skill_grep:0.5.6-current.1=0"]},
+    {"topic": "NOP", "legacy": "must submit same trial config/result/reward/log", "v050": "NOP not restored", "strict": "qa17 still fail on missing NOP product", "evidence": ["official/autoresearch-unified-qa/SKILL.md:22", "scripts/qa_official.py:356-360"]}
+  ]
+}
