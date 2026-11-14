@@ -15,8 +15,14 @@
 | `20261025-auto2768-official-review/` | auto2768 第 1 轮，FAIL，4 项 fail（QA05/QA08/QA11/QA17），含 SUMMARY |
 | `20261026-auto2768-official-review/` | auto2768 第 2 轮，FAIL，1 项 fail（QA13 数值一致性），含 SUMMARY |
 | `20261027-auto2768-official-review/` | auto2768 第 3 轮，PASS_WITH_WAIVERS（0 fail，5 项豁免），含 SUMMARY |
+| `20261114-auto2768-official-review-r1-G03-QA05-QA11-A03/` | auto2768 新链路第 1 轮，FAIL，G03/QA05/QA11/A03；原 zip + 官文原件 |
+| `20261114-auto2768-official-review-r2-H02/` | auto2768 新链路第 2 轮，FAIL，H02 Oracle 源码/产物移交错位；原 zip + 官文原件 |
+| `20261114-auto2768-official-review-r3-H04/` | auto2768 新链路第 3 轮，FAIL，H04 当前 best_method 冻结 adapter 不匹配；原 zip + 官文原件 |
+| `20261114-auto2768-official-review-r4-PASS/` | auto2768 新链路第 4 轮，PASS；对应 v30 包；原 zip + 官文原件 |
 
-九轮来自四个题包（auto0340、auto2001、auto0823、auto2768）的同一条官方链路（`standard_review_with_waivers` 阶段），全部从飞书平台两张表的附件字段下载（三期领题表与三期专家自行选题表），是判据反推的原始素材，读法见各自 SUMMARY。fail 分布有明确共性，QA05 在 0340/2001/2768 三个包的第一轮全部命中，QA17 紧随其后；这正是 `check_execution_path.py` 十条规则的选题依据。
+旧链路九轮来自四个题包（auto0340、auto2001、auto0823、auto2768）的 `standard_review_with_waivers` 阶段，全部从飞书平台两张表的附件字段下载，是判据反推的原始素材，读法见各自 SUMMARY。fail 分布有明确共性，QA05 在 0340/2001/2768 三个包的第一轮全部命中，QA17 紧随其后；这正是 `check_execution_path.py` 十条规则的选题依据。
+
+2026-11-14 新增的四轮是 `0.5.6-current.1` / `read-recovery-fix-20261113-v1` 链路的连续官方反馈序列（失败 → 失败 → 失败 → 通过），按飞书附件原始字节入库；总览见 `20261114-auto2768-official-review-raw-README.md`。这一组不写 `SUMMARY.md` 判据解读，避免把自动值守结论混入官方原文；每个目录的 `archive-manifest.json` 只记录来源、token、sha256 与原样性说明。
 
 ## 你可以交什么
 
