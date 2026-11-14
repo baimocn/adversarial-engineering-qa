@@ -17,11 +17,12 @@ SKILL_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = SKILL_ROOT / "scripts" / "check_honest_candidate.py"
 
 ENTRY_BAD_API = '''\
-import argparse, sys
+import argparse
 p = argparse.ArgumentParser(); p.add_argument("--solution_dir"); p.add_argument("--out")
 a = p.parse_args()
-act = __import__("numpy").zeros(4)
-act.numpy()          # tensor_api_mismatch
+ndarray = type("numpy.ndarray", (), {})
+act = ndarray()
+act.numpy()          # tensor_api_mismatch: exact error text, no numpy dependency
 '''
 
 ENTRY_TAMPERED = '''\
@@ -66,7 +67,7 @@ class HonestCandidateTest(unittest.TestCase):
                            capture_output=True, text=True, encoding="utf-8", errors="replace")
         return r.returncode, json.loads(out.read_text(encoding="utf-8"))
 
-    def test_numpy_api_crash_is_blocking(self):
+    def test_tensor_api_crash_is_blocking(self):
         rc, rep = self._run(ENTRY_BAD_API)
         self.assertEqual(rc, 1)
         self.assertEqual(rep["verdict"], "blocking")
