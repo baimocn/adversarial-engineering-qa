@@ -6,7 +6,7 @@ agent_created: true
 
 # Adversarial Engineering QA
 
-**版本**：v2.6（2026-11-13）
+**版本**：v2.7.0（2026-11-14）
 **v2 相对 v1 的实质改动**：新增 Gate C（执行层门禁）——`scripts/check_execution_path.py`
 四条静态规则 + `scripts/check_honest_candidate.py` 诚实候选冒烟；判定纪律加入
 「Gate C blocking 不可豁免、不得静默降级 manual」；合并规则加入 `remaining_findings` 阻断。
@@ -84,6 +84,12 @@ sha256/size 全量复算（评分合同清单失配=blocking，专家证据清�
 `scripts/verdict.py` 为准；官方底稿未填不再给作者 PASS，而记
 `QA_NOT_FINISHED`。旧 0.3.10、V4、NOP、PASS_WITH_WAIVERS、固定两轨 10h 等
 只作 legacy 材料，不再参与当前 gate。
+
+**v2.7 相对 v2.6 的实质改动（2026-11-14，current-standard）**：以官方
+`autoresearch-unified-qa v0.5.0-current.1` 为唯一规则底座，新增
+`scripts/current_standard_gate.py` 单包机械门禁；`scripts/verdict.py` 只输出
+PASS/FAIL，`PASS_WITH_WAIVERS` / `PASS_WITH_OPEN` 退出外部结论；官方 skill 包
+`official/autoresearch-unified-qa/package.zip` 与当前飞书文档附件 SHA256 一致。
 
 ## 目标
 
