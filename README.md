@@ -92,7 +92,7 @@ python scripts/validate_review.py --review <outdir>/adversarial_review.json
 **自测**。
 
 ```bash
-python -m unittest discover -s tests   # 94 用例
+python -m unittest discover -s tests   # 143 用例
 ```
 
 ## 判级纪律（最容易踩的坑）
@@ -134,7 +134,7 @@ criteria/           拆题缓存（按题族）
 field-reports/      他人质检失败/存疑报告收集处（脱敏后一报告一文件，
                     可复现的误报会转成回归用例）
 assets/             review.json 模板
-tests/              unittest 自测（124 用例，含各检查器的误报回归）
+tests/              unittest 自测（143 用例，含各检查器的误报回归）
 ```
 
 ## 欢迎提 PR
@@ -169,4 +169,4 @@ tests/              unittest 自测（124 用例，含各检查器的误报回�
 
 **第四步，如果修复方对判级不服**（觉得我们把好包判死了），别在 PR 里争论，直接给反例。我们收过"修复报告声称已修复但字节没动"的包，也出过"检查器误报把好包判死"的事故，两个方向都真实发生过。判断标准只有一个，当前字节加复跑输出。
 
-提 PR 前请跑 `python -m unittest discover -s tests`，94 个用例全过再提交。改动检查器判据的 PR，请同时给出"会误伤的真实包"反例，或者说明为什么不会。
+提 PR 前请跑 `python -m unittest discover -s tests`，143 个用例全过再提交。改动检查器判据的 PR，请同时给出"会误伤的真实包"反例，或者说明为什么不会。
